@@ -20,6 +20,14 @@ Route::post('login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin'
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
 Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
-Route::group(['middleware' => 'auth'], function(){
-	Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
-});
+Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
+Route::resource('reportes', 'Reporte\ReporteController', ['only' => ['index']]);
+
+
+// Route::group(['middleware' => ''], function(){
+	/*
+	|-------------------------
+	| Reportes Routes
+	|-------------------------
+	*/
+// });

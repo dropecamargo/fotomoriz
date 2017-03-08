@@ -8,7 +8,7 @@ return [
 
     'app' => [
         'name' => 'Fotomoriz',
-        'site' => 'http://fotomoriz.com//',
+        'site' => 'http://www.fotomoriz.com',
         'image' => [
             'logo' => '/images/logo.png',
             'avatar' => '/images/avatar.svg'

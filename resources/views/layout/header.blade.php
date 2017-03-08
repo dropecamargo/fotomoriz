@@ -1,6 +1,6 @@
 <header class="main-header">
     <a href="{{ route('dashboard') }}" class="logo">
-        <span class="logo-mini">S<b>S</b></span>
+        <span class="logo-mini">FTZ</b></span>
         {{-- logo for regular state and mobile devices --}}
         <span class="logo-lg"><b>{{ config('koi.app.name') }}</b></span>
     </a>
@@ -16,17 +16,17 @@
             <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                         {{-- The user image in the navbar --}}
-                        <img src="{{ asset(config('koi.app.image.avatar')) }}" class="user-image" alt="{{ Auth::user()->username }}"/>
+                        {{-- The user image in the navbar --}}
+                        {{-- <img src="{{ asset(config('koi.app.image.avatar')) }}" class="user-image" alt="{{ Auth::user()->username }}"/> --}}
                         {{-- hidden-xs hides the username on small devices so only the image appears. --}}
-                        <span class="hidden-xs">{{ Auth::user()->getName() }}</span>
+                        {{-- <span class="hidden-xs">{{ Auth::user()->getName() }}</span> --}}
                     </a>
 
                     <ul class="dropdown-menu">
                         {{-- The user image in the menu --}}
                         <li class="user-header">
                             <img src="{{ asset(config('koi.app.image.avatar')) }}" class="img-circle" alt="User Image"/>
-                            <p>{{ Auth::user()->getName() }}</p>
+                            {{-- <p>{{ Auth::user()->getName() }}</p> --}}
                         </li>
                         {{-- Menu Footer --}}
                         <li class="user-footer">
@@ -51,11 +51,11 @@
                 <img src="{{ asset(config('koi.app.image.avatar')) }}" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
-                <p>{{ Auth::user()->username }}</p>
+                {{-- <p>{{ Auth::user()->username }}</p> --}}
                 <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
         </div>
 
         @include('layout.menu')
     </section>
-  </aside>
+</aside>

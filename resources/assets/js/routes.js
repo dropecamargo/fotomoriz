@@ -12,7 +12,7 @@ app || (app = {});
     app.AppRouter = new( Backbone.Router.extend({
         routes : {
             //Login
-            'login(/)': 'getLogin',      
+            // 'login(/)': 'getLogin',   
         },
 
         /**
@@ -45,13 +45,8 @@ app || (app = {});
         */
         initialize : function ( opts ){
             // Initialize resources
-            // this.componentGlobalView = new app.ComponentGlobalView();
-            // this.componentSearchTerceroView = new app.ComponentSearchTerceroView();
-            // this.componentTerceroView = new app.ComponentTerceroView();
-            // this.componentReporteView = new app.ComponentReporteView();
-            // this.componentCreateResourceView = new app.ComponentCreateResourceView();
-            // this.componentSearchCuentaView = new app.ComponentSearchCuentaView();
-
+            this.componentReporteView = new app.ComponentReporteView();
+            this.componentGlobalView = new app.ComponentGlobalView();
       	},
 
         /**
@@ -70,15 +65,15 @@ app || (app = {});
         * show view in Calendar Event
         * @param String show
         */
-        getLogin: function () {
+        // getLogin: function () {
 
-            if ( this.loginView instanceof Backbone.View ){
-                this.loginView.stopListening();
-                this.loginView.undelegateEvents();
-            }
+        //     if ( this.loginView instanceof Backbone.View ){
+        //         this.loginView.stopListening();
+        //         this.loginView.undelegateEvents();
+        //     }
 
-            this.loginView = new app.UserLoginView( );
-        }
+        //     this.loginView = new app.UserLoginView();
+        // }
 
     }) );
 

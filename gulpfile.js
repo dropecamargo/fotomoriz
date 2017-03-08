@@ -18,16 +18,17 @@ var paths = {
 
 elixir(function(mix) {
     mix.styles([
-		paths.adminlte + 'bootstrap/css/bootstrap.min.css',
+        paths.adminlte + 'bootstrap/css/bootstrap.min.css',
         paths.adminlte + 'dist/css/skins/skin-red-light.min.css',
-		paths.adminlte + 'plugins/iCheck/minimal/red.css',
-		paths.adminlte + 'plugins/select2/select2.min.css',
-		paths.adminlte + 'plugins/datepicker/datepicker3.css',
-		paths.adminlte + 'dist/css/AdminLTE.min.css',
-		paths.libs + 'font-awesome/css/font-awesome.min.css',
-		paths.libs + 'datatables.net-bs/css/dataTables.bootstrap.css',
-		paths.libs + 'datatables.net-buttons-bs/css/buttons.bootstrap.min.css',
-	], 'public/css/vendor.min.css');
+        paths.adminlte + 'plugins/iCheck/minimal/red.css',
+        paths.adminlte + 'plugins/select2/select2.min.css',
+        paths.adminlte + 'plugins/datepicker/datepicker3.css',
+        paths.adminlte + 'plugins/timepicker/bootstrap-timepicker.min.css',
+        paths.adminlte + 'dist/css/AdminLTE.min.css',
+        paths.libs + 'font-awesome/css/font-awesome.min.css',
+        paths.libs + 'datatables.net-bs/css/dataTables.bootstrap.css',
+        paths.libs + 'datatables.net-buttons-bs/css/buttons.bootstrap.min.css',
+    ], 'public/css/vendor.min.css');
 });
 
 elixir(function(mix) {
@@ -36,7 +37,7 @@ elixir(function(mix) {
 
 elixir(function(mix) {
     mix.scripts([
-    	paths.adminlte + 'plugins/jQuery/jquery-2.2.3.min.js',
+        paths.adminlte + 'plugins/jQuery/jquery-2.2.3.min.js',
         paths.adminlte + 'bootstrap/js/bootstrap.min.js',
         paths.adminlte + 'dist/js/app.min.js',
         paths.adminlte + 'plugins/slimScroll/jquery.slimscroll.min.js',
@@ -45,6 +46,7 @@ elixir(function(mix) {
         paths.adminlte + 'plugins/select2/i18n/es.js',
         paths.adminlte + 'plugins/datepicker/bootstrap-datepicker.js',
         paths.adminlte + 'plugins/datepicker/locales/bootstrap-datepicker.es.js',
+        paths.adminlte + 'plugins/timepicker/bootstrap-timepicker.min.js',
         paths.libs + 'bootstrap-validator/dist/validator.min.js',
         paths.libs + 'datatables.net/js/jquery.dataTables.min.js',
         paths.libs + 'datatables.net-bs/js/dataTables.bootstrap.min.js',
@@ -58,7 +60,7 @@ elixir(function(mix) {
         paths.libs + 'moment/moment.js',
         paths.libs + 'moment/locale/es.js',
         paths.libs + 'alertify.js/dist/js/alertify.js',
-   	], 'public/js/vendor.min.js')
+    ], 'public/js/vendor.min.js')
     .scripts([
         'models/*.js',
         'collections/**/*.js',

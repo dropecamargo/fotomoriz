@@ -14,34 +14,26 @@
     </section>
 
    	<section class="content">
-	    <div class="box box-success" id="reporte-create">
+	    <div class="box box-danger" id="reporte-create">
 	    	<form action="{{ route('reporteentradassalidas.index') }}" method="GET" data-toggle="validator">
 			 	<input class="hidden" id="type-reporte-koi-component" name="type"></input>
 				<div class="box-body">
 					<div class="row">
 						<div class="form-group col-md-offset-4 col-sm-offset-4 col-xs-6 col-sm-3 col-md-2">
-							<label for="fecha_inicio" class="control-label">Fecha Inicio</label>
-							<select name="fecha_inicio" id="fecha_inicio" class="form-control" required>
-								@for($i = config('koi.app.ano'); $i <= date('Y'); $i++)
-									<option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
-								@endfor
-							</select>
+							<label for="fecha_inicial" class="control-label">Fecha inicial</label>
+							<input type="text" id="fecha_inicial" name="fecha_inicial" placeholder="Fecha inicial" class="form-control input-sm datepicker" value="{{ date('Y-m-d') }}" required>
 						</div>
 
 						<div class="form-group col-xs-6 col-sm-3 col-md-2">
-							<label for="fecha_salida" class="control-label">Fecha Salida</label>
-							<select name="fecha_salida" id="fecha_salida" class="form-control" required>
-								@for($i = config('koi.app.ano'); $i <= date('Y'); $i++)
-									<option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>{{ $i }}</option>
-								@endfor
-							</select>
+							<label for="fecha_final" class="control-label">Fecha final</label>
+							<input type="text" id="fecha_final" name="fecha_final" placeholder="Fecha final" class="form-control input-sm datepicker" value="{{ date('Y-m-d') }}" required>
 						</div>
 					</div>
 
 					<div class="row">
 						<div class="form-group col-md-offset-4 col-sm-offset-4 col-xs-6 col-sm-3 col-md-4">
 							<label for="sucursal" class="control-label">Sucursal</label>
-	                        <select name="sucursal" id="sucursal" class="form-control select2-default-clear">
+	                        <select name="sucursal" id="sucursal" class="form-control select2-default-clear" required>
 	                        	@foreach($sucursal as $key => $value )
 	                        		<option value="{{ $key }}" <%- sucursal == '{{ $key }}' ? 'selected': ''%>{{ $value }}</option>
 	                        	@endforeach

@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 
 use View, Excel, App, DB, Log;
 
-use App\Models\Base\AuxiliarReporte; 
+use App\Models\Base\AuxiliarReporte;
 
 class ReporteEntradasSalidasController extends Controller
 {
@@ -20,12 +20,11 @@ class ReporteEntradasSalidasController extends Controller
      */
     public function index(Request $request)
     {
-        
         $sucursal = DB::table('sucursal')
-                    ->select('sucursal_codigo','sucursal_nombre')
-                    ->where('sucursal_activa', true)
-                    ->orderBy('sucursal_codigo', 'asc')
-                    ->lists('sucursal_nombre', 'sucursal_codigo');
+            ->select('sucursal_codigo','sucursal_nombre')
+            ->where('sucursal_activa', true)
+            ->orderBy('sucursal_codigo', 'asc')
+            ->lists('sucursal_nombre', 'sucursal_codigo');
 
         if($request->has('type'))
         {
@@ -35,7 +34,8 @@ class ReporteEntradasSalidasController extends Controller
                 $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_entrada','inventario_referencia');
                 $query->where('inventario_unidad_entrada', '>', '0');
                 $query->whereIn('inventario_documentos', ['NACI','ENTRA','TRASL','FACTU','DEVOL','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                $query->limit(100);
+                $query->where('inventario_sucursal', $request->sucursal);
+                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicio, $request->fecha_final]);
                 $inventario_entrada = $query->get();
 
                 // Recorrer query inventario
@@ -70,7 +70,8 @@ class ReporteEntradasSalidasController extends Controller
                 $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_salida','inventario_referencia');
                 $query->where('inventario_unidad_salida', '>', '0');
                 $query->whereIn('inventario_documentos', ['TRASL','FACTU','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                $query->limit(100);
+                $query->where('inventario_sucursal', $request->sucursal);
+                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicio, $request->fecha_final]);
                 $inventario_salida = $query->get();
 
                 // Recorrer query inventario
@@ -105,7 +106,7 @@ class ReporteEntradasSalidasController extends Controller
             }catch(\Exception $e){
                 DB::rollback();
                 Log::error($e->getMessage());
-                abort(500); 
+                abort(500);
             }
 
             // Preparar datos reporte

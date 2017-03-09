@@ -35,10 +35,8 @@ class ReporteEntradasSalidasController extends Controller
                 $query->where('inventario_unidad_entrada', '>', '0');
                 $query->whereIn('inventario_documentos', ['NACI','ENTRA','TRASL','FACTU','DEVOL','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
                 $query->where('inventario_sucursal', $request->sucursal);
-                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicio, $request->fecha_final]);
+                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
                 $inventario_entrada = $query->get();
-
-                dd($query->toSql(), $request->all());
 
                 // Recorrer query inventario
                 foreach ($inventario_entrada as $item) {
@@ -73,7 +71,7 @@ class ReporteEntradasSalidasController extends Controller
                 $query->where('inventario_unidad_salida', '>', '0');
                 $query->whereIn('inventario_documentos', ['TRASL','FACTU','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
                 $query->where('inventario_sucursal', $request->sucursal);
-                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicio, $request->fecha_final]);
+                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
                 $inventario_salida = $query->get();
 
                 // Recorrer query inventario

@@ -38,7 +38,7 @@ class ReporteEntradasSalidasController extends Controller
                 $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicio, $request->fecha_final]);
                 $inventario_entrada = $query->get();
 
-                dd($query->toSql());
+                dd($query->toSql(), $request->all());
 
                 // Recorrer query inventario
                 foreach ($inventario_entrada as $item) {

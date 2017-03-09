@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use View, Excel, App, DB, Log;
 
 use App\Models\Base\AuxiliarReporte;
+use App\Models\Base\Sucursal;
 
 class ReporteEntradasSalidasController extends Controller
 {
@@ -104,15 +105,18 @@ class ReporteEntradasSalidasController extends Controller
             }
 
             // Preparar datos reporte
-            $title = sprintf('%s %s %s', 'Reporte entradas y salidas', $request->fecha_inicio, $request->fecha_fin);
+            $title = sprintf('%s', 'Reporte entradas y salidas');
             $type = $request->type;
+            $fecha_inicio = $request->fecha_inicial;
+            $fecha_final = $request->fecha_final;
+            $sucursal = Sucursal::find($request->sucursal);
 
             // Generate file
             switch ($type) {
                 case 'xls':
-                    Excel::create(sprintf('%s_%s_%s', 'reporte_entradas_salidas', date('Y_m_d'), date('H_m_s')), function($excel) use($auxiliar, $title, $type) {
-                    $excel->sheet('Excel', function($sheet) use($auxiliar, $title, $type) {
-                        $sheet->loadView('reportes.reporteentradassalidas.reporte', compact('auxiliar', 'title', 'type'));
+                    Excel::create(sprintf('%s_%s_%s', 'reporte_entradas_salidas', date('Y_m_d'), date('H_m_s')), function($excel) use($fecha_inicio, $fecha_final, $sucursal, $auxiliar, $title, $type) {
+                    $excel->sheet('Excel', function($sheet) use($fecha_inicio, $fecha_final, $sucursal, $auxiliar, $title, $type) {
+                        $sheet->loadView('reportes.reporteentradassalidas.reporte', compact('fecha_inicio','fecha_final','sucursal','auxiliar', 'title', 'type'));
                         $sheet->setFontSize(8);
                     });
                 })->download('xls');

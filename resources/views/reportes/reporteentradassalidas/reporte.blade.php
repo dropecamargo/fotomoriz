@@ -4,6 +4,9 @@
 	<table class="rtable" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
+				<th colspan="13" align="center">Fecha inicio: {{ $fecha_inicio }}  Fecha final: {{ $fecha_final }} Sucursal: {{ $sucursal->sucursal_nombre }}</th>
+			</tr>
+			<tr>
 				<th width="20px"></th>
 				<th width="20px"></th>
 				<th colspan="6" align="center">ENTRADAS</th>

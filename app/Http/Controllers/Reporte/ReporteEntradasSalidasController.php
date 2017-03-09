@@ -19,11 +19,12 @@ class ReporteEntradasSalidasController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
+    {   
+
         $sucursal = DB::table('sucursal')
             ->select('sucursal_codigo','sucursal_nombre')
             ->where('sucursal_activa', true)
-            ->orderBy('sucursal_codigo', 'asc')
+            ->orderBy('sucursal_nombre', 'asc')
             ->lists('sucursal_nombre', 'sucursal_codigo');
 
         if($request->has('type'))
@@ -34,9 +35,14 @@ class ReporteEntradasSalidasController extends Controller
                 $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_entrada','inventario_referencia');
                 $query->where('inventario_unidad_entrada', '>', '0');
                 $query->whereIn('inventario_documentos', ['NACI','ENTRA','TRASL','FACTU','DEVOL','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                $query->where('inventario_sucursal', $request->sucursal);
+                
+                if($request->has('sucursal') && $request->sucursal != '0'){ 
+                    $query->where('inventario_sucursal', $request->sucursal);
+                }
+
                 $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
                 $inventario_entrada = $query->get();
+
 
                 // Recorrer query inventario
                 foreach ($inventario_entrada as $item) {
@@ -70,7 +76,11 @@ class ReporteEntradasSalidasController extends Controller
                 $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_salida','inventario_referencia');
                 $query->where('inventario_unidad_salida', '>', '0');
                 $query->whereIn('inventario_documentos', ['TRASL','FACTU','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                $query->where('inventario_sucursal', $request->sucursal);
+                
+                if($request->has('sucursal') && $request->sucursal != '0'){ 
+                    $query->where('inventario_sucursal', $request->sucursal);
+                }
+
                 $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
                 $inventario_salida = $query->get();
 

@@ -37,6 +37,7 @@
 	                        	@foreach($sucursal as $key => $value )
 	                        		<option value="{{ $key }}" <%- sucursal == '{{ $key }}' ? 'selected': ''%>{{ $value }}</option>
 	                        	@endforeach
+	                        		<option value="0">TODAS</option>
 	                        </select>
 						</div>
 					</div>

@@ -20,13 +20,6 @@ class ReporteEntradasSalidasController extends Controller
      */
     public function index(Request $request)
     {   
-
-        $sucursal = DB::table('sucursal')
-            ->select('sucursal_codigo','sucursal_nombre')
-            ->where('sucursal_activa', true)
-            ->orderBy('sucursal_nombre', 'asc')
-            ->lists('sucursal_nombre', 'sucursal_codigo');
-
         if($request->has('type'))
         {
             DB::beginTransaction();
@@ -35,14 +28,9 @@ class ReporteEntradasSalidasController extends Controller
                 $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_entrada','inventario_referencia');
                 $query->where('inventario_unidad_entrada', '>', '0');
                 $query->whereIn('inventario_documentos', ['NACI','ENTRA','TRASL','FACTU','DEVOL','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                
-                if($request->has('sucursal') && $request->sucursal != '0'){ 
-                    $query->where('inventario_sucursal', $request->sucursal);
-                }
-
+                $query->where('inventario_sucursal', $request->sucursal);
                 $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
                 $inventario_entrada = $query->get();
-
 
                 // Recorrer query inventario
                 foreach ($inventario_entrada as $item) {
@@ -76,11 +64,7 @@ class ReporteEntradasSalidasController extends Controller
                 $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_salida','inventario_referencia');
                 $query->where('inventario_unidad_salida', '>', '0');
                 $query->whereIn('inventario_documentos', ['TRASL','FACTU','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                
-                if($request->has('sucursal') && $request->sucursal != '0'){ 
-                    $query->where('inventario_sucursal', $request->sucursal);
-                }
-
+                $query->where('inventario_sucursal', $request->sucursal);
                 $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
                 $inventario_salida = $query->get();
 
@@ -122,9 +106,6 @@ class ReporteEntradasSalidasController extends Controller
             // Preparar datos reporte
             $title = sprintf('%s %s %s', 'Reporte entradas y salidas', $request->fecha_inicio, $request->fecha_fin);
             $type = $request->type;
-            $fh_inicio = $request->fecha_inicio;
-            $fh_fin = $request->fecha_fin;
-            $sucursal = $request->sucursal;
 
             // Generate file
             switch ($type) {
@@ -138,6 +119,6 @@ class ReporteEntradasSalidasController extends Controller
                 break;
             }
         }
-        return view('reportes.reporteentradassalidas.index', ['sucursal' => $sucursal]);
+        return view('reportes.reporteentradassalidas.index');
     }
 }

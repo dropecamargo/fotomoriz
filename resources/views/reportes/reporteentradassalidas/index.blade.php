@@ -34,10 +34,9 @@
 						<div class="form-group col-md-offset-4 col-sm-offset-4 col-xs-6 col-sm-3 col-md-4">
 							<label for="sucursal" class="control-label">Sucursal</label>
 	                        <select name="sucursal" id="sucursal" class="form-control select2-default-clear" required>
-	                        	@foreach($sucursal as $key => $value )
+	                        	@foreach( App\Models\Base\Sucursal::getSucursales() as $key => $value )
 	                        		<option value="{{ $key }}" <%- sucursal == '{{ $key }}' ? 'selected': ''%>{{ $value }}</option>
 	                        	@endforeach
-	                        		<option value="0">TODAS</option>
 	                        </select>
 						</div>
 					</div>

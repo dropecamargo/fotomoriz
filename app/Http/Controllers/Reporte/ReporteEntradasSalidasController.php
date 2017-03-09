@@ -22,6 +22,7 @@ class ReporteEntradasSalidasController extends Controller
     {
         $sucursal = DB::table('sucursal')
             ->select('sucursal_codigo','sucursal_nombre')
+            ->where('sucursal_activa', true)
             ->orderBy('sucursal_codigo', 'asc')
             ->lists('sucursal_nombre', 'sucursal_codigo');
 

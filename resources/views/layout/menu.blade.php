@@ -6,7 +6,7 @@
 
     {{-- Comercial --}}
     <li class="{{ in_array(Request::segment(1), ['reporte']) ? 'active' : '' }}">
-        <a href="{{ route('reportes.index') }}">
+        <a href="{{ route('reporteentradassalidas.index') }}">
             <i class="fa fa-bar-chart-o"></i><span>Reporte</span>
         </a>
     </li>

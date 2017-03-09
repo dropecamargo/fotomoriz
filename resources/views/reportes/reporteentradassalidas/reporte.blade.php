@@ -12,7 +12,7 @@
 			</tr>
 			<tr>
 				<th width="20px" align="left">Referencia</th>
-				<th width="20px" align="left">Producto</th>
+				<th width="80px" align="left">Producto</th>
 				<th width="20px" align="center">Entrada</th>
 				<th width="20px" align="center">Traslado</th>
 				<th width="20px" align="center">Facturas</th>
@@ -27,7 +27,23 @@
 			</tr>
 		</thead>
 		<tbody>
-			
+			@foreach($auxiliar as $item)
+			<tr>
+				<td align="left">{{ $item->referencia }}</td>
+				<td align="left">{{ $item->producto_nombre }}</td>
+				<td align="rigth">{{ $item->entrada_entrada }}</td>
+				<td align="rigth">{{ $item->traslado_entrada }}</td>
+				<td align="rigth">{{ $item->facturas_entrada }}</td>
+				<td align="rigth">{{ $item->devoluciones_entrada }}</td>
+				<td align="rigth">{{ $item->remisiones_entrada }}</td>
+				<td align="rigth">{{ $item->ajustes_entrada }}</td>
+				<td></td>
+				<td align="rigth">{{ $item->traslado_salida }}</td>
+				<td align="rigth">{{ $item->facturas_salida }}</td>
+				<td align="rigth">{{ $item->remisiones_salida }}</td>
+				<td align="rigth">{{ $item->ajustes_salida }}</td>
+			</tr>
+			@endforeach
 		</tbody>
 	</table>
 @stop

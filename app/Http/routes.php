@@ -21,7 +21,7 @@ Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin'])
 Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
 Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
-Route::resource('reportes', 'Reporte\ReporteController', ['only' => ['index']]);
+Route::resource('reporteentradassalidas', 'Reporte\ReporteEntradasSalidasController', ['only' => ['index']]);
 
 
 // Route::group(['middleware' => ''], function(){

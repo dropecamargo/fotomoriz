@@ -12,4 +12,8 @@ class AuxiliarReporte extends Model
      * @var string
      */
     protected $table = 'auxiliarreporte';
+
+    public $timestamps = false;
+
+    public $incrementing = false;
 }

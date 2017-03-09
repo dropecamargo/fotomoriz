@@ -1,21 +1,21 @@
 @extends('layout.layout')
 
-@section('title') Reporte @stop
+@section('title') Reporte entradas y salidas @stop
 
 @section('content')
     <section class="content-header">
 		<h1>
-			Reporte
+			Reporte entradas y salidas
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Reporte</li>
+			<li class="active">Reporte entradas y salidas</li>
 		</ol>
     </section>
 
    	<section class="content">
 	    <div class="box box-success" id="reporte-create">
-	    	<form action="{{ route('reportes.index') }}" method="GET" data-toggle="validator">
+	    	<form action="{{ route('reporteentradassalidas.index') }}" method="GET" data-toggle="validator">
 			 	<input class="hidden" id="type-reporte-koi-component" name="type"></input>
 				<div class="box-body">
 					<div class="row">

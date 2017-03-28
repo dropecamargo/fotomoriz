@@ -7,7 +7,12 @@
     {{-- Comercial --}}
     <li class="{{ in_array(Request::segment(1), ['reporte']) ? 'active' : '' }}">
         <a href="{{ route('reporteentradassalidas.index') }}">
-            <i class="fa fa-bar-chart-o"></i><span>Reporte</span>
+            <i class="fa fa-bar-chart-o"></i><span>Reporte Entradas Salidas</span>
+        </a>
+    </li>
+	<li class="{{ in_array(Request::segment(1), ['reportearp']) ? 'active' : '' }}">
+        <a href="{{ route('reportearp.index') }}">
+            <i class="fa fa-bar-chart-o"></i><span>Reporte Gastos ARP</span>
         </a>
     </li>
 </ul>

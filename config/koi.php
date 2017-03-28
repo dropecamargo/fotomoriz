@@ -13,7 +13,7 @@ return [
             'logo' => '/images/logo.png',
             'avatar' => '/images/avatar.svg'
         ],
-        'ano' => 2015
+        'ano' => 2006
     ],
 
     'meses' => [

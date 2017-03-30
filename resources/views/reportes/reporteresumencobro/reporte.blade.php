@@ -16,7 +16,7 @@
 				<th width="20px" align="center">Nombre Concepto</th>
 				<th width="20px" align="left">Proxima Llamada</th>
 				<th width="20px" align="center">T. Interno</th>
-				<th width="60px" align="left">Nombre</th>
+				<th width="60px" align="left">Nombre</th> 
 			</tr>
 		</thead>
 		<tbody>
@@ -36,6 +36,8 @@
 				<td align="rigth">{{ $item->llamadacob_tercerointerno }}</td>
 				<td align="rigth">{{ $item->ti_n1 }} {{ $item->ti_n2 }} {{ $item->ti_ap1 }} {{ $item->ti_ap2 }}</td>
 			</tr>
+			
+			
 			@endforeach
 		</tbody>
 	</table>

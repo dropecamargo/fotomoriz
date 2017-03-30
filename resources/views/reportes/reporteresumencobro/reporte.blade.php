@@ -9,7 +9,7 @@
 
 			<tr>
 				<th width="20px" align="left">Nit</th>
-				<th width="60px" align="left">Nombre</th>
+				<th width="60px" align="left">Nombre Tercero</th>
 				<th width="20px" align="left">Fecha</th>
 				<th width="20px" align="center">Hora</th>
 				<th width="20px" align="center">Concepto</th>
@@ -28,7 +28,6 @@
 				@else
 					<td align="rigth">{{ $item->t_rz }}</td>
 				@endif
-				
 				<td align="left">{{  $item->llamadacob_fecha }}</td>
 				<td align="rigth">{{ $item->llamadacob_hora }}</td>
 				<td align="rigth">{{ $item->llamadacob_conceptocob }}</td>

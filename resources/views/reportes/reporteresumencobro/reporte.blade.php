@@ -13,7 +13,8 @@
 				<th width="20px" align="left">Fecha</th>
 				<th width="20px" align="center">Hora</th>
 				<th width="20px" align="center">Concepto</th>
-				<th width="20px" align="center">Concepto</th>
+				<th width="20px" align="center">Nombre Concepto</th>
+				<th width="20px" align="left">Proxima Llamada</th>
 				<th width="20px" align="center">T. Interno</th>
 				<th width="60px" align="left">Nombre</th>
 			</tr>
@@ -32,6 +33,7 @@
 				<td align="rigth">{{ $item->llamadacob_hora }}</td>
 				<td align="rigth">{{ $item->llamadacob_conceptocob }}</td>
 				<td align="rigth">{{ $item->conceptocob_nombre }}</td>
+				<td align="rigth">{{ $item->llamadacob_prox_fecha  }} {{ $item->llamadacob_prox_hora }}</td>
 				<td align="rigth">{{ $item->llamadacob_tercerointerno }}</td>
 				<td align="rigth">{{ $item->ti_n1 }} {{ $item->ti_n2 }} {{ $item->ti_ap1 }} {{ $item->ti_ap2 }}</td>
 			</tr>

@@ -29,17 +29,11 @@ class ReporteResumenCobroController extends Controller
 							't.tercero_razon_social as t_rz', 't.tercero_nombre1 as t_n1', 't.tercero_nombre2 as t_n2', 't.tercero_apellido1 as t_ap1', 't.tercero_apellido2 as t_ap2',
 							'ti.tercero_nombre1 as ti_n1', 'ti.tercero_nombre2 as ti_n2', 'ti.tercero_apellido1 as ti_ap1', 'ti.tercero_apellido2 as ti_ap2'
 			);
-							//DB::raw("CONCAT(t.tercero_razon_social, ' ',  t.tercero_nombre1, ' ', t.tercero_nombre2, ' ',t.tercero_apellido1, ' ',t.tercero_apellido2) as tercero_nombre"), 
-			                //DB::raw("CONCAT	(ti.tercero_nombre1::text, ' ', ti.tercero_nombre2::text, ' ',ti.tercero_apellido1::text, ' ',ti.tercero_apellido2::text) as terceroi_nombre"));
-							//DB::raw("(t.tercero_razon_nombre || ' ' || t.tercero_nombre1 || ' ' || t.tercero_nombre2 || ' ' || t.tercero_apellido1 || ' ' || t.tercero_apellido2) as tercero_nombre"));
 			$query->join('conceptocob', 'llamadacob_conceptocob', '=', 'conceptocob_codigo');
 			$query->join('tercero as t', 'llamadacob_tercero', '=', 't.tercero_nit');
 			$query->join('tercero as ti', 'llamadacob_tercerointerno', '=', 'ti.tercero_nit');
             $query->whereBetween('llamadacob_fecha', [$request->fecha_inicial, $request->fecha_final]);
             $llamadas = $query->get();
-			
-			
-			
 			
 			// Preparar datos reporte
             $title = sprintf('%s', 'Reporte Resumen Cobro');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\reportearp;
 
 use Illuminate\Http\Request;
 
+use View, Excel, App, DB, Log;
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -14,9 +16,14 @@ class ReporteArpController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+		if($request->has('type'))
+        {
+			dd($request->mes);
+		}
         return view('reportes.reportearp.index');
+		
     }
 
     /**

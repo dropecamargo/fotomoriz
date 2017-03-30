@@ -15,4 +15,9 @@
             <i class="fa fa-bar-chart-o"></i><span>Reporte Gastos ARP</span>
         </a>
     </li>
+	<li class="{{ in_array(Request::segment(1), ['reporteresumencobro']) ? 'active' : '' }}">
+        <a href="{{ route('reporteresumencobro.index') }}">
+            <i class="fa fa-bar-chart-o"></i><span>Reporte Resumen Cobro</span>
+        </a>
+    </li>
 </ul>

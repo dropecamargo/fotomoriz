@@ -20,4 +20,9 @@
             <i class="fa fa-bar-chart-o"></i><span>Reporte Resumen Cobro</span>
         </a>
     </li>
+	<li class="{{ in_array(Request::segment(1), ['reporteanalisisinventario']) ? 'active' : '' }}">
+        <a href="{{ route('reporteanalisisinventario.index') }}">
+            <i class="fa fa-bar-chart-o"></i><span>Reporte Analisis Inventario</span>
+        </a>
+    </li>
 </ul>

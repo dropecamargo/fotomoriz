@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Base\Lamadacob;
-use App\Models\Base\Conceptocob;
-use App\Models\Base\Tercero;
 
 use View, Excel, App, DB, Log;
 

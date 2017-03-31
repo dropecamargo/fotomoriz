@@ -24,6 +24,7 @@ Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
 Route::resource('reporteentradassalidas', 'Reporte\ReporteEntradasSalidasController', ['only' => ['index']]);
 Route::resource('reportearp', 'ReporteArp\ReporteArpController', ['only' => ['index']]);
 Route::resource('reporteresumencobro', 'ReporteResumenCobro\ReporteResumenCobroController', ['only' => ['index']]);
+Route::resource('reporteanalisisinventario', 'ReporteAnalisisInventario\ReporteAnalisisInventarioController', ['only' => ['index']]);
 
 
 // Route::group(['middleware' => ''], function(){

@@ -1,21 +1,21 @@
 @extends('layout.layout')
 
-@section('title') Reporte Gastos ARP@stop
+@section('title') Reporte Analisis Inventario@stop
 
 @section('content')
     <section class="content-header">
 		<h1>
-			Reporte Gastos ARP
+			Reporte Analisis Inventario
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Reporte Gastos ARP</li>
+			<li class="active">Reporte Analisis Inventario</li>
 		</ol>
     </section>
 
    	<section class="content">
 	    <div class="box box-danger" id="reporte-create">
-	    	<form action="{{ route('reportearp.index') }}" method="GET" data-toggle="validator">
+	    	<form action="{{ route('reporteanalisisinventario.index') }}" method="GET" data-toggle="validator">
 			 	<input class="hidden" id="type-reporte-koi-component" name="type"></input>
 				<div class="box-body">
 					<div class="row">

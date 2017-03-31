@@ -26,6 +26,33 @@ class ReporteAnalisisInventarioController extends Controller
 			DB::beginTransaction();
             try{
 
+			    if($request->mes==1)
+				{
+					$xmes1=10; $xano1=$request->ano-1;
+					$xmes2=11; $xano2=$request->ano-1;
+					$xmes3=12; $xano3=$request->ano-1;
+				}
+				if($request->mes==2)
+				{
+					$xmes1=11; $xano1=$request->ano-1;
+					$xmes2=12; $xano2=$request->ano-1;
+					$xmes3=1;  $xano3=$request->ano;
+				}
+				if($request->mes==3)
+				{
+					$xmes1=12; $xano1=$request->ano-1;
+					$xmes2=1;  $xano2=$request->ano;
+					$xmes3=2;  $xano3=$request->ano;					
+				}
+				if($request->mes>3)
+				{
+					$xmes1=$request->mes-3; $xano1=$request->ano;
+					$xmes2=$request->mes-2; $xano2=$request->ano;
+					$xmes3=$request->mes-1; $xano3=$request->ano;				
+				}
+				$xmes4=$request->mes; $xano4=$request->ano;
+				
+				
 				//campos auxiliar
 				// ventas
 				// cch1 : referencia producto
@@ -42,134 +69,236 @@ class ReporteAnalisisInventarioController extends Controller
 				
 				// ventas
 				$query = DB::table('factura2');
-                $query->select('factura2_producto', 'factura2_unidades_vendidas', DB::raw('(factura2_unidades_vendidas * factura2_costo) as costo'));		
+                $query->select('factura2_producto', 
+				               DB::raw('sum(factura2_unidades_vendidas) as unidades'), 
+							   DB::raw('sum((factura2_unidades_vendidas * factura2_costo)) as costo'));		
 				$query->join('factura1', function($join) {
 					$join->on('factura1_numero', '=', 'factura2_numero');
 					$join->on('factura1_sucursal', '=', 'factura2_sucursal');
 				});
 				$query->where('factura1_anulada', '=', False);
 				$query->where('factura2_tipoinventario', '=', '1');
-				$query->whereRaw("EXTRACT(YEAR from factura1_fecha) = $request->ano");
-				$query->whereRaw("EXTRACT(MONTH from factura1_fecha) = $request->mes");
+				$query->whereRaw("EXTRACT(YEAR from factura1_fecha) = $xano1");
+				$query->whereRaw("EXTRACT(MONTH from factura1_fecha) = $xmes1");
+				$query->groupBy('factura2_producto');
                 $ventas = $query->get();
-				
-				foreach ($ventas as $item) {
+			
+				foreach ($ventas as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->factura2_producto;
-                    $inventario->cin1 = $item->factura2_unidades_vendidas;
+                    $inventario->cin1 = $item->unidades;
 					$inventario->cdb1 = $item->costo;
                     $inventario->save();
                 }	
 				
 				// devoluciones
 				$query = DB::table('devolucion2');
-				$query->select('devolucion2_producto', 'devolucion2_cantidad', DB::raw('(devolucion2_cantidad * devolucion2_costo) as costo'));		
+				$query->select('devolucion2_producto', 
+				                DB::raw('sum(devolucion2_cantidad) as unidades'), 
+								DB::raw('sum((devolucion2_cantidad * devolucion2_costo)) as costo'));		
 				$query->join('devolucion1', function($join) {
 					$join->on('devolucion1_numero', '=', 'devolucion2_numero');
 					$join->on('devolucion1_sucursal', '=', 'devolucion2_sucursal');
 				});
-				$query->whereRaw("EXTRACT(YEAR from devolucion1_fecha_elaboro) = $request->ano");
-				$query->whereRaw("EXTRACT(MONTH from devolucion1_fecha_elaboro) = $request->mes");
+				$query->whereRaw("EXTRACT(YEAR from devolucion1_fecha_elaboro) = $xano1");
+				$query->whereRaw("EXTRACT(MONTH from devolucion1_fecha_elaboro) = $xmes1");
 				$query->where('devolucion2_tipoinventario','=', '1');
+				$query->groupBy('devolucion2_producto');
                 $devoluciones = $query->get();
+			
 				
 							
-				foreach ($devoluciones as $item) {
+				foreach ($devoluciones as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->devolucion2_producto;
-                    $inventario->cin1 = $item->devolucion2_cantidad;
-					$inventario->cdb1 = $item->costo;
+                    $inventario->cin1 = $item->unidades*(-1);
+					$inventario->cdb1 = $item->costo*(-1);
                     $inventario->save();
                 }
 
-				/*
-				foreach ($ventas as $item) {
+				// ventas
+				$query = DB::table('factura2');
+                $query->select('factura2_producto', 
+				               DB::raw('sum(factura2_unidades_vendidas) as unidades'), 
+							   DB::raw('sum((factura2_unidades_vendidas * factura2_costo)) as costo'));		
+				$query->join('factura1', function($join) {
+					$join->on('factura1_numero', '=', 'factura2_numero');
+					$join->on('factura1_sucursal', '=', 'factura2_sucursal');
+				});
+				$query->where('factura1_anulada', '=', False);
+				$query->where('factura2_tipoinventario', '=', '1');
+				$query->whereRaw("EXTRACT(YEAR from factura1_fecha) = $xano2");
+				$query->whereRaw("EXTRACT(MONTH from factura1_fecha) = $xmes2");
+				$query->groupBy('factura2_producto');
+                $ventas = $query->get();
+				
+				foreach ($ventas as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->factura2_producto;
-                    $inventario->cin2 = $item->factura2_unidades_vendidas;
+                    $inventario->cin2 = $item->unidades;
 					$inventario->cdb2 = $item->costo;
                     $inventario->save();
                 }
 				
-				foreach ($devoluciones as $item) {
+				// devoluciones
+				$query = DB::table('devolucion2');
+				$query->select('devolucion2_producto', 
+				                DB::raw('sum(devolucion2_cantidad) as unidades'), 
+								DB::raw('sum((devolucion2_cantidad * devolucion2_costo)) as costo'));		
+				$query->join('devolucion1', function($join) {
+					$join->on('devolucion1_numero', '=', 'devolucion2_numero');
+					$join->on('devolucion1_sucursal', '=', 'devolucion2_sucursal');
+				});
+				$query->whereRaw("EXTRACT(YEAR from devolucion1_fecha_elaboro) = $xano2");
+				$query->whereRaw("EXTRACT(MONTH from devolucion1_fecha_elaboro) = $xmes2");
+				$query->where('devolucion2_tipoinventario','=', '1');
+				$query->groupBy('devolucion2_producto');
+                $devoluciones = $query->get();
+			
+				
+				foreach ($devoluciones as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->devolucion2_producto;
-                    $inventario->cin2 = $item->devolucion2_cantidad;
-					$inventario->cdb2 = $item->costo;
+                    $inventario->cin2 = $item->unidades*(-1);
+					$inventario->cdb2 = $item->costo*(-1);
                     $inventario->save();
                 }
 
+				// ventas
+				$query = DB::table('factura2');
+                $query->select('factura2_producto', 
+				               DB::raw('sum(factura2_unidades_vendidas) as unidades'), 
+							   DB::raw('sum((factura2_unidades_vendidas * factura2_costo)) as costo'));		
+				$query->join('factura1', function($join) {
+					$join->on('factura1_numero', '=', 'factura2_numero');
+					$join->on('factura1_sucursal', '=', 'factura2_sucursal');
+				});
+				$query->where('factura1_anulada', '=', False);
+				$query->where('factura2_tipoinventario', '=', '1');
+				$query->whereRaw("EXTRACT(YEAR from factura1_fecha) = $xano3");
+				$query->whereRaw("EXTRACT(MONTH from factura1_fecha) = $xmes3");
+				$query->groupBy('factura2_producto');
+                $ventas = $query->get();
 				
-				foreach ($ventas as $item) {
+				foreach ($ventas as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->factura2_producto;
-                    $inventario->cin3 = $item->factura2_unidades_vendidas;
+                    $inventario->cin3 = $item->unidades;
 					$inventario->cdb3 = $item->costo;
                     $inventario->save();
                 }
 				
-				foreach ($devoluciones as $item) {
+				// devoluciones
+				$query = DB::table('devolucion2');
+				$query->select('devolucion2_producto', 
+				                DB::raw('sum(devolucion2_cantidad) as unidades'), 
+								DB::raw('sum((devolucion2_cantidad * devolucion2_costo)) as costo'));		
+				$query->join('devolucion1', function($join) {
+					$join->on('devolucion1_numero', '=', 'devolucion2_numero');
+					$join->on('devolucion1_sucursal', '=', 'devolucion2_sucursal');
+				});
+				$query->whereRaw("EXTRACT(YEAR from devolucion1_fecha_elaboro) = $xano3");
+				$query->whereRaw("EXTRACT(MONTH from devolucion1_fecha_elaboro) = $xmes3");
+				$query->where('devolucion2_tipoinventario','=', '1');
+				$query->groupBy('devolucion2_producto');
+                $devoluciones = $query->get();
+			
+				
+				foreach ($devoluciones as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->devolucion2_producto;
-                    $inventario->cin3 = $item->devolucion2_cantidad;
-					$inventario->cdb3 = $item->costo;
+                    $inventario->cin3 = $item->unidades*(-1);
+					$inventario->cdb3 = $item->costo*(-1);
                     $inventario->save();
                 }
 				
-				foreach ($ventas as $item) {
+				// ventas
+				$query = DB::table('factura2');
+                $query->select('factura2_producto', 
+				               DB::raw('sum(factura2_unidades_vendidas) as unidades'), 
+							   DB::raw('sum((factura2_unidades_vendidas * factura2_costo)) as costo'));		
+				$query->join('factura1', function($join) {
+					$join->on('factura1_numero', '=', 'factura2_numero');
+					$join->on('factura1_sucursal', '=', 'factura2_sucursal');
+				});
+				$query->where('factura1_anulada', '=', False);
+				$query->where('factura2_tipoinventario', '=', '1');
+				$query->whereRaw("EXTRACT(YEAR from factura1_fecha) = $xano4");
+				$query->whereRaw("EXTRACT(MONTH from factura1_fecha) = $xmes4");
+				$query->groupBy('factura2_producto');
+                $ventas = $query->get();
+				
+				foreach ($ventas as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->factura2_producto;
-                    $inventario->cin4 = $item->factura2_unidades_vendidas;
+                    $inventario->cin4 = $item->unidades;
 					$inventario->cdb4 = $item->costo;
                     $inventario->save();
                 }
 				
-				foreach ($devoluciones as $item) {
+				// devoluciones
+				$query = DB::table('devolucion2');
+				$query->select('devolucion2_producto', 
+				                DB::raw('sum(devolucion2_cantidad) as unidades'), 
+								DB::raw('sum((devolucion2_cantidad * devolucion2_costo)) as costo'));		
+				$query->join('devolucion1', function($join) {
+					$join->on('devolucion1_numero', '=', 'devolucion2_numero');
+					$join->on('devolucion1_sucursal', '=', 'devolucion2_sucursal');
+				});
+				$query->whereRaw("EXTRACT(YEAR from devolucion1_fecha_elaboro) = $xano4");
+				$query->whereRaw("EXTRACT(MONTH from devolucion1_fecha_elaboro) = $xmes4");
+				$query->where('devolucion2_tipoinventario','=', '1');
+				$query->groupBy('devolucion2_producto');
+                $devoluciones = $query->get();
+			
+				
+				foreach ($devoluciones as $item) 
+				{
                     $inventario = new AuxiliarReporte;
                     $inventario->cch1 = $item->devolucion2_producto;
-                    $inventario->cin4 = $item->devolucion2_cantidad;
-					$inventario->cdb4 = $item->costo;
+                    $inventario->cin4 = $item->unidades*(-1);
+					$inventario->cdb4 = $item->costo*(-1);
                     $inventario->save();
                 }
 				
-                //Salidas
-                $query = DB::table('inventario');
-                $query->select('inventario_documentos', 'inventario_producto','inventario_unidad_salida','inventario_referencia');
-                $query->where('inventario_unidad_salida', '>', '0');
-                $query->whereIn('inventario_documentos', ['TRASL','FACTU','ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL','ABAJA','AFALT','ASOBR']);
-                $query->where('inventario_sucursal', $request->sucursal);
-                $query->whereBetween('inventario_fecha_documento', [$request->fecha_inicial, $request->fecha_final]);
-                $inventario_salida = $query->get();
-
-                // Recorrer query inventario
-                foreach ($inventario_salida as $item) {
-                    $inventario = new AuxiliarReporte;
-                    $inventario->cch1 = $item->inventario_producto;
-
-                    if (in_array($item->inventario_documentos, ['TRASL'])){
-                        $inventario->cin7 = $item->inventario_unidad_salida;
-
-                    }elseif (in_array($item->inventario_documentos, ['FACTU'])){
-                        $inventario->cin8 = $item->inventario_unidad_salida;
-
-                    }elseif (in_array($item->inventario_documentos, ['ACOMP','ADEVP','AIARR','APRES','ECANI','ENVIO','RCONS','REMRE','RGRAN','RIARR','ROBSE','RPROV','RPRUE','RRECL'])) {
-                        $inventario->cin9 = $item->inventario_unidad_salida;
-
-                    }elseif (in_array($item->inventario_documentos, ['ABAJA','AFALT','ASOBR'])){
-                        $inventario->cin10 = $item->inventario_unidad_salida;
-
-                    }
-                    $inventario->save();
-                }
-
-                $query = AuxiliarReporte::query();
-                $query->select('cch1 as referencia','producto.producto_nombre', DB::raw('sum(cin1) as entrada_entrada'), DB::raw('sum(cin2) as traslado_entrada'), DB::raw('sum(cin3) as facturas_entrada'), DB::raw('sum(cin4) as devoluciones_entrada'), DB::raw('sum(cin5) as remisiones_entrada'), DB::raw('sum(cin6) as ajustes_entrada'),DB::raw('sum(cin7) as traslado_salida'), DB::raw('sum(cin8) as facturas_salida'), DB::raw('sum(cin9) as remisiones_salida'), DB::raw('sum(cin10) as ajustes_salida'));
-                $query->join('producto', 'cch1', '=', 'producto_serie');
-                $query->groupBy('referencia', 'producto_nombre');
-                $query->orderBy('referencia');
+				
+				//  Existencias a cierre
+				$query = DB::table('cierreinventario');
+				$query->select('cierreinventario_producto', 
+								DB::raw('sum(cierreinventario_cantidad) as unidades'), 
+								DB::raw('sum(cierreinventario*cierreinventario_costo) as costo')); 
+				$query->where('cierreinventario_tipoinventario','=', '1');
+				$query->where('cierreinventario_mes','=', $xmes1);
+				$query->where('cierreinventario_ano','=', $xano1);
+				$query->where('cierreinventario_sucursal','<>', '');  suc virtuales
+				$query->groupBy('cierreinventario_producto');
+                $devoluciones = $query->get();
+				
+				// para generar reporte
+				$query = AuxiliarReporte::query();
+                $query->select('cch1 as referencia','p.producto_nombre as nombre', 'l.lineanegocio_nombre as linea', 
+								DB::raw('sum(cin1) as unidad1'), DB::raw('sum(cdb1) as costo1'),
+								DB::raw('sum(cin2) as unidad2'), DB::raw('sum(cdb2) as costo2'),
+								DB::raw('sum(cin3) as unidad3'), DB::raw('sum(cdb3) as costo3'),
+								DB::raw('sum(cin4) as unidad4'), DB::raw('sum(cdb4) as costo4')
+				
+				
+				
+				);				
+                $query->join('producto as p', 'cch1', '=', 'p.producto_serie');
+				$query->join('lineanegocio as l', 'p.producto_lineanegocio', '=', 'l.lineanegocio_codigo');
+                $query->groupBy('referencia', 'nombre', 'linea');
+                $query->orderBy('referencia', 'nombre', 'linea');
                 $auxiliar = $query->get();
-
-				*/
+				
+				
 				
                 DB::rollback();
             }catch(\Exception $e){

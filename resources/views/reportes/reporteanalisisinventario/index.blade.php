@@ -1,6 +1,6 @@
 @extends('layout.layout')
 
-@section('title') Reporte Analisis Inventario@stop
+@section('title') Reporte Analisis Inventario @stop
 
 @section('content')
     <section class="content-header">

@@ -11,6 +11,7 @@
 				<th width="60px" align="left">Linea</th>
 				<th width="20px" align="left">Referencia</th>
 				<th width="80px" align="left">Producto</th>
+				<th width="80px" align="left">config('koi.meses')[1]</th>
 				
 				
 			</tr>
@@ -33,6 +34,9 @@
 				
 				<td align="rigth">{{ $item->unidad4 }}</td>
 				<td align="rigth">{{ $item->costo4 }}</td>
+				
+				<td align="rigth">{{ $item->unidad5 }}</td>
+				<td align="rigth">{{ $item->costo5 }}</td>
 				
 			</tr>
 			@endforeach

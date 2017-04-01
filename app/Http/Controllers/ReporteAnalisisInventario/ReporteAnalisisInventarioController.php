@@ -66,7 +66,7 @@ class ReporteAnalisisInventarioController extends Controller
 				// cch1 : referencia producto
 				// cdb9 : costo pedidos de importacion
 			    // cin9 : unidades pedidos de importacion
-				
+				/*
 				// ventas
 				$query = DB::table('factura2');
                 $query->select('factura2_producto', 
@@ -268,18 +268,116 @@ class ReporteAnalisisInventarioController extends Controller
                     $inventario->save();
                 }
 				
+				*/
+				
+				
+				
 				
 				//  Existencias a cierre
 				$query = DB::table('cierreinventario');
 				$query->select('cierreinventario_producto', 
 								DB::raw('sum(cierreinventario_cantidad) as unidades'), 
-								DB::raw('sum(cierreinventario*cierreinventario_costo) as costo')); 
+								DB::raw('sum(cierreinventario_cantidad*cierreinventario_costo_pesos) as costo')); 
 				$query->where('cierreinventario_tipoinventario','=', '1');
 				$query->where('cierreinventario_mes','=', $xmes1);
 				$query->where('cierreinventario_ano','=', $xano1);
-				$query->where('cierreinventario_sucursal','<>', '');  suc virtuales
+				$query->whereNotIn('cierreinventario_sucursal', [6, 7, 8, 9, 10]);
 				$query->groupBy('cierreinventario_producto');
-                $devoluciones = $query->get();
+                $existencias = $query->get();
+				
+				
+				
+				foreach ($existencias as $item) 
+				{
+                    $inventario = new AuxiliarReporte;
+                    $inventario->cch1 = $item->cierreinventario_producto;
+                    $inventario->cin5 = $item->unidades;
+					$inventario->cdb5 = $item->costo;
+                    $inventario->save();
+                }
+				
+				$query = DB::table('cierreinventario');
+				$query->select('cierreinventario_producto', 
+								DB::raw('sum(cierreinventario_cantidad) as unidades'), 
+								DB::raw('sum(cierreinventario_cantidad*cierreinventario_costo_pesos) as costo')); 
+				$query->where('cierreinventario_tipoinventario','=', '1');
+				$query->where('cierreinventario_mes','=', $xmes2);
+				$query->where('cierreinventario_ano','=', $xano2);
+				$query->whereNotIn('cierreinventario_sucursal', [6, 7, 8, 9, 10]);
+				$query->groupBy('cierreinventario_producto');
+                $existencias = $query->get();
+				
+				
+				
+				foreach ($existencias as $item) 
+				{
+                    $inventario = new AuxiliarReporte;
+                    $inventario->cch1 = $item->cierreinventario_producto;
+                    $inventario->cin6 = $item->unidades;
+					$inventario->cdb6 = $item->costo;
+                    $inventario->save();
+                }
+				
+				
+				$query = DB::table('cierreinventario');
+				$query->select('cierreinventario_producto', 
+								DB::raw('sum(cierreinventario_cantidad) as unidades'), 
+								DB::raw('sum(cierreinventario_cantidad*cierreinventario_costo_pesos) as costo')); 
+				$query->where('cierreinventario_tipoinventario','=', '1');
+				$query->where('cierreinventario_mes','=', $xmes3);
+				$query->where('cierreinventario_ano','=', $xano3);
+				$query->whereNotIn('cierreinventario_sucursal', [6, 7, 8, 9, 10]);
+				$query->groupBy('cierreinventario_producto');
+                $existencias = $query->get();
+				
+				
+				
+				foreach ($existencias as $item) 
+				{
+                    $inventario = new AuxiliarReporte;
+                    $inventario->cch1 = $item->cierreinventario_producto;
+                    $inventario->cin7 = $item->unidades;
+					$inventario->cdb7 = $item->costo;
+                    $inventario->save();
+                }
+				
+				
+				if(date('n')==$xmes4  && date('o')==$xano4) 
+				{
+					$query = DB::table('prodbode');
+					$query->select('prodbode_producto as referencia', 
+								DB::raw('sum(prodbode_unidades) as unidades'), 
+								DB::raw('sum(prodbode_unidades*producto_costo_pesos) as costo')); 
+					$query->join('producto', 'prodbode_producto', '=', 'producto_serie');
+					$query->where('producto_tipoinventario','=', '1');
+					$query->whereNotIn('prodbode_sucursal', [6, 7, 8, 9, 10]);
+					$query->groupBy('prodbode_producto');
+					$existencias = $query->get();
+				}
+				else
+				{
+					$query = DB::table('cierreinventario');
+					$query->select('cierreinventario_producto as referencia', 
+								DB::raw('sum(cierreinventario_cantidad) as unidades'), 
+								DB::raw('sum(cierreinventario_cantidad*cierreinventario_costo_pesos) as costo')); 
+					$query->where('cierreinventario_tipoinventario','=', '1');
+					$query->where('cierreinventario_mes','=', $xmes4);
+					$query->where('cierreinventario_ano','=', $xano4);
+					$query->whereNotIn('cierreinventario_sucursal', [6, 7, 8, 9, 10]);
+					$query->groupBy('cierreinventario_producto');
+					$existencias = $query->get();
+				}
+				
+				
+				foreach ($existencias as $item) 
+				{
+                    $inventario = new AuxiliarReporte;
+                    $inventario->cch1 = $item->referencia;
+                    $inventario->cin8 = $item->unidades;
+					$inventario->cdb8 = $item->costo;
+                    $inventario->save();
+                }
+				
 				
 				// para generar reporte
 				$query = AuxiliarReporte::query();
@@ -287,10 +385,11 @@ class ReporteAnalisisInventarioController extends Controller
 								DB::raw('sum(cin1) as unidad1'), DB::raw('sum(cdb1) as costo1'),
 								DB::raw('sum(cin2) as unidad2'), DB::raw('sum(cdb2) as costo2'),
 								DB::raw('sum(cin3) as unidad3'), DB::raw('sum(cdb3) as costo3'),
-								DB::raw('sum(cin4) as unidad4'), DB::raw('sum(cdb4) as costo4')
-				
-				
-				
+								DB::raw('sum(cin4) as unidad4'), DB::raw('sum(cdb4) as costo4'),
+								DB::raw('sum(cin5) as unidad5'), DB::raw('sum(cdb5) as costo5'),
+								DB::raw('sum(cin6) as unidad6'), DB::raw('sum(cdb6) as costo6'),
+								DB::raw('sum(cin7) as unidad7'), DB::raw('sum(cdb7) as costo7'),
+								DB::raw('sum(cin8) as unidad8'), DB::raw('sum(cdb8) as costo8')
 				);				
                 $query->join('producto as p', 'cch1', '=', 'p.producto_serie');
 				$query->join('lineanegocio as l', 'p.producto_lineanegocio', '=', 'l.lineanegocio_codigo');
@@ -303,7 +402,6 @@ class ReporteAnalisisInventarioController extends Controller
                 DB::rollback();
             }catch(\Exception $e){
                 DB::rollback();
-				dd($e->getMessage());
                 Log::error($e->getMessage());
                 abort(500);
             }

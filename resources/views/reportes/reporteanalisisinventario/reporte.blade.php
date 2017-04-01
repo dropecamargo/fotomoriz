@@ -38,6 +38,15 @@
 				<td align="rigth">{{ $item->unidad5 }}</td>
 				<td align="rigth">{{ $item->costo5 }}</td>
 				
+				<td align="rigth">{{ $item->unidad6 }}</td>
+				<td align="rigth">{{ $item->costo6 }}</td>
+				
+				<td align="rigth">{{ $item->unidad7 }}</td>
+				<td align="rigth">{{ $item->costo7 }}</td>
+				
+				<td align="rigth">{{ $item->unidad8 }}</td>
+				<td align="rigth">{{ $item->costo8 }}</td>
+				
 			</tr>
 			@endforeach
 		</tbody>

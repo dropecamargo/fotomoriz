@@ -16,9 +16,7 @@
 				<th colspan="4" align="center">EXISTENCIAS</th>
 			</tr>
 			
-			
 			<tr>
-		    
 				
 				<th width="60px" align="left">Linea</th>
 				<th width="20px" align="left">Referencia</th>
@@ -42,15 +40,14 @@
 				<td align="left">{{ $item->referencia }}</td>
 				<td align="left">{{ $item->nombre }}</td>
 				
-				<td align="rigth">{{ $item->costo1 }}</td>
-				<td align="rigth">{{ $item->costo2 }}</td>
-				<td align="rigth">{{ $item->costo3 }}</td>
-				<td align="rigth">{{ $item->costo4 }}</td>
-				<th width="5px" align="left"></th>
-				<td align="rigth">{{ $item->costo5 }}</td>
-				<td align="rigth">{{ $item->costo6 }}</td>
-				<td align="rigth">{{ $item->costo7 }}</td>
-				<td align="rigth">{{ $item->costo8 }}</td>
+				<td align="rigth">{{ $item->unidad1 }}</td>
+				<td align="rigth">{{ $item->unidad2 }}</td>
+				<td align="rigth">{{ $item->unidad3 }}</td>
+				<td align="rigth">{{ $item->unidad4 }}</td>
+				<td align="rigth">{{ $item->unidad5 }}</td>
+				<td align="rigth">{{ $item->unidad6 }}</td>
+				<td align="rigth">{{ $item->unidad7 }}</td>
+				<td align="rigth">{{ $item->unidad8 }}</td>
 				
 			</tr>
 			@endforeach

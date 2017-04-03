@@ -83,7 +83,6 @@ class ReporteAnalisisInventarioController extends Controller
 				$query->where('factura2_tipoinventario', '=', '1');
 				$query->whereRaw("EXTRACT(YEAR from factura1_fecha) = $xano1");
 				$query->whereRaw("EXTRACT(MONTH from factura1_fecha) = $xmes1");
-				$query->limit(10);
 				$query->groupBy('factura2_producto');
                 $ventas = $query->get();
 			
@@ -95,7 +94,7 @@ class ReporteAnalisisInventarioController extends Controller
 					$inventario->cdb1 = $item->costo;
                     $inventario->save();
                 }	
-				/*
+				
 				// devoluciones
 				$query = DB::table('devolucion2');
 				$query->select('devolucion2_producto', 
@@ -393,7 +392,7 @@ class ReporteAnalisisInventarioController extends Controller
 					$inventario->cdb8 = $item->costo;
                     $inventario->save();
                 }
-				*/
+				
 				
 				
 				

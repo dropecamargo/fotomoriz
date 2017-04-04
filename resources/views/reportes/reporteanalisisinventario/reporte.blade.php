@@ -14,6 +14,10 @@
 				<th colspan="4" align="center">VENTAS</th>
 				<th colspan="1" align="center"></th>
 				<th colspan="4" align="center">EXISTENCIAS</th>
+				<th colspan="1" align="center"></th>
+				<th colspan="4" align="center">ROTACION</th>
+				<th colspan="1" align="center"></th>
+				<th colspan="1" align="center">TRANSITO</th>
 			</tr>
 			
 			
@@ -27,11 +31,19 @@
 				<th width="20px" align="left">{{ $nmes2 }}</th>
 				<th width="20px" align="left">{{ $nmes3 }}</th>
 				<th width="20px" align="left">{{ $nmes4 }}</th>
-				<th width="5px" align="left"></th>
+				<th width="20px" align="left">Promedio</th>
 				<th width="20px" align="left">{{ $nmes1 }}</th>
 				<th width="20px" align="left">{{ $nmes2 }}</th>
 				<th width="20px" align="left">{{ $nmes3 }}</th>
 				<th width="20px" align="left">{{ $nmes4 }}</th>
+				<th width="20px" align="left"></th>
+				<th width="20px" align="left">{{ $nmes1 }}</th>
+				<th width="20px" align="left">{{ $nmes2 }}</th>
+				<th width="20px" align="left">{{ $nmes3 }}</th>
+				<th width="20px" align="left">{{ $nmes4 }}</th>
+				<th width="20px" align="left"></th>
+				<th width="20px" align="left">USD</th>
+				
 				
 			</tr>
 		</thead>
@@ -46,11 +58,34 @@
 				<td align="rigth">{{ $item->costo2 }}</td>
 				<td align="rigth">{{ $item->costo3 }}</td>
 				<td align="rigth">{{ $item->costo4 }}</td>
-				<th width="5px" align="left"></th>
+				<th align="rigth">{{ ($item->costo1+$item->costo2+$item->costo3+$item->costo4)/4 }}</th>
 				<td align="rigth">{{ $item->costo5 }}</td>
 				<td align="rigth">{{ $item->costo6 }}</td>
 				<td align="rigth">{{ $item->costo7 }}</td>
 				<td align="rigth">{{ $item->costo8 }}</td>
+				<td align="rigth"></td>
+				@if($item->costo5 != 0)
+					<td align="rigth">{{ $item->costo1/$item->costo5 }}</td>
+				@else
+					<td align="rigth">0</td>
+				@endif
+				@if($item->costo6 != 0)
+					<td align="rigth">{{ $item->costo2/$item->costo6 }}</td>
+			    @else
+					<td align="rigth">0</td>
+				@endif
+				@if($item->costo7 != 0)
+					<td align="rigth">{{ $item->costo3/$item->costo7 }}</td>
+				@else
+					<td align="rigth">0</td>
+				@endif
+				@if($item->costo8 != 0)
+					<td align="rigth">{{ $item->costo4/$item->costo8 }}</td>
+				@else
+					<td align="rigth">0</td>
+				@endif
+				<td align="rigth"></td>
+				<td align="rigth">{{ $item->costo9 }}</td>
 				
 			</tr>
 			@endforeach

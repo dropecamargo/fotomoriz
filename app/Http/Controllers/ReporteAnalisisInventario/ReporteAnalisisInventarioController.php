@@ -236,7 +236,7 @@ class ReporteAnalisisInventarioController extends Controller
 					});
 				});
 				$query->where('cierreinventario_cantidad','>', '0');
-				$query->whereNotIn('cierreinventario_sucursal', [6, 7, 8, 9, 10]);
+				$query->whereNotIn('cierreinventario_sucursal', [6, 7, 8, 9, 10, 15]);
 				$query->groupBy('cierreinventario_producto', 'mes');
 				//$query->limit(50);
                 $existencias = $query->get();
@@ -280,7 +280,7 @@ class ReporteAnalisisInventarioController extends Controller
 					$query->join('producto', 'prodbode_producto', '=', 'producto_serie');
 					$query->where('producto_tipoinventario','=', '1');
 					$query->where('prodbode_unidades','>', '0');
-					$query->whereNotIn('prodbode_sucursal', [6, 7, 8, 9, 10]);
+					$query->whereNotIn('prodbode_sucursal', [6, 7, 8, 9, 10, 15]);
 					$query->groupBy('prodbode_producto');
 					//$query->limit(50);
 					$existencias = $query->get();

@@ -17,7 +17,7 @@
 				<th colspan="1" align="center"></th>
 				<th colspan="4" align="center">ROTACION</th>
 				<th colspan="1" align="center"></th>
-				<th colspan="1" align="center">TRANSITO</th>
+				<th colspan="2" align="center">TRANSITO</th>
 			</tr>
 			
 			<tr>
@@ -25,10 +25,17 @@
 				<th width="60px" align="left">Linea</th>
 				<th width="20px" align="left">Referencia</th>
 				<th width="80px" align="left">Producto</th>
-				<th width="20px" align="left">{{ $nmes1 }}</th>
-				<th width="20px" align="left">{{ $nmes2 }}</th>
-				<th width="20px" align="left">{{ $nmes3 }}</th>
-				<th width="20px" align="left">{{ $nmes4 }}</th>
+				@if($xmeses==4)
+					<th width="20px" align="left">{{ $nmes1 }}</th>
+					<th width="20px" align="left">{{ $nmes2 }}</th>
+					<th width="20px" align="left">{{ $nmes3 }}</th>
+					<th width="20px" align="left">{{ $nmes4 }}</th>
+				@else
+					<th width="20px" align="left">{{ $nmes0 }}</th>
+					<th width="20px" align="left">{{ $nmes1 }}</th>
+					<th width="20px" align="left">{{ $nmes2 }}</th>
+					<th width="20px" align="left">{{ $nmes3 }}</th>
+				@endif
 				<th width="20px" align="left">Promedio</th>
 				<th width="20px" align="left">{{ $nmes1 }}</th>
 				<th width="20px" align="left">{{ $nmes2 }}</th>
@@ -40,7 +47,8 @@
 				<th width="20px" align="left">{{ $nmes3 }}</th>
 				<th width="20px" align="left">{{ $nmes4 }}</th>
 				<th width="20px" align="left"></th>
-				
+				<th width="20px" align="left">Importaciones</th>
+				<th width="20px" align="left">Nacionales</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -54,34 +62,27 @@
 				<td align="rigth">{{ $item->unidad2 }}</td>
 				<td align="rigth">{{ $item->unidad3 }}</td>
 				<td align="rigth">{{ $item->unidad4 }}</td>
-				<th align="rigth">{{ ($item->unidad1+$item->unidad2+$item->unidad3+$item->unidad4)/4 }}</th>
+				{{--*/  $promedio=($item->unidad1+$item->unidad2+$item->unidad3+$item->unidad4)/4 ;  /*--}}
+				<th align="rigth">{{ $promedio }}</th>
 				<td align="rigth">{{ $item->unidad5 }}</td>
 				<td align="rigth">{{ $item->unidad6 }}</td>
 				<td align="rigth">{{ $item->unidad7 }}</td>
 				<td align="rigth">{{ $item->unidad8 }}</td>
 				<td align="rigth"></td>
-				@if($item->uinidad5 != 0)
-					<td align="rigth">{{ $item->unidad1/$item->unidad5 }}</td>
+				@if($promedio != 0)
+					<td align="rigth">{{ $item->unidad5/$promedio }}</td>
+					<td align="rigth">{{ $item->unidad6/$promedio }}</td>
+					<td align="rigth">{{ $item->unidad7/$promedio }}</td>
+					<td align="rigth">{{ $item->unidad8/$promedio }}</td>
 				@else
 					<td align="rigth">0</td>
-				@endif
-				@if($item->uinidad6 != 0)
-					<td align="rigth">{{ $item->unidad2/$item->unidad6 }}</td>
-				@else
 					<td align="rigth">0</td>
-				@endif
-				@if($item->uinidad7 != 0)
-					<td align="rigth">{{ $item->unidad3/$item->unidad7 }}</td>
-				@else
 					<td align="rigth">0</td>
-				@endif
-				@if($item->uinidad8 != 0)
-					<td align="rigth">{{ $item->unidad4/$item->unidad8 }}</td>
-				@else
 					<td align="rigth">0</td>
 				@endif
 				<td align="rigth"></td>
 				<td align="rigth">{{ $item->unidad9 }}</td>
+				<td align="rigth">{{ $item->unidad10 }}</td>
 				
 			</tr>
 			@endforeach

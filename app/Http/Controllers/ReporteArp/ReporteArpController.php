@@ -40,13 +40,12 @@ class ReporteArpController extends Controller
 				
 				// auxiliar mes
 				$query = DB::table('asiento2n');
-                $query->select('asiento2n_nivel1', 'asiento2n_nivel2', 'asiento2n_centrocosto', 'asiento2n_plancuentasn',
+                $query->select('asiento2n_centrocosto', 'asiento2n_plancuentasn',
 				               DB::raw('(asiento2n_debito-asiento2n_credito) as valor')
 							   );		
 				$query->where('asiento2n_mes', '=', $request->mes);
 				$query->where('asiento2n_ano', '=', $request->ano);
 				$query->where('asiento2n_clase', '=', '5');
-				$query->where('asiento2n_centrocosto', '=', '11');
 				$query->where(function ($query) 
 				{    
 					$query->where(function($query) 
@@ -55,20 +54,13 @@ class ReporteArpController extends Controller
 						$query->orwhere('asiento2n_grupo', '=', '2');
 					});
 				});
-				
-				
-				//dd($query->toSql());
-				//$query->limit(5);
-				
+				$query->orderby('asiento2n_plancuentasn');
                 $gastos = $query->get();
-				
-				dd($gastos);
-				
+			
 				foreach ($gastos as $item) 
 				{
                     $inventario = new AuxiliarReporte;
-                    $inventario->cin1 = $item->asiento2n_nivel1;
-					$inventario->cin2 = $item->asiento2n_nivel2;
+                
 					$inventario->cin3 = $item->asiento2n_centrocosto;
 					$inventario->cdb1 = $item->valor;
 					$inventario->cbi1 = $item->asiento2n_plancuentasn;
@@ -95,9 +87,7 @@ class ReporteArpController extends Controller
 							$unidades=Unidaddecision::getUnidaddecision();
 							//dd($unidades);
 							foreach ($unidades as $key=>$value)
-							{
-								
-								//dd($key.'   '.$value);
+							{								
 								// para generar reporte
 								$query = AuxiliarReporte::query();
 								$query->select('p.plancuentasn_nombre as cuenta', 'cin1 as nivel1', 'cin2 as nivel2', 'u.unidaddecision_nombre as unidad', 

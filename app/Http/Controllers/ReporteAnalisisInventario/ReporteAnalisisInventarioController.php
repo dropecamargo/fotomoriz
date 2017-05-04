@@ -418,8 +418,6 @@ class ReporteAnalisisInventarioController extends Controller
 				
                     Excel::create(sprintf('%s_%s_%s', 'reporte_analisis_inventario', date('Y_m_d'), date('H_m_s')), function($excel) use($mes, $ano, $xmeses, $nmes0, $nmes1, $nmes2, $nmes3, $nmes4, $auxiliar, $title, $type) 
 					{
-						
-						
 						$title = sprintf('%s', 'Analisis Inventario  Costos');
 						$excel->sheet('Excel', function($sheet) use($mes, $ano, $xmeses, $nmes0, $nmes1, $nmes2, $nmes3, $nmes4, $auxiliar, $title, $type) 
 						{

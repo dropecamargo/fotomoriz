@@ -91,7 +91,10 @@ class ReporteEntradasSalidasController extends Controller
                 }
 
                 $query = AuxiliarReporte::query();
-                $query->select('cch1 as referencia','producto.producto_nombre', DB::raw('sum(cin1) as entrada_entrada'), DB::raw('sum(cin2) as traslado_entrada'), DB::raw('sum(cin3) as facturas_entrada'), DB::raw('sum(cin4) as devoluciones_entrada'), DB::raw('sum(cin5) as remisiones_entrada'), DB::raw('sum(cin6) as ajustes_entrada'),DB::raw('sum(cin7) as traslado_salida'), DB::raw('sum(cin8) as facturas_salida'), DB::raw('sum(cin9) as remisiones_salida'), DB::raw('sum(cin10) as ajustes_salida'));
+                $query->select('cch1 as referencia','producto.producto_nombre', DB::raw('sum(cin1) as entrada_entrada'), DB::raw('sum(cin2) as traslado_entrada'), 
+								DB::raw('sum(cin3) as facturas_entrada'), DB::raw('sum(cin4) as devoluciones_entrada'), DB::raw('sum(cin5) as remisiones_entrada'), 
+								DB::raw('sum(cin6) as ajustes_entrada'),DB::raw('sum(cin7) as traslado_salida'), DB::raw('sum(cin8) as facturas_salida'), 
+								DB::raw('sum(cin9) as remisiones_salida'), DB::raw('sum(cin10) as ajustes_salida'));
                 $query->join('producto', 'cch1', '=', 'producto_serie');
                 $query->groupBy('referencia', 'producto_nombre');
                 $query->orderBy('referencia');

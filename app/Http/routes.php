@@ -21,10 +21,13 @@ Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin'])
 Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
 Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
+Route::resource('reporteanalisisinventario', 'ReporteAnalisisInventario\ReporteAnalisisInventarioController', ['only' => ['index']]);
 Route::resource('reporteentradassalidas', 'Reporte\ReporteEntradasSalidasController', ['only' => ['index']]);
 Route::resource('reportearp', 'ReporteArp\ReporteArpController', ['only' => ['index']]);
 Route::resource('reporteresumencobro', 'ReporteResumenCobro\ReporteResumenCobroController', ['only' => ['index']]);
-Route::resource('reporteanalisisinventario', 'ReporteAnalisisInventario\ReporteAnalisisInventarioController', ['only' => ['index']]);
+Route::resource('reporteedades', 'ReporteEdades\ReporteEdades', ['only' => ['index']]);
+Route::resource('reporteposfechados', 'ReportePosFechados\ReportePosFechados', ['only' => ['index']]);
+
 
 
 // Route::group(['middleware' => ''], function(){

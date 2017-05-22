@@ -95,7 +95,7 @@
 						{{--*/  $col6=$item->saldo ;  /*--}}
 					@endif
 				@else
-					{{--*/ $Tmora=$item->saldo ; /*--}}
+					{{--*/ $Tvencer=$item->saldo ; /*--}}
 					@if( $item->dias >= 0 && $item->dias <=30)
 						{{--*/  $col7=$item->saldo ;  /*--}}
 					@endif

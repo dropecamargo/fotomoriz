@@ -162,15 +162,15 @@ class ReportePosFechados extends Controller
 				
 				// Preparar datos reporte
             
-			$title = sprintf('%s', 'Cheques Posfechados');
-            $type = $request->type;
+				$title = sprintf('%s', 'Cheques Posfechados');
+				$type = $request->type;
 		
 
-            // Generate file
-            switch ($type) 
-			{
-                case 'xls':
-				
+				// Generate file
+				switch ($type) 
+				{
+					case 'xls':
+					
                     Excel::create(sprintf('%s_%s_%s', 'reporte_cheques_posfechados', date('Y_m_d'), date('H_m_s')), function($excel) use($auxiliar, $title, $type) 
 					{
 						$excel->sheet('Excel', function($sheet) use($auxiliar, $title, $type) 
@@ -181,7 +181,7 @@ class ReportePosFechados extends Controller
 						});
 					})->download('xls');
 					break;
-            }
+				}
 				
 				
 				

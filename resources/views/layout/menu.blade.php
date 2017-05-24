@@ -35,5 +35,10 @@
             <i class="fa fa-bar-chart-o"></i><span>Reporte Cheques Posfechados</span>
         </a>
     </li>
+	<li class="{{ in_array(Request::segment(1), ['reporterecibos']) ? 'active' : '' }}">
+        <a href="{{ route('reporterecibos.index') }}">
+            <i class="fa fa-bar-chart-o"></i><span>Reporte Recibos de Caja</span>
+        </a>
+    </li>
 	
 </ul>

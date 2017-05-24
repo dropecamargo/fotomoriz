@@ -27,6 +27,7 @@ Route::resource('reportearp', 'ReporteArp\ReporteArpController', ['only' => ['in
 Route::resource('reporteresumencobro', 'ReporteResumenCobro\ReporteResumenCobroController', ['only' => ['index']]);
 Route::resource('reporteedades', 'ReporteEdades\ReporteEdades', ['only' => ['index']]);
 Route::resource('reporteposfechados', 'ReportePosFechados\ReportePosFechados', ['only' => ['index']]);
+Route::resource('reporterecibos', 'ReporteRecibos\ReporteRecibos', ['only' => ['index']]);
 
 
 

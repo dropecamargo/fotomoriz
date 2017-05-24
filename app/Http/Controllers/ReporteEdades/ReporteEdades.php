@@ -204,8 +204,7 @@ class ReporteEdades extends Controller
 					break;
 				}
 		
-				
-				dd('fin');
+
 				
 			    DB::rollback();
             }catch(\Exception $e){

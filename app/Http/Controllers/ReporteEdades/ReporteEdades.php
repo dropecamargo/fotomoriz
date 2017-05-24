@@ -56,7 +56,7 @@ class ReporteEdades extends Controller
 					
 					$arrayv = explode("-", $item->vencimiento);
 					$arrayh = explode("-", date("Y-m-d"));
-					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1] && $item->vencimiento > date("Y-m-d"))
 						$inventario->cdb3 = $item->saldo;
 					else
 						$inventario->cdb3 = 0;
@@ -90,7 +90,7 @@ class ReporteEdades extends Controller
 				    $inventario->cin4 = $item->dias;
 					$arrayv = explode("-", $item->vencimiento);
 					$arrayh = explode("-", date("Y-m-d"));
-					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1]  && $item->vencimiento > date("Y-m-d")))
 						$inventario->cdb3 = $item->saldo;
 					else
 						$inventario->cdb3 = 0;
@@ -122,7 +122,7 @@ class ReporteEdades extends Controller
 				    $inventario->cin4 = $item->dias;
 					$arrayv = explode("-", $item->vencimiento);
 					$arrayh = explode("-", date("Y-m-d"));
-					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1] && $item->vencimiento > date("Y-m-d")))
 						$inventario->cdb3 = $item->saldo;
 					else
 						$inventario->cdb3 = 0;
@@ -155,7 +155,7 @@ class ReporteEdades extends Controller
 				    $inventario->cin4 = $item->dias;
 					$arrayv = explode("-", $item->vencimiento);
 					$arrayh = explode("-", date("Y-m-d"));
-					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1] && $item->vencimiento > date("Y-m-d")))
 						$inventario->cdb3 = $item->saldo;
 					else
 						$inventario->cdb3 = 0;
@@ -192,7 +192,7 @@ class ReporteEdades extends Controller
 				    $inventario->cin4 = $item->dias;	
 					$arrayv = explode("-", $item->vencimiento);
 					$arrayh = explode("-", date("Y-m-d"));
-					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1] && $item->vencimiento > date("Y-m-d")))
 						$inventario->cdb3 = $item->saldo;
 					else
 						$inventario->cdb3 = 0;					

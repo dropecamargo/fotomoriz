@@ -33,6 +33,7 @@
 				<th width="20px" align="center">Mayor A 360</th>
 				<th width="20px" align="center">Total Mora</th>
 				<th width="20px" align="center">Total Por Vencer</th>
+				<th width="20px" align="center">Vencer Mes</th>
 				
 			</tr>
 		</thead>
@@ -131,8 +132,8 @@
 				<td align="rigth">{{ $col12 }}</td>
 				<td align="rigth">{{ $Tmora }}</td>
 				<td align="rigth">{{ $Tvencer }}</td>
-				
-
+				<td align="rigth">{{ $item->mes }}</td>
+			
 				
 			</tr>
 			

@@ -53,6 +53,16 @@ class ReporteEdades extends Controller
 					$inventario->cdb1 = $item->valor;
 					$inventario->cdb2 = $item->saldo;
 				    $inventario->cin4 = $item->dias;
+					
+					$arrayv = explode("-", $item->vencimiento);
+					$arrayh = explode("-", date("Y-m-d"));
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+						$inventario->cdb3 = $item->saldo;
+					else
+						$inventario->cdb3 = 0;
+				   
+					
+					
                     $inventario->save();
                 }	
 				
@@ -78,6 +88,12 @@ class ReporteEdades extends Controller
 					$inventario->cdb1 = $item->valor;
 					$inventario->cdb2 = $item->saldo;
 				    $inventario->cin4 = $item->dias;
+					$arrayv = explode("-", $item->vencimiento);
+					$arrayh = explode("-", date("Y-m-d"));
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+						$inventario->cdb3 = $item->saldo;
+					else
+						$inventario->cdb3 = 0;
                     $inventario->save();
                 }	
 				
@@ -104,6 +120,12 @@ class ReporteEdades extends Controller
 					$inventario->cdb1 = $item->valor;
 					$inventario->cdb2 = $item->saldo;
 				    $inventario->cin4 = $item->dias;
+					$arrayv = explode("-", $item->vencimiento);
+					$arrayh = explode("-", date("Y-m-d"));
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+						$inventario->cdb3 = $item->saldo;
+					else
+						$inventario->cdb3 = 0;
                     $inventario->save();
                 }	
 				
@@ -131,6 +153,12 @@ class ReporteEdades extends Controller
 					$inventario->cdb1 = $item->valor;
 					$inventario->cdb2 = $item->saldo;
 				    $inventario->cin4 = $item->dias;
+					$arrayv = explode("-", $item->vencimiento);
+					$arrayh = explode("-", date("Y-m-d"));
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+						$inventario->cdb3 = $item->saldo;
+					else
+						$inventario->cdb3 = 0;
                     $inventario->save();
                 }	
 				
@@ -161,14 +189,20 @@ class ReporteEdades extends Controller
 					$inventario->cbi2 = 0;
 					$inventario->cdb1 = $item->valor;
 					$inventario->cdb2 = $item->saldo;
-				    $inventario->cin4 = $item->dias;
+				    $inventario->cin4 = $item->dias;	
+					$arrayv = explode("-", $item->vencimiento);
+					$arrayh = explode("-", date("Y-m-d"));
+					if($arrayv[0]==$arrayh[0] && $arrayv[1]==$arrayh[1])
+						$inventario->cdb3 = $item->saldo;
+					else
+						$inventario->cdb3 = 0;					
                     $inventario->save();
                 }	
 				
 				// para generar reporte
 				$query = AuxiliarReporte::query();
                 $query->select('cch1 as documento', 'cin1 as numero', 'cin2 as cuota', 'cin3 as sucural', 'cdt1 as fecha', 'cdt2 as vencimiento', 'cbi1 as tercero',
-								'cbi2 as vendedor', 'cdb1 as valor', 'cdb2 as saldo', 'cin4 as dias', 'sucursal_nombre as nombresucursal',
+								'cbi2 as vendedor', 'cdb1 as valor', 'cdb2 as saldo', 'cdb3 as mes', 'cin4 as dias', 'sucursal_nombre as nombresucursal',
 								't.tercero_razon_social as t_rz', 't.tercero_nombre1 as t_n1', 't.tercero_nombre2 as t_n2', 't.tercero_apellido1 as t_ap1', 't.tercero_apellido2 as t_ap2',
 								'ti.tercero_nombre1 as ti_n1', 'ti.tercero_nombre2 as ti_n2', 'ti.tercero_apellido1 as ti_ap1', 'ti.tercero_apellido2 as ti_ap2'
 								);				

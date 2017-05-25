@@ -117,8 +117,8 @@ class ReporteEdades extends Controller
 					$inventario->cdt2 = $item->vencimiento;
 					$inventario->cbi1 = $item->cliente;
 					$inventario->cbi2 = 0;
-					$inventario->cdb1 = $item->valor;
-					$inventario->cdb2 = $item->saldo;
+					$inventario->cdb1 = $item->valor*(-1);
+					$inventario->cdb2 = $item->saldo*(-1);
 				    $inventario->cin4 = $item->dias;
 					$arrayv = explode("-", $item->vencimiento);
 					$arrayh = explode("-", date("Y-m-d"));

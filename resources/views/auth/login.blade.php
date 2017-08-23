@@ -42,9 +42,9 @@
 			<div class="login-box-body">
 				<p class="login-box-msg">Ingresa con tu usuario y contraseña</p>
 
-				{!! Form::open(['route' => 'login', 'id' => 'form-login-account', 'data-toggle' => 'validator']) !!}
+				{!! Form::open(['route' => 'auth.login', 'id' => 'form-login-account', 'data-toggle' => 'validator']) !!}
 					<div class="form-group has-feedback">
-						<input type="text" name="username" class="form-control" placeholder="Usuario" value="{{ old('username') }}" pattern="^[_A-z0-9]{1,}$" maxlength="15"required>
+						<input type="text" name="usuario_id" class="form-control" placeholder="Usuario" value="{{ old('usuario_id') }}" pattern="^[_A-z0-9]{1,}$" maxlength="15"required>
 						<span class="glyphicon glyphicon-user form-control-feedback"></span>
 					</div>
 					<div class="form-group has-feedback">

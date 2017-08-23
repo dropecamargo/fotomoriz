@@ -11,8 +11,7 @@ app || (app = {});
 
     app.AppRouter = new( Backbone.Router.extend({
         routes : {
-            //Login
-            // 'login(/)': 'getLogin',   
+            'login(/)': 'getLogin'
         },
 
         /**
@@ -65,16 +64,15 @@ app || (app = {});
         * show view in Calendar Event
         * @param String show
         */
-        // getLogin: function () {
+        getLogin: function () {
 
-        //     if ( this.loginView instanceof Backbone.View ){
-        //         this.loginView.stopListening();
-        //         this.loginView.undelegateEvents();
-        //     }
+            if ( this.loginView instanceof Backbone.View ){
+                this.loginView.stopListening();
+                this.loginView.undelegateEvents();
+            }
 
-        //     this.loginView = new app.UserLoginView();
-        // }
-
+            this.loginView = new app.UserLoginView( );
+        },
     }) );
 
 })(jQuery, this, this.document);

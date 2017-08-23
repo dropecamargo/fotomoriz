@@ -16,25 +16,31 @@
 | Routes Auth
 |--------------------------------------------------------------------------
 */
-Route::post('login', ['as' => 'login', 'uses' => 'Auth\AuthController@postLogin']);
+Route::group(['prefix' => 'auth'], function(){
+	Route::post('login', ['as' => 'auth.login', 'uses' => 'Auth\AuthController@postLogin']);
+	Route::get('logout', ['as' => 'auth.logout', 'uses' => 'Auth\AuthController@getLogout']);
+	Route::get('integrate', ['as' => 'auth.integrate', 'uses' => 'Auth\AuthController@integrate']);
+});
 Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
-Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@getLogout']);
 
-Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
-Route::resource('reporteanalisisinventario', 'ReporteAnalisisInventario\ReporteAnalisisInventarioController', ['only' => ['index']]);
-Route::resource('reporteentradassalidas', 'Reporte\ReporteEntradasSalidasController', ['only' => ['index']]);
-Route::resource('reportearp', 'ReporteArp\ReporteArpController', ['only' => ['index']]);
-Route::resource('reporteresumencobro', 'ReporteResumenCobro\ReporteResumenCobroController', ['only' => ['index']]);
-Route::resource('reporteedades', 'ReporteEdades\ReporteEdades', ['only' => ['index']]);
-Route::resource('reporteposfechados', 'ReportePosFechados\ReportePosFechados', ['only' => ['index']]);
-Route::resource('reporterecibos', 'ReporteRecibos\ReporteRecibos', ['only' => ['index']]);
+/*
+|--------------------------------------------------------------------------
+| Secure Routes Application
+|--------------------------------------------------------------------------
+*/
+Route::group(['middleware' => 'auth'], function(){
+	Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
 
-
-
-// Route::group(['middleware' => ''], function(){
 	/*
 	|-------------------------
 	| Reportes Routes
 	|-------------------------
 	*/
-// });
+	Route::resource('reporteanalisisinventario', 'ReporteAnalisisInventario\ReporteAnalisisInventarioController', ['only' => ['index']]);
+	Route::resource('reporteentradassalidas', 'Reporte\ReporteEntradasSalidasController', ['only' => ['index']]);
+	Route::resource('reportearp', 'ReporteArp\ReporteArpController', ['only' => ['index']]);
+	Route::resource('reporteresumencobro', 'ReporteResumenCobro\ReporteResumenCobroController', ['only' => ['index']]);
+	Route::resource('reporteedades', 'ReporteEdades\ReporteEdades', ['only' => ['index']]);
+	Route::resource('reporteposfechados', 'ReportePosFechados\ReportePosFechados', ['only' => ['index']]);
+	Route::resource('reporterecibos', 'ReporteRecibos\ReporteRecibos', ['only' => ['index']]);
+});

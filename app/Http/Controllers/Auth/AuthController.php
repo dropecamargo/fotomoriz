@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-use Validator;
-use Auth;
-
-use App\Models\Base\Tercero;
+use App\Models\Base\Usuario;
+use Validator, Auth;
 
 class AuthController extends Controller
 {
@@ -24,10 +22,9 @@ class AuthController extends Controller
     | a simple trait to add these behaviors. Why don't you explore it?
     |
     */
-
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
-    protected $username = 'username';
+    protected $username = 'usuario_id';
 
     protected $loginPath = '/login';
 
@@ -40,36 +37,70 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['except' => ['getLogout', 'integrate'] ]);
     }
 
     /**
-     * Get a validator for an incoming registration request.
+     * Handle a login request to the application.
      *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    protected function validator(array $data)
+    public function postLogin(Request $request)
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
+        $this->validate($request, [
+            $this->loginUsername() => 'required', 'password' => 'required',
         ]);
+
+        // If the class is using the ThrottlesLogins trait, we can automatically throttle
+        // the login attempts for this application. We'll key this by the username and
+        // the IP address of the client making these requests into this application.
+        $throttles = $this->isUsingThrottlesLoginsTrait();
+
+        if ($throttles && $this->hasTooManyLoginAttempts($request)) {
+            return $this->sendLockoutResponse($request);
+        }
+
+        $credentials = $this->getCredentials($request);
+
+        if (Auth::attempt($credentials, $request->has('remember'))) {
+            return $this->handleUserWasAuthenticated($request, $throttles);
+        }else{
+            // Support md5 passwords
+            $user = Usuario::where('usuario_id', $request->usuario_id)->where('usuario_activo', true)->first();
+            if( $user instanceof Usuario && $user->usuario_password == md5($request->password) ) {
+                Auth::login($user);
+            }
+        }
+
+        // If the login attempt was unsuccessful we will increment the number of attempts
+        // to login and redirect the user back to the login form. Of course, when this
+        // user surpasses their maximum number of attempts they will get locked out.
+        if ($throttles) {
+            $this->incrementLoginAttempts($request);
+        }
+
+        return redirect($this->loginPath())
+            ->withInput($request->only($this->loginUsername(), 'remember'))
+            ->withErrors([
+                $this->loginUsername() => $this->getFailedLoginMessage(),
+            ]);
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Handle a integrate login request to the application.
      *
-     * @param  array  $data
-     * @return User
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    protected function create(array $data)
+    public function integrate(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+        if($request->has('usuario_id')) {
+            $user = Usuario::where('usuario_id', $request->usuario_id)->where('usuario_activo', true)->firstOrFail();
+            Auth::login($user);
+
+            return redirect()->route($request->has('redirect') ? $request->redirect : 'dashboard');
+        }
+        abort(404);
     }
 }

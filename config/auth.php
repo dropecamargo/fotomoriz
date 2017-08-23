@@ -28,7 +28,7 @@ return [
     |
     */
 
-    'model' => App\Models\Base\Tercero::class,
+    'model' => App\Models\Base\Usuario::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'table' => 'koi_tercero',
+    'table' => 'usuarios',
 
     /*
     |--------------------------------------------------------------------------

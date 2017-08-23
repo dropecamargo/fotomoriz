@@ -75,6 +75,17 @@ return [
             'schema'   => 'public',
         ],
 
+        'framework' => [
+            'driver'   => 'pgsql',
+            'host'     => env('FRAMEWORK_HOST', 'localhost'),
+            'database' => env('FRAMEWORK_DATABASE', 'forge'),
+            'username' => env('FRAMEWORK_USERNAME', 'forge'),
+            'password' => env('FRAMEWORK_PASSWORD', ''),
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'framework',
+        ],
+
         'sqlsrv' => [
             'driver'   => 'sqlsrv',
             'host'     => env('DB_HOST', 'localhost'),

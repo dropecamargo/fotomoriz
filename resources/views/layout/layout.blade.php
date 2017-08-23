@@ -26,7 +26,7 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
     </head>
-    <body class="hold-transition skin-red-light sidebar-mini {{ Cookie::get('sidebar_toggle') }}">
+    <body class="hold-transition skin-red sidebar-mini {{ Cookie::get('sidebar_toggle') }}">
         <div class="wrapper">
 
             {{-- Main Header --}}
@@ -35,7 +35,7 @@
             {{-- Content Wrapper. Contains page content --}}
             <div class="content-wrapper">
                 @yield('content')
-                
+
             </div>
 
             <!-- Main Footer -->

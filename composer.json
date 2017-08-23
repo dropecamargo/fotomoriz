@@ -9,6 +9,7 @@
         "laravel/framework": "5.1.*",
         "laravelcollective/html": "5.1.*",
         "lord/laroute" : "2.*",
+        "zizaco/entrust": "5.2.x-dev",
         "yajra/laravel-datatables-oracle": "^6.8",
         "maatwebsite/excel": "~2.1.0",
         "dompdf/dompdf": "~0.6.1",

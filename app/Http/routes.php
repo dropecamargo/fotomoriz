@@ -36,11 +36,11 @@ Route::group(['middleware' => 'auth'], function(){
 	| Reportes Routes
 	|-------------------------
 	*/
-	Route::resource('reporteanalisisinventario', 'ReporteAnalisisInventario\ReporteAnalisisInventarioController', ['only' => ['index']]);
-	Route::resource('reporteentradassalidas', 'Reporte\ReporteEntradasSalidasController', ['only' => ['index']]);
-	Route::resource('reportearp', 'ReporteArp\ReporteArpController', ['only' => ['index']]);
-	Route::resource('reporteresumencobro', 'ReporteResumenCobro\ReporteResumenCobroController', ['only' => ['index']]);
-	Route::resource('reporteedades', 'ReporteEdades\ReporteEdades', ['only' => ['index']]);
-	Route::resource('reporteposfechados', 'ReportePosFechados\ReportePosFechados', ['only' => ['index']]);
-	Route::resource('reporterecibos', 'ReporteRecibos\ReporteRecibos', ['only' => ['index']]);
+	Route::resource('reporteentradassalidas', 'Report\ReporteEntradasSalidasController', ['only' => ['index']]);
+	Route::resource('reporteanalisisinventario', 'Report\ReporteAnalisisInventarioController', ['only' => ['index']]);
+	Route::resource('reportearp', 'Report\ReporteArpController', ['only' => ['index']]);
+	Route::resource('reporteresumencobro', 'Report\ReporteResumenCobroController', ['only' => ['index']]);
+	Route::resource('reporteedades', 'Report\ReporteEdadesController', ['only' => ['index']]);
+	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);
+	Route::resource('reporterecibos', 'Report\ReporteRecibosController', ['only' => ['index']]);
 });

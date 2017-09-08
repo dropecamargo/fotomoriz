@@ -4,6 +4,40 @@
         <a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
     </li>
 
+    {{-- Administracion --}}
+    <li class="treeview {{ in_array(Request::segment(1), ['roles', 'permisos']) ? 'active' : '' }}">
+        <a href="{{ route('dashboard') }}">
+            <i class="fa fa-cog"></i> <span>Administración</span><i class="fa fa-angle-left pull-right"></i>
+        </a>
+
+        <ul class="treeview-menu">
+            {{-- Modulos administracion --}}
+            <li class="{{ in_array(Request::segment(1), ['roles']) ? 'active' : '' }}">
+                <a href="#">
+                    <i class="fa fa-wpforms"></i> Módulos <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ Request::segment(1) == 'roles' ? 'active' : '' }}">
+                        <a href="{{ route('roles.index') }}"><i class="fa fa-address-card-o"></i> Roles</a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- Referencias administracion --}}
+            <li class="{{ in_array(Request::segment(1), ['permisos']) ? 'active' : '' }}">
+
+                <a href="#">
+                    <i class="fa fa-circle-o"></i> Referencias <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ Request::segment(1) == 'permisos' ? 'active' : '' }}">
+                        <a href="{{ route('permisos.index') }}"><i class="fa fa-circle-o"></i> Permisos</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
     <li class="treeview {{ in_array(Request::segment(1), ['reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-suitcase"></i> <span>Cartera</span><i class="fa fa-angle-left pull-right"></i>

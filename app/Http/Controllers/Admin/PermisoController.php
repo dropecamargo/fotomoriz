@@ -1,30 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Models\Base\Permiso;
+use Datatables;
 
-class HomeController extends Controller
+class PermisoController extends Controller
 {
-    /**
-     * Instantiate a new HomeController instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('dashboard.main');
+        if ($request->ajax()) {
+            $query = Permiso::query();
+            return Datatables::of($query)->make(true);
+        }
+        return view('admin.permisos.index');
     }
 
     /**

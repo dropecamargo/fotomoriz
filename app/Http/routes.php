@@ -33,14 +33,38 @@ Route::group(['middleware' => 'auth'], function(){
 
 	/*
 	|-------------------------
-	| Reportes Routes
+	| Admin Routes
+	|-------------------------
+	*/
+	Route::group(['prefix' => 'roles'], function()
+	{
+		Route::resource('permisos', 'Admin\PermisoRolController', ['only' => ['index', 'update', 'destroy']]);
+	});
+	Route::resource('roles', 'Admin\RolController', ['except' => ['destroy']]);
+	Route::resource('permisos', 'Admin\PermisoController', ['only' => ['index']]);
+
+	/*
+	|-------------------------
+	| Cartera Routes
+	|-------------------------
+	*/
+	Route::resource('reporteedades', 'Report\ReporteEdadesController', ['only' => ['index']]);
+	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);
+	Route::resource('reporterecibos', 'Report\ReporteRecibosController', ['only' => ['index']]);
+	Route::resource('reporteresumencobro', 'Report\ReporteResumenCobroController', ['only' => ['index']]);
+
+	/*
+	|-------------------------
+	| Contabilidad Routes
+	|-------------------------
+	*/
+	Route::resource('reportearp', 'Report\ReporteArpController', ['only' => ['index']]);
+
+	/*
+	|-------------------------
+	| Inventario Routes
 	|-------------------------
 	*/
 	Route::resource('reporteentradassalidas', 'Report\ReporteEntradasSalidasController', ['only' => ['index']]);
 	Route::resource('reporteanalisisinventario', 'Report\ReporteAnalisisInventarioController', ['only' => ['index']]);
-	Route::resource('reportearp', 'Report\ReporteArpController', ['only' => ['index']]);
-	Route::resource('reporteresumencobro', 'Report\ReporteResumenCobroController', ['only' => ['index']]);
-	Route::resource('reporteedades', 'Report\ReporteEdadesController', ['only' => ['index']]);
-	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);
-	Route::resource('reporterecibos', 'Report\ReporteRecibosController', ['only' => ['index']]);
 });

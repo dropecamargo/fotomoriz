@@ -5,11 +5,11 @@
 @section('content')
     <section class="content-header">
 		<h1>
-			Reporte Gastos ARP
+			Reporte gastos ARP
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Reporte Gastos ARP</li>
+			<li class="active">Reporte gastos ARP</li>
 		</ol>
     </section>
 

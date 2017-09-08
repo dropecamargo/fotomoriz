@@ -5,11 +5,11 @@
 @section('content')
     <section class="content-header">
 		<h1>
-			Reporte Recibos de Caja
+			Reporte recibos de caja
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Reporte Recibos de Caja</li>
+			<li class="active">Reporte recibos de caja</li>
 		</ol>
     </section>
 
@@ -30,7 +30,7 @@
 						</div>
 					</div>
 
-					
+
 
 					<div class="row">
 						<div class="col-md-2 col-md-offset-5 col-sm-6 col-xs-6">

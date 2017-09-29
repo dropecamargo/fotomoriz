@@ -1,5 +1,6 @@
 /vendor
 /storage/exports
+/storage/app
 /resources/assets/libs
 /node_modules
 Homestead.yaml

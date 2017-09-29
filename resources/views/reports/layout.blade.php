@@ -152,6 +152,11 @@
 		@endif
 	</head>
 	<body>
+		{{-- Title --}}
+		{{--*/ $empresa = App\Models\Base\Empresa::getEmpresa(); /*--}}
+		@include('reports.title')
+		<br/>
+
 		@yield('content')
 	</body>
 </html>

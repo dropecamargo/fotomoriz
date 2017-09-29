@@ -36,6 +36,8 @@
             <div class="content-wrapper">
                 @yield('content')
 
+                {{-- Modals base --}}
+                @include('modals')
             </div>
 
             <!-- Main Footer -->

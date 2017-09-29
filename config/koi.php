@@ -174,5 +174,9 @@ return [
             'CO' => 'Contado',
             'CT' => 'Crédito'
         ]
+    ],
+
+    'template' => [
+        'bg' => 'bg-green'
     ]
 ];

@@ -191,12 +191,14 @@ class SendEmails extends Command
                     $file = storage_path('app')."/DOC_CARTERA/EXTRACTOS/prueba/$enviados->ruta_archivo";
                     if(Storage::has("DOC_CARTERA/EXTRACTOS/prueba/$enviados->ruta_archivo")){
 
+                        $emails = ['wnieves@fotomoriz.com', $enviados->tercero_email];
+
                         // Preparar datos para enviar
                         $datos = ['cliente' => $enviados, 'empresa' => $empresa];
-                        Mail::send('emails.extractos.enviado', $datos, function($msj) use ($file, $empresa){
+                        Mail::send('emails.extractos.enviado', $datos, function($msj) use ($file, $empresa, $emails){
                             $msj->from('sistemas@fotomoriz.com', $empresa->empresa_nombre);
-                            $msj->to('aforero@fotomoriz.com');
-                            $msj->subject('Prueba -> Estado de cuentas.');
+                            $msj->to($emails);
+                            $msj->subject('Estado de cuentas.');
                             $msj->attach($file);
                         });
 
@@ -210,8 +212,8 @@ class SendEmails extends Command
                     $datos = ['empresa' => $empresa, 'correos' => $correos];
                     Mail::send('emails.extractos.noenviado', $datos, function($msj) use ($empresa){
                         $msj->from('sistemas@fotomoriz.com', $empresa->empresa_nombre);
-                        $msj->to('aforero@fotomoriz.com');
-                        $msj->subject('Prueba -> Estados de cuenta no enviados.');
+                        $msj->to('wnieves@fotomoriz.com');
+                        $msj->subject('Estados de cuenta no enviados.');
                     });
                 }else{
                     Log::error('No hay correos para enviar.');

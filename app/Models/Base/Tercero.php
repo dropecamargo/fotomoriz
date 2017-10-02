@@ -2,38 +2,24 @@
 
 namespace App\Models\Base;
 
-use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use DB;
 
-class Tercero extends Model implements AuthenticatableContract,
-                                    AuthorizableContract,
-                                    CanResetPasswordContract
+class Tercero extends Model
 {
-    use Authenticatable, Authorizable, CanResetPassword;
-
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'tercerointerno';
+    protected $table = 'tercero';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = ['username', 'password'];
+    public $timestamps = false;
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = ['password', 'remember_token'];
+    public static function getTercerosCierrecartera($año, $mes){
+        $query = Tercero::query();
+        $query->select('tercero_nit', 'tercero_plazo_cartera', 'tercero_telefono', 'tercero_telefono2', 'tercero_direccion', 'tercero_email', DB::raw("tercero_nombre1 || ' ' || tercero_nombre2 AS tercero_nombres"), DB::raw("tercero_apellido1 || ' ' || tercero_apellido2 AS tercero_apellidos"), 'tercero_razon_social', DB::raw("(CASE WHEN tercero_persona = 'N' THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 || (CASE WHEN (tercero_razon_social IS NOT NULL AND tercero_razon_social != '') THEN (' - ' || tercero_razon_social) ELSE '' END) ) ELSE tercero_razon_social END) AS tercero_nombre"));
+        $query->whereIn('tercero_nit', DB::table('cierrecartera')->select('cierrecartera_tercero')->where('cierrecartera_mes', $mes)->where('cierrecartera_ano', $año));
+        return $query->get();
+    }
 }

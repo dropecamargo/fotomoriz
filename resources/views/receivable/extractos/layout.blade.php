@@ -24,6 +24,10 @@
 					width: 100%;
 				}
 
+				.subtbtitle {
+					width: 100%;
+				}
+
 				.company{
 					font-size: 12;
 					font-weight: bold;
@@ -37,8 +41,21 @@
 					border-bottom: 1px solid black;
 				}
 
+				.cliente{
+					margin-top: -10px;
+					font-size: 8;
+					font-weight: bold;
+					text-align: center;
+				}
+
+				.nit_cliente{
+					font-size: 7;
+					font-weight: bold;
+					text-align: center;
+				}
+
 				.title{
-					font-size: 10;
+					font-size: 9;
 					font-weight: bold;
 					text-align: center;
 				}
@@ -57,14 +74,27 @@
 				.rtable th {
 					border: 1px solid black;
 					padding-left: 2px;
+					font-size: 11px;
 				}
 
 				.rtable td, th {
 					height: 19px;
 				}
 
-				.rtable tr:nth-child(even) {
-					background-color: #f2f2f2
+				.rtablemid {
+					width: 100%;
+				    border-collapse: collapse;
+					border: 1px solid black;
+				}
+
+				.rtablemid th {
+					border: 0px solid black;
+					padding-left: 2px;
+					font-size: 22px;
+				}
+
+				.rtablemid td {
+					font-size: 22px;
 				}
 
 				.htable {
@@ -75,19 +105,9 @@
 					text-align: left;
 				}
 
-				.brtable {
-					width: 100%;
-				    border-collapse: collapse;
-				}
-
-				.brtable th {
-					border: 1px solid black;
-					padding-left: 2px;
-				}
-
-				.brtable td {
-					border: 1px solid black;
-					padding-left: 2px;
+				.foottable td, th {
+					text-align: left;
+					font-size: 9px;
 				}
 
 				.left {
@@ -110,43 +130,8 @@
 					width: 100%;
 				}
 
-				.size-6 {
-					font-size: 6;
-				}
-
-				.size-7 {
-					font-size: 7;
-				}
-
-				.border-left {
-					border-left: 1px solid black;
-					padding-left: 2px;
-				}
-
-				.border-right {
-					border-right: 1px solid black;
-					padding-left: 2px;
-				}
-
-				.border-top {
-					border-top: 1px solid black;
-					padding-top: 2px;
-				}
-
-				.height-40 {
-					height: 40px;
-				}
-
-				.height-19 {
-					height: 19px;
-				}
-
-				.margin-top-60 {
-					margin-top: 60px;
-				}
-
-				.margin-bottom-60 {
-					margin-bottom: 60px;
+				.page-break {
+				    page-break-after: always;
 				}
 			</style>
 		@endif

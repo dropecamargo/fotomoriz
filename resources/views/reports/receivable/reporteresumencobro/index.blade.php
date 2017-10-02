@@ -1,15 +1,15 @@
 @extends('layout.layout')
 
-@section('title') Reporte Resumen Cobro @stop
+@section('title') Reporte resumen de cobro @stop
 
 @section('content')
     <section class="content-header">
 		<h1>
-			Reporte Resumen Cobro
+			Reporte resumen de cobro
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Reporte Resumen Cobro</li>
+			<li class="active">Reporte resumen de cobro</li>
 		</ol>
     </section>
 

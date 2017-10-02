@@ -1,22 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class HomeController extends Controller
+class PermisoRolController extends Controller
 {
-    /**
-     * Instantiate a new HomeController instance.
-     */
-    public function __construct()
-    {
-        //
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +16,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard.main');
+        //
     }
 
     /**

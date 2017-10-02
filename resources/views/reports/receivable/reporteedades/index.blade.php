@@ -5,11 +5,11 @@
 @section('content')
     <section class="content-header">
 		<h1>
-			Reporte Edades Cartera
+			Reporte edades de cartera
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Reporte Edades Cartera</li>
+			<li class="active">Reporte edades de cartera</li>
 		</ol>
     </section>
 

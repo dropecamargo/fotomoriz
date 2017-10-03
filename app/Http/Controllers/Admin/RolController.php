@@ -54,6 +54,9 @@ class RolController extends Controller
                     $rol->fill($data);
                     $rol->save();
 
+                    DB::rollback();
+                    return response()->json(['success' => false, 'errors' => 'PCAMARGO OK -> '.$rol->id]);
+
                     // $id = $rol->getConnection()->getPdo()->lastInsertId();
 
                     // Commit Transaction

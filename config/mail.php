@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => 'sistemas@fotomoriz.com', 'name' => 'FOTOMORIZ S.A.'],
 
     /*
     |--------------------------------------------------------------------------

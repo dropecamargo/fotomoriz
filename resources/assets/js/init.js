@@ -37,6 +37,7 @@ var app = app || {};
             this.initAlertify();
             this.initSelect2();
             this.initToUpper();
+            this.initSpinner();
             this.initInputMask();
             this.initDatePicker();
         },
@@ -95,6 +96,26 @@ var app = app || {};
                 removeMaskOnSubmit: true,
                 unmaskAsNumber: true,
                 min: 0
+            });
+        },
+
+        /**
+        * Init initSpinner
+        */
+        initSpinner: function () {
+            $('.spinner-percentage').spinner({
+                step: 0.1,
+                start: 0,
+                min: 0,
+                max: 100,
+                numberFormat: "n",
+                stop: function( event, ui ) {
+                    if(!_.isNull(this.value) && !_.isUndefined(this.value) && !_.isEmpty(this.value)) {
+                        if(!$.isNumeric( this.value ) || this.value > 100 || this.value < 0){
+                            $(this).spinner( 'value', 0 );
+                        }
+                    }
+               }
             });
         },
 

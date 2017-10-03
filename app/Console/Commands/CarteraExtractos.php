@@ -85,8 +85,6 @@ class CarteraExtractos extends Command
             $fechas->nombre_mes_siguiente = ($mescierre >= 12 ? strtoupper(config('koi.meses')[1]) : strtoupper(config('koi.meses')[$mescierre+1]));
             $fechas->ano_siguiente = ($mescierre >= 12 ? date('Y')+1 : date('Y'));
 
-            $existente = ['ventas@jvpublicidadymark.com', 'magicolorflorencia@yahoo.es', 'etrianaq@hotmail.com', 'info@artymana.com.co', 'promographics1@gmail.com', 'zona.publicitaria@hotmail.com', 'nicolas.pena@on2desing.com', 'claudiavega_gvp@yahoo.es', 'aldemar@hotmail.com', 'andres.llano@imageprinting.com.co', 'iincolors@gmail.com', 'ltdiseno@gmail.com', 'mgr@proempaques.com', 'tesoreria@promadeco.com.co', 'gerencia@signlinepublicidad.com', 'delosrios@visual-box.com', 'compras@advisioncv.com', 'amgoimp@gmail.com', 'viewdigitalltda@gmail.com', 'administrativo@imprestudiografico.com', 'abarteimpresioneseu@gmail.com', 'empresa@editorageminis.com', 'mercadeo@xkanner.com', 'alvarocontreras56@yahoo.com', 'gerencia@digiprintweb.net', 'pladicon2012acacias@gmail.com', 'compugonzalez@gmail.com', 'gladys77osorio@yahoo.com', 'contabilidad@arde.com.co', 'dir.general@gyamarketingeimpresion.com', 'ddsimpresion@gmail.com', 'sistemas@fotomoriz.com', 'carropartes@gmail.com', 'p.rodriguez@matepublicidad.com', 'j.carrero@grafiq.com.co', 'princon@desarrollo-visual.com', 'jaime-g@jagodigital.com.co', 'compras@dislumbra.com', 'l.rodriguez@artepop.co', 'gerencia@creativapublicidad.com.co', 'gerprod@alangraph.com', 'deeperdesign.info@gmail.com', 'agho_publicidad@hotmail.com', 'imagendigitalprint@hotmail.com', 'jecatruju@gmail.com', 'paolagalvis@creativegroup.com.co', 'katherine.gomez@aviancataca.com', 'ideas@printpointsas.com', 'diegoduke1@hotmail.com', 'humberto@servigrafic.com', 'ideasap@hotmail.es', 'daniel.camacho.vargas@gmail.com', 'creaydisena@gmail.com', 'esmeraldameneses2009@hotmail.com', 'jhonhen888@hotmail.com', 'imagen.digital12@hotmail.com', 'tallerdigitalsas@gmail.com', 'bpfajardo.artgraphics14@gmail.com', 'carmengallego@rgbpreprensa.net', 'administrativo@imagecolors.com', 'gerencia@imprecomercial.com', 'fotoadmin@etb.net.co', 'jcontreras@swantex.com', 'gyjpublicidaddigital@hotmail.com', 'administracion@comunicacionwow.com', 'ventas@filmtex.com', 'david20perez@gmail.com', 'sergio@duplad.com', 'businessglobal35@yahoo.es', 'magifoto-digital@hotmail.com', 'gerencia@impresosmariel.com', 'publicidad2@marcel-france.com', 'jcasas@apglass.com', 'visuality.exterior@gmail.com', 'avilumpub@yahoo.es', 'harveycruz0522@hotmail.co', 'dusdigital@gmail.com', 'fernandomedina@vallasamerica.com', 'avilapublicidad@mac.com', 'gerencia@opcionesgraficas.com', 'dgsbucaramanga@gmail.com', 'senalgrafica@hotmail.com', 'compras@midta.com', 'lilit1967@yahoo.com', 'perfectprint2009@hotmail.com', 'c_florez@solutions.com.co', 'almacen@fgsa.co', 'devilsltda@gmail.com', 'publicidadproo8@gmail.com', 'publicidaddigitalbarrancabermeja@hotmail.com', 'seyspro@gmail.com', 'gillovilla@hotmail.com', 'publikfactory@hotmail.com', 'marioaraujo1180@hotmail.com', 'masdigitalimpresion@gmail.com', 'conceptgraphic.sas@hotmail.com', 'ventasrapiprint@yahoo.es', 'mabelaparicio@crearimpresion.com', 'yaneth@logograma.com.co', 'jormaji@hotmail.com', 'publicidadruiz@hotmail.com', 'impresos@epm.net.co'];
-
             // Recorrer clientes
             foreach ($terceros as $tercero) {
                 // Iniciando datos 2° parte
@@ -158,39 +156,39 @@ class CarteraExtractos extends Command
                 // Generate file
                 switch ($type){
                     case 'pdf':
-                    $pdf = App::make('dompdf.wrapper');
-                    $pdf->loadHTML(View::make('receivable.extractos.reports.reporte',  compact('tercero', 'datos', 'fechas', 'title', 'type')));
-                    $carpeta = sprintf('%s_%s', $fechas->ano_actual, $mescierre);
-                    $name = sprintf('%s_%s_%s.pdf', $empresa->empresa_nombre,'extractocliente',$tercero->tercero_nit);
-                    $salida = $pdf->output();
+                        $pdf = App::make('dompdf.wrapper');
+                        $pdf->loadHTML(View::make('receivable.extractos.reports.reporte',  compact('tercero', 'datos', 'fechas', 'title', 'type')));
+                        $carpeta = sprintf('%s_%s', $fechas->ano_actual, $mescierre);
+                        $name = sprintf('%s_%s_%s.pdf', $empresa->empresa_nombre,'extractocliente',$tercero->tercero_nit);
+                        $salida = $pdf->output();
 
-                    Storage::put("DOC_CARTERA/EXTRACTOS/prueba/$carpeta/$name", $salida);
+                        Storage::put("DOC_CARTERA/EXTRACTOS/prueba/$carpeta/$name", $salida);
 
-                    // Validar que tercero_mail contenga @ && Validar saldos > 0
-                    $validarcorreo = strpos($tercero->tercero_email, '@');
-                    if($validarcorreo !== false){
-                        $validar = strpos($tercero->tercero_email, ';');
-                        $enviados = new \stdClass();
-                        $enviados->tercero_nombre = $tercero->tercero_nombre;
-                        $enviados->tercero_nit = $tercero->tercero_nit;
-                        if($validar === false){
-                            $enviados->tercero_email = $tercero->tercero_email;
+                        // Validar que tercero_mail contenga @ && Validar saldos > 0
+                        $validarcorreo = strpos($tercero->tercero_email, '@');
+                        if($validarcorreo !== false){
+                            $validar = strpos($tercero->tercero_email, ';');
+                            $enviados = new \stdClass();
+                            $enviados->tercero_nombre = $tercero->tercero_nombre;
+                            $enviados->tercero_nit = $tercero->tercero_nit;
+                            if($validar === false){
+                                $enviados->tercero_email = $tercero->tercero_email;
+                            }else{
+                                $email = explode(';', $tercero->tercero_email);
+                                $enviados->tercero_email = $email[0];
+                            }
+                            $enviados->ruta_archivo = $carpeta.'/'.$name;
+                            $correos->enviados[] = $enviados;
                         }else{
-                            $email = explode(';', $tercero->tercero_email);
-                            $enviados->tercero_email = $email[0];
+                            // Crear un objeto con los clientes sin correo
+                            $noenviado = new \stdClass();
+                            $noenviado->tercero_nit = $tercero->tercero_nit;
+                            $noenviado->tercero_nombres = $tercero->tercero_nombres;
+                            $noenviado->tercero_apellidos = $tercero->tercero_apellidos;
+                            $noenviado->tercero_razon_social = $tercero->tercero_razon_social;
+                            $correos->noenviados[] = $noenviado;
                         }
-                        $enviados->ruta_archivo = $carpeta.'/'.$name;
-                        $correos->enviados[] = $enviados;
-                    }else{
-                        // Crear un objeto con los clientes sin correo
-                        $noenviado = new \stdClass();
-                        $noenviado->tercero_nit = $tercero->tercero_nit;
-                        $noenviado->tercero_nombres = $tercero->tercero_nombres;
-                        $noenviado->tercero_apellidos = $tercero->tercero_apellidos;
-                        $noenviado->tercero_razon_social = $tercero->tercero_razon_social;
-                        $correos->noenviados[] = $noenviado;
-                    }
-                    break;
+                        break;
                 }
             }
 
@@ -201,13 +199,8 @@ class CarteraExtractos extends Command
                 $file = storage_path('app')."/DOC_CARTERA/EXTRACTOS/prueba/$enviados->ruta_archivo";
                 if( Storage::has("DOC_CARTERA/EXTRACTOS/prueba/$enviados->ruta_archivo") ){
 
-                    if( in_array( trim($enviados->tercero_email), $existente) ){
-                        continue;
-                    }
-
                     // Preparar datos para enviar
                     $emails = ['wnieves@fotomoriz.com', $enviados->tercero_email];
-
                     try{
 
                         $datos = ['cliente' => $enviados, 'empresa' => $empresa];

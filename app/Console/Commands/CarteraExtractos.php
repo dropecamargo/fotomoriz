@@ -205,6 +205,7 @@ class CarteraExtractos extends Command
 
                         $datos = ['cliente' => $enviados, 'empresa' => $empresa];
                         Mail::send('emails.extractos.enviado', $datos, function($msj) use ($file, $empresa, $emails){
+                            $msj->from('wnieves@fotomoriz.com', $empresa->empresa_nombre);
                             $msj->to($emails);
                             $msj->subject('Estado de cuentas.');
                             $msj->attach($file);
@@ -229,6 +230,7 @@ class CarteraExtractos extends Command
                 // Preparar datos para un listado de no enviados
                 $datos = ['empresa' => $empresa, 'correos' => $correos];
                 Mail::send('emails.extractos.noenviado', $datos, function($msj) use ($empresa){
+                    $msj->from('wnieves@fotomoriz.com', $empresa->empresa_nombre);
                     $msj->to('wnieves@fotomoriz.com');
                     $msj->subject('Estados de cuenta no enviados.');
                 });

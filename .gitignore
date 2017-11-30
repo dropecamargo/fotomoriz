@@ -1,4 +1,5 @@
 /vendor
+/modules
 /storage/exports
 /storage/app
 /resources/assets/libs
@@ -6,3 +7,4 @@
 Homestead.yaml
 Homestead.json
 .env
+.ftpconfig

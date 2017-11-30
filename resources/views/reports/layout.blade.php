@@ -152,6 +152,13 @@
 		@endif
 	</head>
 	<body>
+		<script type="text/php">
+		    if (isset($pdf)) {
+				// Configurar (positionX, positionY, textp, font-family, font-size, font-color, word_space, char_space, angle)
+				$pdf->page_text(279, $pdf->get_height() - 15, utf8_decode("Pagina {PAGE_NUM} de {PAGE_COUNT}"), 'DejaVu Sans', 7, array(0,0,0), 0.0, 0.0, 0.0);
+		    }
+		</script>
+
 		{{-- Title --}}
 		{{--*/ $empresa = App\Models\Base\Empresa::getEmpresa(); /*--}}
 		@include('reports.title')

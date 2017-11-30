@@ -16,6 +16,9 @@ class CierreCartera extends Model
 
     public $timestamps = false;
 
+    /**
+    *  Function getResumenCarterta
+    **/
     public static function getResumenCarterta($mes, $ano, $tercero)
     {
         // Cierrecartera_s
@@ -66,5 +69,26 @@ class CierreCartera extends Model
         $resumencartera = array('m_360' => $m_360, 'm_180' => $m_180, 'm_90' => $m_90, 'm_60' => $m_60, 'm_30' => $m_30, 'm_0' => $m_0, 'pv_m_0' => $pv_m_0, 'pv_m_30' => $pv_m_30, 't_1+2' => $saldos);
 
         return $resumencartera;
+    }
+
+    /**
+    *  Function getIntereses
+    **/
+    public static function getIntereses( $mes, $ano, $fechacierre, $tercero, $dias_gracia)
+    {
+        // Cierrecartera
+        $query = CierreCartera::query();
+        $query->select('cierrecartera_numero as numero', 'cierrecartera_documentos as docu', 'cierrecartera_sucursal as sucursal', 'cierrecartera_fecha as expedicion', 'cierrecartera_cuota as cuota', 'cierrecartera_vence as vencimiento', 'cierrecartera_saldo as valor', 'documentos_nombre as documento', DB::raw("('$fechacierre' - cierrecartera_vence) as dias"), 'documentos_nombre as documento');
+        $query->join('documentos', 'cierrecartera_documentos', '=', 'documentos_codigo');
+        $query->whereRaw('documentos_codigo = cierrecartera_documentos');
+        $query->whereRaw('cierrecartera_saldo > 0');
+        $query->whereRaw("('$fechacierre' - cierrecartera_vence) > $dias_gracia");
+        $query->where('cierrecartera_documentos', '!=', 'ANTIC');
+        $query->where('cierrecartera_mes', $mes);
+        $query->where('cierrecartera_ano', $ano);
+        $query->where('cierrecartera_tercero', $tercero);
+        $query->orderBy('cierrecartera_vence', 'asc', 'cierrecartera_numero', 'asc');
+
+        return $query->get();
     }
 }

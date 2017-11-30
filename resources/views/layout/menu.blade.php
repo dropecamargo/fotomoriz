@@ -38,14 +38,14 @@
         </ul>
     </li>
 
-    <li class="treeview {{ in_array(Request::segment(1), ['intereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+    <li class="treeview {{ in_array(Request::segment(1), ['intereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-suitcase"></i> <span>Cartera</span><i class="fa fa-angle-left pull-right"></i>
         </a>
 
         <ul class="treeview-menu">
             {{-- Modulos cartera --}}
-            {{-- <li class="{{ in_array(Request::segment(1), ['intereses']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['intereses']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-wpforms"></i> Módulos <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -54,10 +54,10 @@
                         <a href="{{ route('intereses.index') }}"><i class="fa fa-pie-chart"></i> Intereses</a>
                     </li>
                 </ul>
-            </li> --}}
+            </li>
 
             {{-- Reportes cartera --}}
-            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-bar-chart-o"></i> Reportes <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -70,6 +70,11 @@
                     <li class="{{ in_array(Request::segment(1), ['reporteposfechados']) ? 'active' : '' }}">
                         <a href="{{ route('reporteposfechados.index') }}">
                             <i class="fa fa-circle-o"></i><span>Cheques posfechados</span>
+                        </a>
+                    </li>
+                    <li class="{{ in_array(Request::segment(1), ['rintereses']) ? 'active' : '' }}">
+                        <a href="{{ route('rintereses.index') }}">
+                            <i class="fa fa-circle-o"></i><span>Intereses generados</span>
                         </a>
                     </li>
                     <li class="{{ in_array(Request::segment(1), ['reporterecibos']) ? 'active' : '' }}">

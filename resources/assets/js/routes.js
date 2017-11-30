@@ -19,6 +19,9 @@ app || (app = {});
             'roles/:rol/edit(/)': 'getRolesEdit',
 
             'permisos(/)': 'getPermisosMain',
+
+            // Routes Cartera
+            // 'intereses(/)': 'getInteresesMain',
         },
 
         /**
@@ -141,6 +144,19 @@ app || (app = {});
             }
 
             this.mainPermisoView = new app.MainPermisoView( );
+        },
+
+        /**
+        * main view permisos
+        */
+        getInteresesMain: function () {
+
+            if ( this.mainInteresView instanceof Backbone.View ){
+                this.mainInteresView.stopListening();
+                this.mainInteresView.undelegateEvents();
+            }
+
+            this.mainInteresView = new app.MainInteresView( );
         },
 
     }) );

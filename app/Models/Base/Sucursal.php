@@ -16,6 +16,8 @@ class Sucursal extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
     public $primaryKey = 'sucursal_codigo';
 
     /**

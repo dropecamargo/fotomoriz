@@ -18,6 +18,9 @@ var paths = {
 
 elixir(function(mix) {
     mix.styles([
+        paths.libs + 'jquery-ui/themes/base/core.css',
+        paths.libs + 'jquery-ui/themes/base/spinner.css',
+        paths.libs + 'jquery-ui/themes/base/theme.css',
         paths.adminlte + 'bootstrap/css/bootstrap.min.css',
         paths.adminlte + 'dist/css/skins/skin-red.min.css',
         paths.adminlte + 'plugins/iCheck/minimal/red.css',
@@ -28,7 +31,6 @@ elixir(function(mix) {
         paths.libs + 'font-awesome/css/font-awesome.min.css',
         paths.libs + 'datatables.net-bs/css/dataTables.bootstrap.css',
         paths.libs + 'datatables.net-buttons-bs/css/buttons.bootstrap.min.css',
-        paths.libs + 'jquery-ui/themes/base/all.css',
     ], 'public/css/vendor.min.css');
 });
 
@@ -80,4 +82,5 @@ elixir(function(mix) {
     mix.copy(paths.adminlte + 'bootstrap/fonts/', 'public/fonts');
     mix.copy(paths.adminlte + 'plugins/iCheck/minimal/red**.png', 'public/css');
     mix.copy(paths.libs + 'font-awesome/fonts/', 'public/fonts');
+    mix.copy(paths.libs + 'jquery-ui/themes/base/images/', 'public/css/images/');
 });

@@ -48,7 +48,8 @@ Route::group(['middleware' => 'auth'], function(){
 	| Cartera Routes
 	|-------------------------
 	*/
-	// Route::resource('intereses', 'Receivable\InteresController', ['only' => ['index']]);
+	Route::resource('intereses', 'Receivable\InteresController', ['only' => ['index', 'store']]);
+	Route::resource('rintereses', 'Report\ReporteInteresesGeneradosController', ['only' => ['index']]);
 	Route::resource('reporteedades', 'Report\ReporteEdadesController', ['only' => ['index']]);
 	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);
 	Route::resource('reporterecibos', 'Report\ReporteRecibosController', ['only' => ['index']]);

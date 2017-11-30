@@ -14,7 +14,8 @@
         "maatwebsite/excel": "~2.1.0",
         "dompdf/dompdf": "~0.6.1",
         "guzzlehttp/guzzle": "~6.0",
-        "barryvdh/laravel-dompdf": "0.6.*"
+        "barryvdh/laravel-dompdf": "0.6.*",
+        "arielcr/numero-a-letras": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

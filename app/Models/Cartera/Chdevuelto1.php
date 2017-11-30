@@ -25,4 +25,17 @@ class Chdevuelto1 extends Model
         $query->where('chdevuelto1_fecha', '<', $fechaf);
         return $query->first();
     }
+
+    public static function getChequesInteres( $fechamora )
+    {
+        $query = Chdevuelto1::query();
+        $query->join('documentos', 'chdevuelto1_documentos', '=', 'documentos_codigo');
+        $query->select('chdevuelto1_numero as numero', 'chdevuelto1_documentos as docu', 'chdevuelto1_sucursal as sucursal', 'chdevuelto1_fecha as expedicion', 'chdevuelto1_fecha as vencimiento',
+                        DB::raw("(chdevuelto1_fecha - $fechamora ) as dias"), 'chdevuelto1_saldo as valor', 'documentos_nombre as documento');
+        $query->whereRaw('documentos_codigo = chdevuelto1_documentos');
+        $query->whereRaw('chdevuelto1_saldo > 0');
+        $query->orderBy('chdevuelto1_fecha', 'asc');
+
+        return $query->get();
+    }
 }

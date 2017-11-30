@@ -16,7 +16,7 @@ class Empresa extends Model
     public static function getEmpresa()
     {
     	$query = Empresa::query();
-        $query->select('empresa_nit', 'empresa_nombre');
+        $query->select('empresa_nit', 'empresa_nombre', 'empresa_iva');
     	return $query->first();
     }
 }

@@ -119,13 +119,12 @@ class SendInteresController extends Controller
                 if( Storage::has("Interes/$enviados->ruta_archivo") ){
 
                     // Preparar datos para enviar
-                    $emails = ['machadokoiti@gmail.com', $enviados->tercero_email];
-                    // $emails = ['machadokoiti@gmail.com'];
+                    $emails = ['wnieves@fotomoriz.com', $enviados->tercero_email];
                     try{
 
                         $datos = ['cliente' => $enviados, 'empresa' => $empresa];
                         Mail::send('emails.intereses.enviado', $datos, function($msj) use ($file, $empresa, $emails){
-                            $msj->from('machadokoiti@gmail.com', $empresa->empresa_nombre);
+                            $msj->from('wnieves@fotomoriz.com', $empresa->empresa_nombre);
                             $msj->to($emails);
                             $msj->subject('Intereses.');
                             $msj->attach($file);
@@ -149,16 +148,14 @@ class SendInteresController extends Controller
                 // Preparar datos para un listado de no enviados
                 $datos = ['empresa' => $empresa, 'correos' => $correos];
                 Mail::send('emails.intereses.noenviado', $datos, function($msj) use ($empresa){
-                    $msj->from('machadokoiti@gmail.com', $empresa->empresa_nombre);
-                    $msj->to('machadokoiti@gmail.com');
-                    $msj->subject('intereses no enviados.');
+                    $msj->from('wnieves@fotomoriz.com', $empresa->empresa_nombre);
+                    $msj->to('wnieves@fotomoriz.com');
+                    $msj->subject('Intereses no enviados.');
                 });
 
             }else{
                 Log::error('No hay correos para enviar.');
             }
-
-
 
             Session::flash('message', 'Se enviaron los correos con exito.');
             Log::info('Se enviaron todos los correos con exito.');

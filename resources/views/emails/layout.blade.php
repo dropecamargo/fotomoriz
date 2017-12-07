@@ -34,7 +34,7 @@
 			$table_inner_width_content = 520;
 			$_inst_url = config('koi.app.site');
 			$_inst_name = config('koi.app.name');
-			$_inst_img = "http://fotomoriz.com/wp-content/uploads/2014/02/logo-fotomoriz.png";
+			$_inst_img = {{ asset(config('koi.app.image.logo')) }};
 		/*--}}
 
 		<table border="0" cellspacing="0" cellpadding="0" height="{{ $table_wrap_height }}" width="{{ $table_wrap_width }}">

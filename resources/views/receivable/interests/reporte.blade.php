@@ -12,15 +12,15 @@
 		<thead>
 			<tr>
 				<th class="left" width="15%">N° Interes:</th>
-				<td width="85%">{{ $object->interes->intereses1_numero }}</td>
+				<td width="85%">{{ $interes['interes']->intereses1_numero }}</td>
 			</tr>
 			<tr>
 				<th class="left" width="15%">Fecha:</th>
-				<td width="85%">{{ $object->interes->intereses1_fecha }}</td>
+				<td width="85%">{{ $interes['interes']->intereses1_fecha }}</td>
 			</tr>
 			<tr>
 				<th class="left" width="15%">Tasa:</th>
-				<th class="left" width="85%">Por concepto de intereses de mora al {{ $object->interes->intereses1_tasa }}% mensual con corte al {{ $object->interes->intereses1_fecha_cierre }}</th>
+				<th class="left" width="85%">Por concepto de intereses de mora al {{ $interes['interes']->intereses1_tasa }}% mensual con corte al {{ $interes['interes']->intereses1_fecha_cierre }}</th>
 			</tr>
 		</thead>
 	</table>
@@ -42,22 +42,22 @@
 		</thead>
 		<tbody>
 			{{--*/ $subtotal = $iva = $base = $parseIva = $total = $cobrados = 0; /*--}}
-			@foreach( $object->detalle as $item)
-			{{--*/ $cobrados = abs($item->detalle->intereses2_dias_a_cobrar) - abs($item->detalle->intereses2_dias_mora); /*--}}
+			@foreach( $interes['detalle'] as $item )
+			{{--*/ $cobrados = abs($item->intereses2_dias_a_cobrar) - abs($item->intereses2_dias_mora); /*--}}
 				<tr>
-					<td class="left size-7">{{ $item->documento_nombre }}</td>
-					<td class="right size-7">{{ $item->detalle->intereses2_num_origen }}</td>
-					<td class="center size-7">{{ $item->detalle->intereses2_cuo_origen }}</td>
-					<td class="center size-7">{{ $item->detalle->intereses2_expedicion }}</td>
-					<td class="center size-7">{{ $item->detalle->intereses2_vencimiento }}</td>
-					<td class="center size-7">{{ $item->detalle->intereses2_dias_mora }}</td>
+					<td class="left size-7">{{ $item->documento }}</td>
+					<td class="right size-7">{{ $item->intereses2_num_origen }}</td>
+					<td class="center size-7">{{ $item->intereses2_cuo_origen }}</td>
+					<td class="center size-7">{{ $item->intereses2_expedicion }}</td>
+					<td class="center size-7">{{ $item->intereses2_vencimiento }}</td>
+					<td class="center size-7">{{ $item->intereses2_dias_mora }}</td>
 					<td class="center size-7">{{ abs($cobrados) }}</td>
-					<td class="center size-7">{{ $item->detalle->intereses2_dias_a_cobrar }}</td>
-					<td class="right size-7">{{ number_format($item->detalle->intereses2_saldo, 2, ',', '.') }}</td>
-					<td class="right size-7">{{ number_format($item->detalle->intereses2_interes, 2, ',', '.') }}</td>
+					<td class="center size-7">{{ $item->intereses2_dias_a_cobrar }}</td>
+					<td class="right size-7">{{ number_format($item->intereses2_saldo, 2, ',', '.') }}</td>
+					<td class="right size-7">{{ number_format($item->intereses2_interes, 2, ',', '.') }}</td>
 				</tr>
-				{{--*/ $subtotal += $item->detalle->intereses2_saldo; /*--}}
-				{{--*/ $base += $item->detalle->intereses2_interes; /*--}}
+				{{--*/ $subtotal += $item->intereses2_saldo; /*--}}
+				{{--*/ $base += $item->intereses2_interes; /*--}}
 			@endforeach
 		</tbody>
 		<tfoot>

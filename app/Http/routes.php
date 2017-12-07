@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth'], function(){
 	|-------------------------
 	*/
 	Route::resource('intereses', 'Receivable\InteresController', ['only' => ['index', 'store']]);
+	Route::resource('sintereses', 'Receivable\SendInteresController', ['only' => ['index']]);
 	Route::resource('rintereses', 'Report\ReporteInteresesGeneradosController', ['only' => ['index']]);
 	Route::resource('reporteedades', 'Report\ReporteEdadesController', ['only' => ['index']]);
 	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);

@@ -118,6 +118,11 @@
 					font-size: 7;
 				}
 
+				.bg-red {
+					background-color: #E55536;
+					color: #FFFFFF;
+				}
+
 				.border-left {
 					border-left: 1px solid black;
 					padding-left: 2px;

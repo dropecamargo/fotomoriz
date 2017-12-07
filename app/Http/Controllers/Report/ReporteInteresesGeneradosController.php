@@ -20,6 +20,7 @@ class ReporteInteresesGeneradosController extends Controller
     {
         if( env('APP_ENV') == 'local'){
             ini_set('memory_limit', '-1');
+            set_time_limit(0);
         }
 
         if( $request->has('type') ){
@@ -40,7 +41,7 @@ class ReporteInteresesGeneradosController extends Controller
             $empresa = Empresa::getEmpresa();
 
             $query = Intereses1::query();
-            $query->select('intereses1_numero', 'intereses1_sucursal', 'intereses1_tercero', DB::raw("SUM(intereses2_interes) as intereses"), DB::raw("(CASE WHEN tercero_persona = 'N'
+            $query->select('intereses1_numero', 'intereses1_sucursal', 'intereses1_anulado', 'intereses1_tercero', DB::raw("SUM(intereses2_interes) as intereses"), DB::raw("(CASE WHEN tercero_persona = 'N'
                         THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 ||
                                 (CASE WHEN (tercero_razon_social IS NOT NULL AND tercero_razon_social != '') THEN (' - ' || tercero_razon_social) ELSE '' END)
                             )
@@ -48,13 +49,12 @@ class ReporteInteresesGeneradosController extends Controller
                     AS tercero_nombre"));
             $query->where('intereses1_fecha_cierre', $fechacierre);
             $query->where('intereses1_sucursal', '=', '1');
-            $query->where('intereses1_anulado', '=', '0');
             $query->join('tercero', 'intereses1_tercero', '=', 'tercero_nit');
             $query->join('intereses2', function ($join){
                 $join->on('intereses1_numero', '=', 'intereses2_numero');
                 $join->on('intereses1_sucursal', '=', 'intereses2_sucursal');
             });
-            $query->groupBy('intereses1_numero', 'intereses1_sucursal', 'intereses1_tercero', 'tercero_persona', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_razon_social');
+            $query->groupBy('intereses1_numero', 'intereses1_sucursal', 'intereses1_tercero', 'tercero_persona', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_razon_social', 'intereses1_anulado');
             $query->orderBy('intereses1_numero');
             $intereses = $query->get();
 

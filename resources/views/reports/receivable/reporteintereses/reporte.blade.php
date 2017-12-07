@@ -19,7 +19,7 @@
 					$iva = $parseiva * $interes->intereses;
 					$total = $iva + $interes->intereses;
 				/*--}}
-				<tr>
+				<tr class="{{ ($interes->intereses1_anulado == true) ? 'bg-red' : '' }}">
 					<td>{{ $interes->intereses1_numero }}</td>
 					<td>{{ $interes->intereses1_tercero }}</td>
 					<td>{{ $interes->tercero_nombre }}</td>

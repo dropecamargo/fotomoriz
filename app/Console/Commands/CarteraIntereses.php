@@ -188,7 +188,7 @@ class CarteraIntereses extends Command
                             $name = sprintf('%s.pdf', $tercero->tercero_nit);
                             $salida = $pdf->output();
 
-                            Storage::put("Interes/$carpeta/$name", $salida);
+                            Storage::put("DOC_CARTERA/INTERESES/$carpeta/$name", $salida);
                             break;
                     }
                 }

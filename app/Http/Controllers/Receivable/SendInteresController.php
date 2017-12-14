@@ -115,8 +115,8 @@ class SendInteresController extends Controller
             // Recorrer clientes con correos validos
             foreach ($correos->enviados as $enviados) {
                 // Buscar archivos storage/app
-                $file = storage_path('app')."/Interes/$enviados->ruta_archivo";
-                if( Storage::has("Interes/$enviados->ruta_archivo") ){
+                $file = storage_path('app')."/DOC_CARTERA/INTERESES/$enviados->ruta_archivo";
+                if( Storage::has("DOC_CARTERA/INTERESES/$enviados->ruta_archivo") ){
 
                     // Preparar datos para enviar
                     $emails = ['wnieves@fotomoriz.com', $enviados->tercero_email];

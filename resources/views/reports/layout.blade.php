@@ -150,7 +150,7 @@
 				}
 
 				.line-red{
-					background-color: #E55536 !important;
+					background-color: #E55536;
 					color: #FFFFFF;
 				}
 			</style>

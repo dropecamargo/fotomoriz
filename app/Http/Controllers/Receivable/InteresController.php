@@ -34,16 +34,21 @@ class InteresController extends Controller
                     	->withInput();
             }
 
+            if( count($request->all()) > 6 ){
+                return redirect('/intereses')
+                ->withErrors('Se ha producido un error, por favor verifique la informacion.')
+                ->withInput();
+            }
+
             // Llamando funcion de Symfony parameters command cartera:interes Tasa, Dias_gracia, Fecha, Año, Mes, Observacion, usuario elaboro
             $user = Auth::user()->usuario_id;
-            $command = "php ".base_path()."/artisan cartera:intereses --data=$data[intereses1_tasa] --data=$data[intereses1_dias_gracia] --data=$data[intereses1_fecha] --data=$data[ano] --data=$data[mes] --data=$data[intereses1_observaciones] --data=$user >> /dev/null 2>&1";
+            $command = "php ".base_path()."/artisan cartera:intereses '$request->intereses1_tasa' '$request->intereses1_dias_gracia' '$request->intereses1_fecha' '$request->ano' '$request->mes' '$request->intereses1_observaciones' '$user' >> /dev/null 2>&1";
             $process = new Process($command);
             $process->start();
 
             //  Enviar mensaje y redireccionar!
             Session::flash('message', 'Se esta generando la rutina! puede continuar.');
             return redirect()->route('intereses.index');
-
         }
         return view('receivable.interests.main');
     }

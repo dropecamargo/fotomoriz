@@ -118,11 +118,6 @@
 					font-size: 7;
 				}
 
-				.bg-red {
-					background-color: #E55536;
-					color: #FFFFFF;
-				}
-
 				.border-left {
 					border-left: 1px solid black;
 					padding-left: 2px;
@@ -152,6 +147,11 @@
 
 				.margin-bottom-60 {
 					margin-bottom: 60px;
+				}
+
+				.line-red{
+					background-color: #E55536;
+					color: #FFFFFF;
 				}
 			</style>
 		@endif

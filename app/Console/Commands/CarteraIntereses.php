@@ -13,14 +13,14 @@ class CarteraIntereses extends Command
      *
      * @var string
      */
-    protected $signature = 'cartera:intereses {--data=*}';
+    protected $signature = 'cartera:intereses {data*}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command for generate interests';
+    protected $description = 'Comando para generar intereses';
 
     /**
      * Create a new command instance.
@@ -39,16 +39,16 @@ class CarteraIntereses extends Command
 
         // Guardar el interes
         $newinteres = new Intereses1;
-        $newinteres->intereses1_tasa = $this->option('data')[0];
-        $newinteres->intereses1_dias_gracia = $this->option('data')[1];
-        $newinteres->intereses1_fecha = $this->option('data')[2];
-        $newinteres->intereses1_observaciones = $this->option('data')[5];
+        $newinteres->intereses1_tasa = $this->argument('data')[0];
+        $newinteres->intereses1_dias_gracia = $this->argument('data')[1];
+        $newinteres->intereses1_fecha = $this->argument('data')[2];
+        $newinteres->intereses1_observaciones = $this->argument('data')[5];
         $newinteres->intereses1_sucursal = $sucursal->sucursal_codigo;
         $newinteres->intereses1_numero = $numero;
         $newinteres->intereses1_documentos = $documentos->documentos_codigo;
         $newinteres->intereses1_anulado = false;
         $newinteres->intereses1_tercero = $tercero->tercero_nit;
-        $newinteres->intereses1_usuario_elaboro = $this->option('data')[6];
+        $newinteres->intereses1_usuario_elaboro = $this->argument('data')[6];
         $newinteres->intereses1_fecha_elaboro = date('Y-m-d');
         $newinteres->intereses1_hora_elaboro = date('H:m:s');
         $newinteres->intereses1_fecha_cierre = $fechacierre;
@@ -60,7 +60,7 @@ class CarteraIntereses extends Command
         $i = 1;
         foreach( $detalle as $cierre ){
             // Calcular intereses formula (valor * tasa ) / 30 -> dias * dias_a_cobrar
-            $formula = $this->option('data')[0] / 100;
+            $formula = $this->argument('data')[0] / 100;
             $v_interes = ( ($cierre->valor * $formula) / 30) * $cierre->acobrar;
 
             $newinteres2 = new Intereses2;
@@ -103,8 +103,8 @@ class CarteraIntereses extends Command
             Log::info('Generando rutina...');
 
             // Fechas filtro mes y ano
-            $ano = $this->option('data')[3];
-            $mes = $this->option('data')[4];
+            $ano = $this->argument('data')[3];
+            $mes = $this->argument('data')[4];
             if( intval($mes) == 12 ){
                 $mesaux = 1;
                 $anoaux = $ano + 1;
@@ -139,7 +139,7 @@ class CarteraIntereses extends Command
                 $numero = !is_integer(intval($numero)) ? 1 : ($numero + 1);
 
                 // Validar que tenga documentos en mora
-                $cierrecartera = CierreCartera::getIntereses( $mes, $ano, $fechacierre, $tercero->tercero_nit, intval($this->option('data')[1]) );
+                $cierrecartera = CierreCartera::getIntereses( $mes, $ano, $fechacierre, $tercero->tercero_nit, intval($this->argument('data')[1]) );
                 if( count($cierrecartera) <= 0 ){
                     continue;
                 }

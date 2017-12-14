@@ -20,7 +20,7 @@ class CarteraExtractos extends Command
      *
      * @var string
      */
-    protected $description = 'Command for generate emails';
+    protected $description = 'Comando para generar extractos';
 
     /**
      * Create a new command instance.

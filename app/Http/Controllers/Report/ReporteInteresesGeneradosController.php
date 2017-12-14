@@ -18,10 +18,10 @@ class ReporteInteresesGeneradosController extends Controller
      */
     public function index(Request $request)
     {
-        if( env('APP_ENV') == 'local'){
+        // if( env('APP_ENV') == 'local'){
             ini_set('memory_limit', '-1');
             set_time_limit(0);
-        }
+        // }
 
         if( $request->has('type') ){
             // Fechas filtro mes y ano

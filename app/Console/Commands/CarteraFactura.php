@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Cartera\Factura1, App\Models\Cartera\Factura2, App\Models\Cartera\FelFactura, App\Models\Cartera\FelProducto;
+use App\Models\Cartera\Factura1, App\Models\Cartera\Factura2, App\Models\Cartera\FelFactura, App\Models\Cartera\FelProducto, App\Models\Cartera\FelImpuestos;
 use Log, DB;
 
 class CarteraFactura extends Command
@@ -95,9 +95,79 @@ class CarteraFactura extends Command
     }
 
     public function insertFelFactura( $felfactura ){
-            $newfelfactura = new FelFactura;
-            $newfelfactura->tipodocumento = '01';
-            $newfelfactura->moneda = 'COP';
-            $newfelfactura->totalimportebruto = $felfactura->factura1_bruto;
+        $newfelfactura = new FelFactura;
+        $newfelfactura->id = '';
+        $newfelfactura->tokenempresa = '';
+        $newfelfactura->idtablaorigen = '';
+        $newfelfactura->tipodocumento = '01';
+        $newfelfactura->prefijo = '';
+        $newfelfactura->consecutivo = '';
+        $newfelfactura->fechafacturacion = '';
+        $newfelfactura->ordencompra = '';
+        $newfelfactura->moneda = 'COP';
+        $newfelfactura->totalimportebruto = $felfactura->factura1_bruto;
+        $newfelfactura->totalbaseimponible = '';
+        $newfelfactura->totalfactura = '';
+        $newfelfactura->mediopago = '';
+        $newfelfactura->descripcion = '';
+        $newfelfactura->incoterm = '';
+        $newfelfactura->consecutivofacturamodificada = '';
+        $newfelfactura->cufefacturamodificada = '';
+        $newfelfactura->fechafacturamodificada = '';
+        $newfelfactura->tipopersona = '';
+        $newfelfactura->razonsocial = '';
+        $newfelfactura->primernombre = '';
+        $newfelfactura->segundonombre = '';
+        $newfelfactura->primerapellido = '';
+        $newfelfactura->segundoapellido = '';
+        $newfelfactura->tipoidentificacion = '';
+        $newfelfactura->numeroidentificacion = '';
+        $newfelfactura->regimen = '';
+        $newfelfactura->email = '';
+        $newfelfactura->pais = '';
+        $newfelfactura->departamento = '';
+        $newfelfactura->ciudad = '';
+        $newfelfactura->bariolocalidad = '';
+        $newfelfactura->direccion = '';
+        $newfelfactura->telefono = '';
+        $newfelfactura->aplicafel = '';
+        $newfelfactura->cufe = '';
+        $newfelfactura->estadoactual = '';
+        $newfelfactura->fecharespuesta = '';
+        $newfelfactura->tokenpassword = '';
+        $newfelfactura->rango = '';
+        $newfelfactura->estatuspago = '';
+        $newfelfactura->totaldescuentos = '';
+        $newfelfactura->fechavencimiento = '';
+    }
+
+    public function insertFelProducto( $felproducto ){
+        $newfelproducto = new FelProducto;
+        $newfelproducto->id = '';
+        $newfelproducto->idfactura = '';
+        $newfelproducto->codigoproducto = '';
+        $newfelproducto->descripcion = '01';
+        $newfelproducto->referencia = '';
+        $newfelproducto->cantidad = '';
+        $newfelproducto->unidadmedida = '';
+        $newfelproducto->valorunitario = '';
+        $newfelproducto->descuento = '';
+        $newfelproducto->preciosinimpuestos = '';
+        $newfelproducto->preciototal = '';
+        $newfelproducto->codigoimpuesto = '';
+        $newfelproducto->porcentajeimpuesto = '';
+        $newfelproducto->valorretenido = '';
+        $newfelproducto->baseimponible = '';
+    }
+
+    public function insertFelImpuestos( $felimpuesto ){
+        $newfel = new FelImpuestos;
+        $newfel->id = '';
+        $newfel->idfactura = '';
+        $newfel->codigoproducto = '01';
+        $newfel->codigoimpuesto = '';
+        $newfel->porcentajeimpuesto = '';
+        $newfel->valorretenido = '';
+        $newfel->baseimponible = '';
     }
 }

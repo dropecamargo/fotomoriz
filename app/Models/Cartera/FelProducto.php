@@ -11,7 +11,7 @@ class FelProducto extends Model
      *
      * @var string
      */
-    protected $table = 'fel_productos';
+    protected $table = 'fel_detallefactura';
 
     public $timestamps = false;
 

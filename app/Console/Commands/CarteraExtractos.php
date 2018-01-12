@@ -44,28 +44,38 @@ class CarteraExtractos extends Command
         }
 
         $this->line('Bienvenido a la rutina de extractos.');
-        $pregunta = $this->ask('Digite el mes con el cual generar extractos (1 a 12)');
-        $mes = intval($pregunta);
+        $preguntames = $this->ask('Digite el mes con el cual generar extractos (1 a 12)');
+        $preguntaano = $this->ask('Digite el año con el cual generar extractos ('.config('koi.app.ano').' a '.date('Y').')');
 
-        if( !($mes > 0 && $mes <= 12) ) {
-            $this->info('El mes no es valido.');
+        $mes = intval($preguntames);
+        $ano = intval($preguntaano);
+
+        if( !($mes > 0 && $mes <= 12) ){
+            $this->error('El mes no es valido.');
             Log::error('El mes no es valido.');
+            return;
+        }
+
+        if( $ano < config('koi.app.ano') || $ano > date('Y') ) {
+            $this->error('El año no es valido');
+            Log::error('El año no es valido.');
             return;
         }
 
         try{
             // Fechas inicio y fin filtros 1° parte
-            $anocierre = date('Y');
+            $anocierre = $ano;
             $mescierre = $mes;
-            if(intval($mescierre)==12){
-                $mesaux=1;
-                $anoaux=$anocierre+1;
+
+            if( intval($mescierre) == 12){
+                $mesaux = 1;
+                $anoaux = $anocierre + 1;
             }else{
-                $mesaux=$mescierre+1;
-                $anoaux=$anocierre;
+                $mesaux = $mescierre + 1;
+                $anoaux = $anocierre;
             }
-            $fechai=$anocierre."-".$mescierre."-01";
-            $fechaf=$anoaux."-".$mesaux."-01";
+            $fechai = $anocierre."-".$mescierre."-01";
+            $fechaf = $anoaux."-".$mesaux."-01";
 
             // Terceros
             $terceros = Tercero::getTercerosCierrecartera($anocierre, $mescierre);
@@ -80,10 +90,10 @@ class CarteraExtractos extends Command
 
             // Fechas
             $fechas = new \stdClass();
-            $fechas->ano_actual = date('Y');
+            $fechas->ano_actual = $ano;
             $fechas->nombre_mes_escogido = strtoupper(config('koi.meses')[$mescierre]);
             $fechas->nombre_mes_siguiente = ($mescierre >= 12 ? strtoupper(config('koi.meses')[1]) : strtoupper(config('koi.meses')[$mescierre+1]));
-            $fechas->ano_siguiente = ($mescierre >= 12 ? date('Y')+1 : date('Y'));
+            $fechas->ano_siguiente = ($mescierre >= 12 ? $ano + 1 : $ano);
 
             // Recorrer clientes
             foreach ($terceros as $tercero) {

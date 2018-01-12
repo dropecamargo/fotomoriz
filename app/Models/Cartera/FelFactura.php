@@ -11,7 +11,7 @@ class FelFactura extends Model
      *
      * @var string
      */
-    protected $table = 'fel_factura';
+    protected $table = 'fel_encabezadofactura';
 
     public $timestamps = false;
 

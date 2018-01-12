@@ -11,7 +11,7 @@ class FelImpuestos extends Model
      *
      * @var string
      */
-    protected $table = 'fel_impuestosgenerales';
+    protected $table = 'fel_impuestos';
 
     public $timestamps = false;
 

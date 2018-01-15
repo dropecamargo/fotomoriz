@@ -60,7 +60,7 @@
             </li>
 
             {{-- Reportes cartera --}}
-            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro', 'reporteverextractos']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-bar-chart-o"></i> Reportes <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -90,6 +90,13 @@
                             <i class="fa fa-circle-o"></i><span>Resumen de cobro</span>
                         </a>
                     </li>
+                </ul>
+            </li>
+            <li  class="{{ in_array(Request::segment(1), ['reporteverextractos']) ? 'active' : '' }}">
+                <a href="#">
+                    <i class="fa fa-files-o"></i> Documentación <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
                     <li class="{{ in_array(Request::segment(1), ['reporteverextractos']) ? 'active' : '' }}">
                         <a href="{{ route('reporteverextractos.index') }}">
                             <i class="fa fa-circle-o"></i><span>Ver extractos</span>

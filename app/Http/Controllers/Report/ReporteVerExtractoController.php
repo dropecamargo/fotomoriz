@@ -19,23 +19,14 @@ class ReporteVerExtractoController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $path = "DOC_CARTERA/EXTRACTOS/prueba/";
-            $files = Storage::allFiles($path);
-            // dd($files);
+            $path = "DOC_CARTERA/EXTRACTOS";
+            $directories = Storage::allDirectories($path);
             $data = [];
-            foreach ($files as $file) {
-                // dd(basename($file), dirname($file));
-                list($a, $b, $c, $d) = explode("/", dirname($file));
-                list($year, $month) = explode("_", $d);
-                // dd($a, $b, $c, $d);
+            foreach ($directories as $directory) {
                 $object = new \stdClass();
-                $object->name = basename($file);
-                $object->year = $year;
-                $object->month = $month;
-                $object->url = url("storage/DOC_CARTERA/EXTRACTOS/prueba/$object->name");
+                $object->name = basename($directory);
                 $data[] = $object;
             }
-            // dd($data);
             return Datatables::of(collect($data))->make(true);
         }
         return view('reports.receivable.reporteverextractos.index');
@@ -68,9 +59,21 @@ class ReporteVerExtractoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
+        if ($request->ajax()) {
+            $path = "DOC_CARTERA/EXTRACTOS/$id";
+            $files = Storage::files($path);
+            $data = [];
+            foreach ($files as $file) {
+                $object = new \stdClass();
+                $object->name = basename($file);
+                $object->url = url("storage/$path/$object->name");
+                $data[] = $object;
+            }
+            return Datatables::of(collect($data))->make(true);
+        }
+        return view('reports.receivable.reporteverextractos.show', ['id' => $id]);
     }
 
     /**

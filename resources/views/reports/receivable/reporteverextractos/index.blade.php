@@ -1,31 +1,21 @@
-@extends('layout.layout')
+@extends('reports.receivable.reporteverextractos.main')
 
-@section('title') Ver extractos @stop
+@section('breadcrumb')
+    <li class="active">Extractos</li>
+@stop
 
-@section('content')
-    <section class="content-header">
-		<h1>
-			Ver extractos
-		</h1>
-		<ol class="breadcrumb">
-			<li><a href="{{ route('dashboard') }}"><i class="fa fa-dashboard"></i> {{ trans('app.home') }}</a></li>
-			<li class="active">Ver extractos</li>
-		</ol>
-    </section>
-
-   	<section class="content">
-        <div id="verextractos-main">
-            <div class="box box-danger">
-                <div class="box-body table-responsive">
-                    <table id="extractos-search-table" class="table table-bordered table-striped" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Archivo</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+@section('module')
+    <div id="verextractos-main">
+        <div class="box box-danger">
+            <div class="box-body table-responsive">
+                <table id="extractos-search-table" class="table table-bordered table-striped" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Directorio</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
-	</section>
+    </div>
 @stop

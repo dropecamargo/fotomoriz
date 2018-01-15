@@ -172,7 +172,7 @@ class CarteraExtractos extends Command
                         $name = sprintf('%s_%s_%s.pdf', $empresa->empresa_nombre,'extractocliente',$tercero->tercero_nit);
                         $salida = $pdf->output();
 
-                        Storage::put("DOC_CARTERA/EXTRACTOS/prueba/$carpeta/$name", $salida);
+                        Storage::put("DOC_CARTERA/EXTRACTOS/$carpeta/$name", $salida);
 
                         // Validar que tercero_mail contenga @ && Validar saldos > 0
                         $validarcorreo = strpos($tercero->tercero_email, '@');
@@ -206,8 +206,8 @@ class CarteraExtractos extends Command
             foreach ($correos->enviados as $enviados) {
 
                 // Buscar archivos storage/app
-                $file = storage_path('app')."/DOC_CARTERA/EXTRACTOS/prueba/$enviados->ruta_archivo";
-                if( Storage::has("DOC_CARTERA/EXTRACTOS/prueba/$enviados->ruta_archivo") ){
+                $file = storage_path('app')."/DOC_CARTERA/EXTRACTOS/$enviados->ruta_archivo";
+                if( Storage::has("DOC_CARTERA/EXTRACTOS/$enviados->ruta_archivo") ){
 
                     // Preparar datos para enviar
                     $emails = ['wnieves@fotomoriz.com', $enviados->tercero_email];

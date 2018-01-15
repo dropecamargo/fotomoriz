@@ -1,5 +1,5 @@
 /**
-* Class MainVerExtractosView
+* Class ShowVerExtractoView
 * @author KOI || @dropecamargo
 * @link http://koi-ti.com
 */
@@ -9,15 +9,16 @@ app || (app = {});
 
 (function ($, window, document, undefined) {
 
-    app.MainVerExtractosView = Backbone.View.extend({
+    app.ShowVerExtractoView = Backbone.View.extend({
 
-        el: '#verextractos-main',
+        el: '#verextractos-show',
 
         /**
         * Constructor Method
         */
-        initialize : function() {
-            this.$extractosSearchTable = this.$('#extractos-search-table');
+        initialize : function(opts) {
+            console.log(opts);
+            this.$extractosSearchTable = this.$('#extractos-files-search-table');
 
             this.$extractosSearchTable.DataTable({
                 dom: "<'row'<'col-sm-12'tr>>" +
@@ -25,7 +26,7 @@ app || (app = {});
                 processing: true,
                 serverSide: true,
                 language: window.Misc.dataTableES(),
-                ajax: window.Misc.urlFull( Route.route('reporteverextractos.index') ),
+                ajax: window.Misc.urlFull( Route.route('reporteverextractos.show', {reporteverextractos: opts.id }) ),
                 columns: [
                     { data: 'name', name: 'name' }
                 ],
@@ -33,7 +34,7 @@ app || (app = {});
                     {
                         targets: 0,
                         render: function ( data, type, full, row ) {
-                            return '<a href="'+ window.Misc.urlFull( Route.route('reporteverextractos.show', {reporteverextractos: full.name }) ) +'"> <i class="fa fa-folder-open"></i> ' + full.name + '</a>';
+                            return '<a href="'+ full.url +'" target="_blank"> <i class="fa fa-file-pdf-o"></i> ' + full.name + '</a>';
                         }
                     }
                 ]

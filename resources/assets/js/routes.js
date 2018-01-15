@@ -25,6 +25,7 @@ app || (app = {});
 
             // Route ver extractos
             'reporteverextractos(/)': 'getVerExtractosMain',
+            'reporteverextractos/:reporteverextractos(/)': 'getVerExtractosShow',
         },
 
         /**
@@ -171,6 +172,16 @@ app || (app = {});
             }
 
             this.mainVerExtractosView = new app.MainVerExtractosView( );
+        },
+
+        getVerExtractosShow: function (reporteverextractos) {
+
+            if ( this.showVerExtractoView instanceof Backbone.View ){
+                this.showVerExtractoView.stopListening();
+                this.showVerExtractoView.undelegateEvents();
+            }
+
+            this.showVerExtractoView = new app.ShowVerExtractoView({ id: reporteverextractos });
         },
     }) );
 

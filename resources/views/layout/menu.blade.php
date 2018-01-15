@@ -38,7 +38,7 @@
         </ul>
     </li>
 
-    <li class="treeview {{ in_array(Request::segment(1), ['intereses', 'sintereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+    <li class="treeview {{ in_array(Request::segment(1), ['intereses', 'sintereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro', 'reporteverextractos']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-suitcase"></i> <span>Cartera</span><i class="fa fa-angle-left pull-right"></i>
         </a>
@@ -60,7 +60,7 @@
             </li>
 
             {{-- Reportes cartera --}}
-            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro', 'reporteverextractos']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-bar-chart-o"></i> Reportes <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -88,6 +88,11 @@
                     <li class="{{ in_array(Request::segment(1), ['reporteresumencobro']) ? 'active' : '' }}">
                         <a href="{{ route('reporteresumencobro.index') }}">
                             <i class="fa fa-circle-o"></i><span>Resumen de cobro</span>
+                        </a>
+                    </li>
+                    <li class="{{ in_array(Request::segment(1), ['reporteverextractos']) ? 'active' : '' }}">
+                        <a href="{{ route('reporteverextractos.index') }}">
+                            <i class="fa fa-circle-o"></i><span>Ver extractos</span>
                         </a>
                     </li>
                 </ul>

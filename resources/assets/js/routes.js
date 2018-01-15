@@ -22,6 +22,9 @@ app || (app = {});
 
             // Routes Cartera
             // 'intereses(/)': 'getInteresesMain',
+
+            // Route ver extractos
+            'reporteverextractos(/)': 'getVerExtractosMain',
         },
 
         /**
@@ -158,7 +161,17 @@ app || (app = {});
 
             this.mainInteresView = new app.MainInteresView( );
         },
+        /**
+        * Main view extractos
+        */
+        getVerExtractosMain: function () {
+            if ( this.mainVerExtractosView instanceof Backbone.View ){
+                this.mainVerExtractosView.stopListening();
+                this.mainVerExtractosView.undelegateEvents();
+            }
 
+            this.mainVerExtractosView = new app.MainVerExtractosView( );
+        },
     }) );
 
 })(jQuery, this, this.document);

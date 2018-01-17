@@ -11,21 +11,18 @@ class FelFactura extends Model
      *
      * @var string
      */
-    protected $table = 'fel_encabezadofactura';
-
-    public $timestamps = false;
+    protected $table = 'fel_factura';
 
     public $incrementing = false;
 
+    public $timestamps = false;
+
     public static function insertFelFactura( $factura ){
         $fecha = "$factura->factura1_fecha_elaboro $factura->factura1_hora_elaboro";
-        $baseimporte = $factura->factura1_bruto - $factura->factura1_descuento;
-        $totalfactura = $baseimporte + $factura->factura1_iva;
+        $totalfactura = $factura->baseimporte + $factura->factura1_iva;
 
         $felfactura = new FelFactura;
-        $felfactura->numero = $factura->factura1_numero;
-        $felfactura->sucursal = $factura->factura1_sucursal;
-        $felfactura->tokenempresa = 'b47c0281057e51e5868494fe16a06acdf9b74335';
+        $felfactura->tokenempresa = 'b47c0281057e51';
         $felfactura->idtablaorigen = $factura->factura1_numero;
         $felfactura->tipodocumento = '01';
         $felfactura->prefijo = $factura->factura1_prefijo;
@@ -34,10 +31,10 @@ class FelFactura extends Model
         $felfactura->ordencompra = '';
         $felfactura->moneda = 'COP';
         $felfactura->totalimportebruto = $factura->factura1_bruto;
-        $felfactura->totalbaseimponible = $baseimporte;
+        $felfactura->totalbaseimponible = $factura->baseimporte;
         $felfactura->totalfactura = $totalfactura;
         $felfactura->mediopago = '10';
-        $felfactura->descripcion = $factura->factura1_observaciones;
+        $felfactura->descripcion = substr($factura->factura1_observaciones, 0, 240);
         $felfactura->incoterm = '';
         $felfactura->consecutivofacturamodificada = 0;
         $felfactura->cufefacturamodificada = '';
@@ -48,16 +45,14 @@ class FelFactura extends Model
         $felfactura->segundonombre = $factura->tercero_nombre2;
         $felfactura->primerapellido = $factura->tercero_apellido1;
         $felfactura->segundoapellido = $factura->tercero_apellido2;
-
         if( $factura->tercero_tipodocumento == 'CC'){
             $felfactura->tipoidentificacion =  13;
         }else if( $factura->tercero_tipodocumento == 'NI'){
             $felfactura->tipoidentificacion =  31;
         }
-
         $felfactura->numeroidentificacion = $factura->tercero_nit;
         $felfactura->regimen = $factura->tercero_regimen == '1' ? 0 : 2;
-        $felfactura->email = $factura->tercero_email;
+        $felfactura->email = empty($factura->tercero_email) ? '' : $factura->tercero_email;
         $felfactura->pais = 'CO';
         $felfactura->departamento = $factura->municipio_nombre;
         $felfactura->ciudad = $factura->departamento_nombre;
@@ -68,6 +63,11 @@ class FelFactura extends Model
         $felfactura->cufe = '';
         $felfactura->estadoactual = '';
         $felfactura->fecharespuesta = $fecha;
+        $felfactura->tokenpassword = 'b47c0281057e51';
+        $felfactura->totaldescuentos = $factura->totaldescuentos;
         $felfactura->save();
+
+        $id = $felfactura->getConnection()->getPdo()->lastInsertId();
+        return $id;
     }
 }

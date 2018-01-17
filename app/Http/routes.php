@@ -40,7 +40,12 @@ Route::group(['middleware' => 'auth'], function(){
 	{
 		Route::resource('permisos', 'Admin\PermisoRolController', ['only' => ['index', 'update', 'destroy']]);
 	});
+	Route::group(['prefix' => 'terceros'], function()
+	{
+		Route::get('search', ['as' => 'terceros.search', 'uses' => 'Admin\TerceroController@search']);
+	});
 	Route::resource('roles', 'Admin\RolController', ['except' => ['destroy']]);
+	Route::resource('terceros', 'Admin\TerceroController', ['only' => ['index']]);
 	Route::resource('permisos', 'Admin\PermisoController', ['only' => ['index']]);
 
 	/*
@@ -48,9 +53,10 @@ Route::group(['middleware' => 'auth'], function(){
 	| Cartera Routes
 	|-------------------------
 	*/
-	Route::resource('intereses', 'Receivable\InteresController', ['only' => ['index', 'store']]);
-	Route::resource('sintereses', 'Receivable\SendInteresController', ['only' => ['index']]);
+	Route::resource('generarintereses', 'Receivable\GenerarInteresController', ['only' => ['index', 'store']]);
+	Route::resource('enviarintereses', 'Receivable\EnviarInteresController', ['only' => ['index', 'show']]);
 	Route::resource('rintereses', 'Report\ReporteInteresesGeneradosController', ['only' => ['index']]);
+
 	Route::resource('reporteedades', 'Report\ReporteEdadesController', ['only' => ['index']]);
 	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);
 	Route::resource('reporterecibos', 'Report\ReporteRecibosController', ['only' => ['index']]);

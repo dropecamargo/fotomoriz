@@ -181,8 +181,7 @@ class CarteraIntereses extends Command
                     switch ($type){
                         case 'pdf':
                             $pdf = App::make('dompdf.wrapper');
-                            $pdf->getDomPDF()->set_option("enable_php", true);
-                            $pdf->loadHTML( View::make('receivable.interests.reporte', compact('tercero', 'interes', 'empresa', 'title', 'type'))->render());
+                            $pdf->loadHTML( View::make('receivable.generarintereses.reporte', compact('tercero', 'interes', 'empresa', 'title', 'type'))->render());
                             $pdf->setPaper('letter', 'portrait')->setWarnings(false);
                             $carpeta = sprintf('%s_%s', $ano, $mes);
                             $name = sprintf('%s.pdf', $tercero->tercero_nit);

@@ -21,7 +21,8 @@ app || (app = {});
             'permisos(/)': 'getPermisosMain',
 
             // Routes Cartera
-            // 'intereses(/)': 'getInteresesMain',
+            'enviarintereses(/)': 'getEnviarInteresesMain',
+            'enviarintereses/:enviarintereses(/)': 'getEnviarInteresesShow',
         },
 
         /**
@@ -56,6 +57,7 @@ app || (app = {});
             // Initialize resources
             this.componentReporteView = new app.ComponentReporteView();
             this.componentGlobalView = new app.ComponentGlobalView();
+            this.componentSearchTerceroView = new app.ComponentSearchTerceroView();
       	},
 
         /**
@@ -149,14 +151,29 @@ app || (app = {});
         /**
         * main view permisos
         */
-        getInteresesMain: function () {
+        getEnviarInteresesMain: function () {
 
-            if ( this.mainInteresView instanceof Backbone.View ){
-                this.mainInteresView.stopListening();
-                this.mainInteresView.undelegateEvents();
+            if ( this.mainEnviarInteresView instanceof Backbone.View ){
+                this.mainEnviarInteresView.stopListening();
+                this.mainEnviarInteresView.undelegateEvents();
             }
 
-            this.mainInteresView = new app.MainInteresView( );
+            this.mainEnviarInteresView = new app.MainEnviarInteresView( );
+        },
+
+        /**
+        * show view show generar intereses
+        */
+        getEnviarInteresesShow: function ( generarintereses ) {
+            this.intereses1Model = new app.Intereses1Model();
+            this.intereses1Model.set( {'interes_codigo': generarintereses}, {'silent':true});
+
+            if ( this.showEnviarInteresView instanceof Backbone.View ){
+                this.showEnviarInteresView.stopListening();
+                this.showEnviarInteresView.undelegateEvents();
+            }
+
+            this.showEnviarInteresView = new app.ShowEnviarInteresView({ model: this.intereses1Model });
         },
 
     }) );

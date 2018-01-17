@@ -38,23 +38,23 @@
         </ul>
     </li>
 
-    <li class="treeview {{ in_array(Request::segment(1), ['intereses', 'sintereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+    <li class="treeview {{ in_array(Request::segment(1), ['generarintereses', 'enviarintereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-suitcase"></i> <span>Cartera</span><i class="fa fa-angle-left pull-right"></i>
         </a>
 
         <ul class="treeview-menu">
             {{-- Modulos cartera --}}
-            <li class="{{ in_array(Request::segment(1), ['intereses', 'sintereses']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['generarintereses', 'enviarintereses']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-wpforms"></i> Módulos <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
-                    <li class="{{ Request::segment(1) == 'intereses' ? 'active' : '' }}">
-                        <a href="{{ route('intereses.index') }}"><i class="fa fa-pie-chart"></i> Generar intereses</a>
+                    <li class="{{ Request::segment(1) == 'generarintereses' ? 'active' : '' }}">
+                        <a href="{{ route('generarintereses.index') }}"><i class="fa fa-pie-chart"></i> Generar intereses</a>
                     </li>
-                    <li class="{{ Request::segment(1) == 'sintereses' ? 'active' : '' }}">
-                        <a href="{{ route('sintereses.index') }}"><i class="fa fa-share-square"></i> Enviar intereses</a>
+                    <li class="{{ Request::segment(1) == 'enviarintereses' ? 'active' : '' }}">
+                        <a href="{{ route('enviarintereses.index') }}"><i class="fa fa-share-square"></i> Enviar intereses</a>
                     </li>
                 </ul>
             </li>

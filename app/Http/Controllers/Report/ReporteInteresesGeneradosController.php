@@ -72,7 +72,6 @@ class ReporteInteresesGeneradosController extends Controller
             switch ($type) {
                 case 'pdf':
                     $pdf = App::make('dompdf.wrapper');
-                    $pdf->getDomPDF()->set_option("enable_php", true);
                     $pdf->loadHTML(View::make('reports.receivable.reporteintereses.reporte', compact('intereses', 'empresa', 'title', 'type'))->render());
                     $pdf->setPaper('A4', 'portairt')->setWarnings(false);
                     return $pdf->stream(sprintf('%s_%s.pdf', 'intereses_generados', date('Y_m_d')));

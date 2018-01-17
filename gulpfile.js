@@ -31,6 +31,7 @@ elixir(function(mix) {
         paths.libs + 'font-awesome/css/font-awesome.min.css',
         paths.libs + 'datatables.net-bs/css/dataTables.bootstrap.css',
         paths.libs + 'datatables.net-buttons-bs/css/buttons.bootstrap.min.css',
+        paths.libs + 'datatables.net-select-dt/css/select.dataTables.css',
     ], 'public/css/vendor.min.css');
 });
 
@@ -60,6 +61,7 @@ elixir(function(mix) {
         paths.libs + 'jquery.inputmask/dist/jquery.inputmask.bundle.js',
         paths.libs + 'datatables.net-buttons/js/dataTables.buttons.js',
         paths.libs + 'datatables.net-buttons-bs/js/buttons.bootstrap.min.js',
+        paths.libs + 'datatables.net-select/js/dataTables.select.js',
         paths.libs + 'accounting.js/accounting.min.js',
         paths.libs + 'underscore/underscore.js',
         paths.libs + 'backbone/backbone.js',

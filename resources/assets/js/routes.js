@@ -23,6 +23,9 @@ app || (app = {});
             // Routes Cartera
             'enviarintereses(/)': 'getEnviarInteresesMain',
             'enviarintereses/:enviarintereses(/)': 'getEnviarInteresesShow',
+
+            'reporteverextractos(/)': 'getVerExtractosMain',
+            'reporteverextractos/:reporteverextractos(/)': 'getVerExtractosShow',
         },
 
         /**
@@ -175,7 +178,27 @@ app || (app = {});
 
             this.showEnviarInteresView = new app.ShowEnviarInteresView({ model: this.intereses1Model });
         },
+        /**
+        * Main view extractos
+        */
+        getVerExtractosMain: function () {
+            if ( this.mainVerExtractosView instanceof Backbone.View ){
+                this.mainVerExtractosView.stopListening();
+                this.mainVerExtractosView.undelegateEvents();
+            }
 
+            this.mainVerExtractosView = new app.MainVerExtractosView( );
+        },
+
+        getVerExtractosShow: function (reporteverextractos) {
+
+            if ( this.showVerExtractoView instanceof Backbone.View ){
+                this.showVerExtractoView.stopListening();
+                this.showVerExtractoView.undelegateEvents();
+            }
+
+            this.showVerExtractoView = new app.ShowVerExtractoView({ id: reporteverextractos });
+        },
     }) );
 
 })(jQuery, this, this.document);

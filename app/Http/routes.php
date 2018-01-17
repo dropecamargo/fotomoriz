@@ -61,6 +61,7 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::resource('reporteposfechados', 'Report\ReportePosFechadosController', ['only' => ['index']]);
 	Route::resource('reporterecibos', 'Report\ReporteRecibosController', ['only' => ['index']]);
 	Route::resource('reporteresumencobro', 'Report\ReporteResumenCobroController', ['only' => ['index']]);
+	Route::resource('reporteverextractos', 'Report\ReporteVerExtractoController', ['only' => ['index', 'show']]);
 
 	/*
 	|-------------------------

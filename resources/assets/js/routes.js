@@ -167,9 +167,9 @@ app || (app = {});
         /**
         * show view show generar intereses
         */
-        getEnviarInteresesShow: function ( generarintereses ) {
+        getEnviarInteresesShow: function ( interes ) {
             this.intereses1Model = new app.Intereses1Model();
-            this.intereses1Model.set( {'interes_codigo': generarintereses}, {'silent':true});
+            this.intereses1Model.set( {'id': interes}, {'silent':true});
 
             if ( this.showEnviarInteresView instanceof Backbone.View ){
                 this.showEnviarInteresView.stopListening();

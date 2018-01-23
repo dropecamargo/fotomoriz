@@ -152,6 +152,15 @@
         },
 
         /**
+        * Format COP currency
+        * @param { value }
+        *
+        */
+        currency: function( value ){
+            return accounting.formatMoney(value, '', 2, ".", ",");
+        },
+
+        /**
         * Redirect to an specific url or refresh the page
         * @param { string } the url to be redirect to
         *
@@ -175,7 +184,7 @@
                 window.Misc.redirect( url );
             }, 500);
         },
-        
+
     };
 
     window.Misc = new Misc();

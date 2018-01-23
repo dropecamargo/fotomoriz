@@ -13,7 +13,8 @@ app || (app = {});
 
       	el: 'body',
 		events: {
-            'click .sidebar-toggle': 'clickSidebar'
+            'click .sidebar-toggle': 'clickSidebar',
+            'hidden.bs.modal': 'multiModal'
 		},
 
         /**
@@ -31,7 +32,13 @@ app || (app = {});
 
 			// Create or update the cookie:
 			document.cookie = "sidebar_toggle=" + (this.$el.hasClass('sidebar-collapse') ? '' : 'sidebar-collapse') + "; path=/; expires=" + expiration.toUTCString();
-		}
+		},
+
+        multiModal: function(){
+            if( $('.modal.in').length > 0){
+                $('body').addClass('modal-open');
+            }
+        }
     });
 
 

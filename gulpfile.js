@@ -33,13 +33,9 @@ elixir(function(mix) {
         paths.libs + 'datatables.net-buttons-bs/css/buttons.bootstrap.min.css',
         paths.libs + 'datatables.net-select-dt/css/select.dataTables.css',
     ], 'public/css/vendor.min.css');
-});
 
-elixir(function(mix) {
     mix.sass('app.scss', 'public/css/app.min.css');
-});
 
-elixir(function(mix) {
     mix.scripts([
         paths.adminlte + 'plugins/jQuery/jquery-2.2.3.min.js',
         paths.libs + 'jquery-ui/ui/core.js',
@@ -78,11 +74,12 @@ elixir(function(mix) {
         'routes.js',
         'init.js'
     ], 'public/js/app.min.js')
-});
 
-elixir(function(mix) {
-    mix.copy(paths.adminlte + 'bootstrap/fonts/', 'public/fonts');
-    mix.copy(paths.adminlte + 'plugins/iCheck/minimal/red**.png', 'public/css');
-    mix.copy(paths.libs + 'font-awesome/fonts/', 'public/fonts');
-    mix.copy(paths.libs + 'jquery-ui/themes/base/images/', 'public/css/images/');
+    // Cache busting
+    mix.version(['css/app.min.css', 'css/vendor.min.css', 'js/app.min.js', 'js/vendor.min.js']);
+
+    mix.copy(paths.adminlte + 'bootstrap/fonts/', 'public/build/fonts');
+    mix.copy(paths.adminlte + 'plugins/iCheck/minimal/red**.png', 'public/build/css');
+    mix.copy(paths.libs + 'font-awesome/fonts/', 'public/build/fonts');
+    mix.copy(paths.libs + 'jquery-ui/themes/base/images/', 'public/build/css/images/');
 });

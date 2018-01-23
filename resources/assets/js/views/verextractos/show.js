@@ -17,7 +17,6 @@ app || (app = {});
         * Constructor Method
         */
         initialize : function(opts) {
-            console.log(opts);
             this.$extractosSearchTable = this.$('#extractos-files-search-table');
 
             this.$extractosSearchTable.DataTable({

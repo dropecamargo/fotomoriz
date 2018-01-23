@@ -21,6 +21,7 @@ class TerceroController extends Controller
         if ($request->ajax()) {
             $query = Tercero::query();
             $query->select('tercero_nit', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_direccion', 'tercero_municipios', DB::raw("(CASE WHEN tercero_persona = 'N' THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 || (CASE WHEN (tercero_razon_social IS NOT NULL AND tercero_razon_social != '') THEN (' - ' || tercero_razon_social) ELSE '' END) ) ELSE tercero_razon_social END) AS tercero_nombre"));
+            $query->whereRaw("tercero_tipodocumento <> 'XX'");
 
             // Persistent data filter
             if($request->has('persistent') && $request->persistent) {
@@ -128,6 +129,7 @@ class TerceroController extends Controller
             $query = Tercero::query();
             $query->select('tercero_nit', DB::raw("(CASE WHEN tercero_persona = 'N' THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 || (CASE WHEN (tercero_razon_social IS NOT NULL AND tercero_razon_social != '') THEN (' - ' || tercero_razon_social) ELSE '' END) ) ELSE tercero_razon_social END) AS tercero_nombre"));
             $query->where('tercero_nit', $request->tercero_nit);
+            $query->whereRaw("tercero_tipodocumento <> 'XX'");
             $tercero = $query->first();
 
             if($tercero instanceof Tercero) {

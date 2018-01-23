@@ -15,9 +15,9 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
         {{-- Vendor css --}}
-        <link href="{{ asset("/css/vendor.min.css") }}" rel="stylesheet" type="text/css" />
+        <link href="{{ elixir("css/vendor.min.css") }}" rel="stylesheet" type="text/css" />
         {{-- App css --}}
-        <link href="{{ asset("/css/app.min.css") }}" rel="stylesheet" type="text/css" />
+        <link href="{{ elixir("css/app.min.css") }}" rel="stylesheet" type="text/css" />
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -47,8 +47,8 @@
 
         <script>window.document.url = "{{ URL::to('/') }}";</script>
         {{-- Vendor KOI App --}}
-        <script src="{{ asset ("/js/vendor.min.js") }}" type="text/javascript"></script>
+        <script src="{{ elixir("js/vendor.min.js") }}" type="text/javascript"></script>
         {{-- KOI App --}}
-        <script src="{{ asset ("/js/app.min.js") }}" type="text/javascript"></script>
+        <script src="{{ elixir("js/app.min.js") }}" type="text/javascript"></script>
     </body>
 </html>

@@ -35,8 +35,8 @@ class GenerarInteresController extends Controller
 
              if( count($request->all()) > 6 ){
                  return redirect('/generarintereses')
-                 ->withErrors('Se ha producido un error, por favor verifique la informacion.')
-                 ->withInput();
+                     ->withErrors('Se ha producido un error, por favor verifique la informacion.')
+                     ->withInput();
              }
 
              // Llamando funcion de Symfony parameters command cartera:interes Tasa, Dias_gracia, Fecha, Año, Mes, Observacion, usuario elaboro

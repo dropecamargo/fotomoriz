@@ -52,8 +52,6 @@ class CarteraIntereses extends Command
             $this->intereses[$key] = $value;
         }
 
-        Log::info($this->intereses);
-
         DB::beginTransaction();
         try {
             Log::info('Generando rutina...');
@@ -76,19 +74,23 @@ class CarteraIntereses extends Command
             if( !$documentos Instanceof Documentos ){
                 throw new \Exception('No es posible recuperar el documento.');
             }
+            Log::info($documentos);
 
             $empresa = Empresa::getEmpresa();
             if( !$empresa Instanceof Empresa ){
                 throw new \Exception('No es posible recuperar empresa.');
             }
+            Log::info($empresa);
 
             $terceros = Tercero::getTercerosCierrecartera($ano, $mes);
+            Log::info(count($terceros));
             foreach ($terceros as $tercero) {
                 // Recuperar sucursal 1 -> Bogota -> sucursal_inter
                 $sucursal = Sucursal::where('sucursal_codigo', '1')->first();
                 if( !$sucursal Instanceof Sucursal ){
                     throw new \Exception('No es posible recuperar sucursal.');
                 }
+                Log::info($sucursal);
 
                 // Recuperar o aumentar consecutive sucursal
                 $numero = $sucursal->sucursal_inter;
@@ -99,6 +101,7 @@ class CarteraIntereses extends Command
                 if( count($cierrecartera) <= 0 ){
                     continue;
                 }
+                Log::info($cierrecartera);
 
                 // array detalle
                 $dias = 0;

@@ -104,6 +104,7 @@ class CarteraIntereses extends Command
                 foreach ($cierrecartera as $cierre) {
                     // Validar existencia de tercero, doc_origen, num_origen, suc_origen, cuo_origen
                     $validar = Intereses1::validarExiste( $tercero->tercero_nit, $cierre->docu, $cierre->numero, $cierre->sucursal, $cierre->cuota );
+                    Log::info($validar);
                     if( $validar Instanceof Intereses1 ){
                         $dias = $validar->intereses2_dias_a_cobrar;
                     }
@@ -179,8 +180,6 @@ class CarteraIntereses extends Command
         $newinteres->intereses1_iva_porcentaje = $empresa->empresa_iva;
         $newinteres->save();
 
-        Log::info('1');
-
         $data['interes'] = $newinteres;
 
         // Recorrer el detalle
@@ -192,10 +191,8 @@ class CarteraIntereses extends Command
             $v_interes = ( ($cierre->valor * $formula) / 30) * $cierre->acobrar;
 
             // Traer factura1_iva de la tabla factura1 para calculo de iva ((intereses2_saldo-factura1_iva*(intereses1_tasa/100))/30)*intereses2_dias_a_cobrar
-            Log::info($cierre->numero);
             $factura = Factura1::select('factura1_iva')->where('factura1_numero', $cierre->numero)->where('factura1_sucursal', $cierre->sucursal)->first();
             $valor_factu += ((($cierre->valor-$factura->factura1_iva)*$formula)/30)*$cierre->acobrar;
-            Log::info($factura);
             $subtotal += $cierre->valor;
             $base += $v_interes;
 
@@ -214,7 +211,6 @@ class CarteraIntereses extends Command
             $newinteres2->intereses2_dias_a_cobrar = $cierre->acobrar;
             $newinteres2->intereses2_dias_mora = $cierre->dias;
             $newinteres2->save();
-            Log::error('2');
 
             $newinteres2->documento = $cierre->documento;
             $data['detalle'][] = $newinteres2;
@@ -227,7 +223,6 @@ class CarteraIntereses extends Command
         $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
         $rinterses1->intereses1_iva_valor = $v_iva;
         $rinterses1->save();
-        Log::info('3');
 
         $foot = new \stdClass();
         $foot->valor_factu = $valor_factu;
@@ -240,7 +235,6 @@ class CarteraIntereses extends Command
         // Actualizar consecutivo
         $sucursal->sucursal_inter = $numero;
         $sucursal->save();
-        Log::info('4');
 
         return $data;
     }

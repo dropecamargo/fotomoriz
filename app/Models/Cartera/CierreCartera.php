@@ -78,7 +78,7 @@ class CierreCartera extends Model
     {
         // Cierrecartera
         $query = CierreCartera::query();
-        $query->select('cierrecartera_numero as numero', 'cierrecartera_documentos as docu', 'cierrecartera_sucursal as sucursal', 'cierrecartera_fecha as expedicion', 'cierrecartera_cuota as cuota', 'cierrecartera_vence as vencimiento', 'cierrecartera_saldo as valor', 'documentos_nombre as documento', DB::raw("('$fechacierre' - cierrecartera_vence) as dias"), 'documentos_nombre as documento');
+        $query->select('cierrecartera_numero as numero', 'cierrecartera_documentos as docu', 'cierrecartera_sucursal as sucursal', 'cierrecartera_fecha as expedicion', 'cierrecartera_cuota as cuota', 'cierrecartera_vence as vencimiento', 'cierrecartera_saldo as valor', 'documentos_nombre as documento', DB::raw("('$fechacierre' - cierrecartera_vence) as dias"));
         $query->join('documentos', 'cierrecartera_documentos', '=', 'documentos_codigo');
         $query->whereRaw('documentos_codigo = cierrecartera_documentos');
         $query->whereRaw('cierrecartera_saldo > 0');

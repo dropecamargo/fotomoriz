@@ -183,17 +183,22 @@ class CarteraIntereses extends Command
 
         // Recorrer el detalle
         $i = 1;
-        $valor_factu = $base = $subtotal = 0;
+        $valor_factu = $base = $subtotal = $factura = 0;
         $formula = $this->intereses['intereses1_tasa'] / 100;
         foreach( $detalle as $cierre ){
             // Calcular intereses formula (valor * tasa ) / 30 -> dias * dias_a_cobrar
             $v_interes = ( ($cierre->valor * $formula) / 30) * $cierre->acobrar;
 
-            // // Traer factura1_iva de la tabla factura1 para calculo de iva ((intereses2_saldo-factura1_iva*(intereses1_tasa/100))/30)*intereses2_dias_a_cobrar
-            // $factura = Factura1::select('factura1_iva')->where('factura1_numero', $cierre->numero)->where('factura1_sucursal', $cierre->sucursal)->first();
-            // $valor_factu += ((($cierre->valor-$factura->factura1_iva)*$formula)/30)*$cierre->acobrar;
-            // $subtotal += $cierre->valor;
-            // $base += $v_interes;
+            // Traer factura1_iva de la tabla factura1 para calculo de iva ((intereses2_saldo-factura1_iva*(intereses1_tasa/100))/30)*intereses2_dias_a_cobrar
+            if( $cierre->docu == 'FACTU'){
+                $factura = Factura1::select('factura1_iva')->where('factura1_numero', $cierre->numero)->where('factura1_sucursal', $cierre->sucursal)->first();
+                $valor_factu += ((($cierre->valor-$factura->factura1_iva)*$formula)/30)*$cierre->acobrar;
+            }else{
+                $valor_factu = $v_interes;
+            }
+            
+            $subtotal += $cierre->valor;
+            $base += $v_interes;
 
             $newinteres2 = new Intereses2;
             $newinteres2->intereses2_numero = $newinteres->intereses1_numero;
@@ -215,21 +220,21 @@ class CarteraIntereses extends Command
             $data['detalle'][] = $newinteres2;
         }
 
-        // $v_iva = $valor_factu * ( $empresa->empresa_iva / 100 );
-        // $total = $v_iva + $base;
-        //
-        // // Recuperar interes1, motivo: la version de pgsql no reotnra el modelo
-        // $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
-        // $rinterses1->intereses1_iva_valor = $v_iva;
-        // $rinterses1->save();
+        $v_iva = $valor_factu * ( $empresa->empresa_iva / 100 );
+        $total = $v_iva + $base;
 
-        // $foot = new \stdClass();
-        // $foot->valor_factu = $valor_factu;
-        // $foot->v_iva = $v_iva;
-        // $foot->subtotal = $subtotal;
-        // $foot->base = $base;
-        // $foot->total = $total;
-        // $data['footer'] = $foot;
+        // Recuperar interes1, motivo: la version de pgsql no reotnra el modelo
+        $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
+        $rinterses1->intereses1_iva_valor = $v_iva;
+        $rinterses1->save();
+
+        $foot = new \stdClass();
+        $foot->valor_factu = $valor_factu;
+        $foot->v_iva = $v_iva;
+        $foot->subtotal = $subtotal;
+        $foot->base = $base;
+        $foot->total = $total;
+        $data['footer'] = $foot;
 
         // Actualizar consecutivo
         $sucursal->sucursal_inter = $numero;

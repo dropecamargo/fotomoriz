@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Receivable;
-// define('ARTISAN_BINARY', base_path().'/artisan');
+define('ARTISAN_BINARY',base_path().'/artisan');
 
 use Illuminate\Http\Request;
 

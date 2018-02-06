@@ -196,7 +196,7 @@ class CarteraIntereses extends Command
             }else{
                 $valor_factu = $v_interes;
             }
-            
+
             $subtotal += $cierre->valor;
             $base += $v_interes;
 

@@ -189,11 +189,11 @@ class CarteraIntereses extends Command
             // Calcular intereses formula (valor * tasa ) / 30 -> dias * dias_a_cobrar
             $v_interes = ( ($cierre->valor * $formula) / 30) * $cierre->acobrar;
 
-            // Traer factura1_iva de la tabla factura1 para calculo de iva ((intereses2_saldo-factura1_iva*(intereses1_tasa/100))/30)*intereses2_dias_a_cobrar
-            $factura = Factura1::select('factura1_iva')->where('factura1_numero', $cierre->numero)->where('factura1_sucursal', $cierre->sucursal)->first();
-            $valor_factu += ((($cierre->valor-$factura->factura1_iva)*$formula)/30)*$cierre->acobrar;
-            $subtotal += $cierre->valor;
-            $base += $v_interes;
+            // // Traer factura1_iva de la tabla factura1 para calculo de iva ((intereses2_saldo-factura1_iva*(intereses1_tasa/100))/30)*intereses2_dias_a_cobrar
+            // $factura = Factura1::select('factura1_iva')->where('factura1_numero', $cierre->numero)->where('factura1_sucursal', $cierre->sucursal)->first();
+            // $valor_factu += ((($cierre->valor-$factura->factura1_iva)*$formula)/30)*$cierre->acobrar;
+            // $subtotal += $cierre->valor;
+            // $base += $v_interes;
 
             $newinteres2 = new Intereses2;
             $newinteres2->intereses2_numero = $newinteres->intereses1_numero;

@@ -74,23 +74,19 @@ class CarteraIntereses extends Command
             if( !$documentos Instanceof Documentos ){
                 throw new \Exception('No es posible recuperar el documento.');
             }
-            Log::info('documentos');
 
             $empresa = Empresa::getEmpresa();
             if( !$empresa Instanceof Empresa ){
                 throw new \Exception('No es posible recuperar empresa.');
             }
-            Log::info('empresa');
 
             $terceros = Tercero::getTercerosCierrecartera($ano, $mes);
-            Log::info(count($terceros));
             foreach ($terceros as $tercero) {
                 // Recuperar sucursal 1 -> Bogota -> sucursal_inter
                 $sucursal = Sucursal::where('sucursal_codigo', '1')->first();
                 if( !$sucursal Instanceof Sucursal ){
                     throw new \Exception('No es posible recuperar sucursal.');
                 }
-                Log::info('sucursal');
 
                 // Recuperar o aumentar consecutive sucursal
                 $numero = $sucursal->sucursal_inter;
@@ -101,7 +97,6 @@ class CarteraIntereses extends Command
                 if( count($cierrecartera) <= 0 ){
                     continue;
                 }
-                Log::info('cierrecartera');
 
                 // array detalle
                 $dias = 0;
@@ -112,7 +107,6 @@ class CarteraIntereses extends Command
                     if( $validar Instanceof Intereses1 ){
                         $dias = $validar->intereses2_dias_a_cobrar;
                     }
-                    Log::info('validar');
 
                     // Calcular dias a cobrar (diascobrados - diasmora)
                     $acobrar = abs($cierre->dias) - abs($dias);
@@ -129,7 +123,6 @@ class CarteraIntereses extends Command
                 if( !empty( $detalle ) ){
                     // El objecto contiene interes(preparado para guardar) y el detalle del interes
                     $interes = $this->agregarInteres( $documentos, $numero, $sucursal, $fechacierre, $tercero, $detalle, $empresa );
-                    Log::info('interes');
 
                     // Preparar datos para pdfs
                     $title = sprintf('%s %s %s %s', 'INTERES DE CLIENTE A', strtoupper(config('koi.meses')[$mes]), 'DEL', $ano);
@@ -186,6 +179,8 @@ class CarteraIntereses extends Command
         $newinteres->intereses1_iva_porcentaje = $empresa->empresa_iva;
         $newinteres->save();
 
+        Log::info($newinteres);
+
         $data['interes'] = $newinteres;
 
         // Recorrer el detalle
@@ -217,6 +212,7 @@ class CarteraIntereses extends Command
             $newinteres2->intereses2_dias_a_cobrar = $cierre->acobrar;
             $newinteres2->intereses2_dias_mora = $cierre->dias;
             $newinteres2->save();
+            Log::error($newinteres2);
 
             $newinteres2->documento = $cierre->documento;
             $data['detalle'][] = $newinteres2;
@@ -229,6 +225,7 @@ class CarteraIntereses extends Command
         $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
         $rinterses1->intereses1_iva_valor = $v_iva;
         $rinterses1->save();
+        Log::info($rinterses1);
 
         $foot = new \stdClass();
         $foot->valor_factu = $valor_factu;
@@ -241,6 +238,7 @@ class CarteraIntereses extends Command
         // Actualizar consecutivo
         $sucursal->sucursal_inter = $numero;
         $sucursal->save();
+        Log::info($sucursal);
 
         return $data;
     }

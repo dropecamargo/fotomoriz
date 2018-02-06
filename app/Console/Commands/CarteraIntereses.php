@@ -104,7 +104,6 @@ class CarteraIntereses extends Command
                 foreach ($cierrecartera as $cierre) {
                     // Validar existencia de tercero, doc_origen, num_origen, suc_origen, cuo_origen
                     $validar = Intereses1::validarExiste( $tercero->tercero_nit, $cierre->docu, $cierre->numero, $cierre->sucursal, $cierre->cuota );
-                    Log::info($validar);
                     if( $validar Instanceof Intereses1 ){
                         $dias = $validar->intereses2_dias_a_cobrar;
                     }
@@ -123,24 +122,25 @@ class CarteraIntereses extends Command
                 // Validar detalle no este vacio
                 if( !empty( $detalle ) ){
                     // El objecto contiene interes(preparado para guardar) y el detalle del interes
-                    $interes = $this->agregarInteres( $documentos, $numero, $sucursal, $fechacierre, $tercero, $detalle, $empresa );
+                    Log::info($detalle);
+                    // $interes = $this->agregarInteres( $documentos, $numero, $sucursal, $fechacierre, $tercero, $detalle, $empresa );
 
-                    // Preparar datos para pdfs
-                    $title = sprintf('%s %s %s %s', 'INTERES DE CLIENTE A', strtoupper(config('koi.meses')[$mes]), 'DEL', $ano);
-                    $type = 'pdf';
-
-                    switch ($type){
-                        case 'pdf':
-                            $pdf = App::make('dompdf.wrapper');
-                            $pdf->loadHTML( View::make('receivable.generarintereses.report.reporte', compact('tercero', 'interes', 'empresa', 'title', 'type'))->render());
-                            $pdf->setPaper('letter', 'portrait')->setWarnings(false);
-                            $carpeta = "{$ano}_{$mes}";
-                            $name = "{$tercero->tercero_nit}.pdf";
-                            $salida = $pdf->output();
-
-                            Storage::put("DOC_CARTERA/INTERESES/$carpeta/$name", $salida);
-                            break;
-                    }
+                    // // Preparar datos para pdfs
+                    // $title = sprintf('%s %s %s %s', 'INTERES DE CLIENTE A', strtoupper(config('koi.meses')[$mes]), 'DEL', $ano);
+                    // $type = 'pdf';
+                    //
+                    // switch ($type){
+                    //     case 'pdf':
+                    //         $pdf = App::make('dompdf.wrapper');
+                    //         $pdf->loadHTML( View::make('receivable.generarintereses.report.reporte', compact('tercero', 'interes', 'empresa', 'title', 'type'))->render());
+                    //         $pdf->setPaper('letter', 'portrait')->setWarnings(false);
+                    //         $carpeta = "{$ano}_{$mes}";
+                    //         $name = "{$tercero->tercero_nit}.pdf";
+                    //         $salida = $pdf->output();
+                    //
+                    //         Storage::put("DOC_CARTERA/INTERESES/$carpeta/$name", $salida);
+                    //         break;
+                    // }
                 }
             }
 

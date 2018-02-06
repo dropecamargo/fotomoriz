@@ -122,8 +122,7 @@ class CarteraIntereses extends Command
                 // Validar detalle no este vacio
                 if( !empty( $detalle ) ){
                     // El objecto contiene interes(preparado para guardar) y el detalle del interes
-                    Log::info($detalle);
-                    // $interes = $this->agregarInteres( $documentos, $numero, $sucursal, $fechacierre, $tercero, $detalle, $empresa );
+                    $interes = $this->agregarInteres( $documentos, $numero, $sucursal, $fechacierre, $tercero, $detalle, $empresa );
 
                     // // Preparar datos para pdfs
                     // $title = sprintf('%s %s %s %s', 'INTERES DE CLIENTE A', strtoupper(config('koi.meses')[$mes]), 'DEL', $ano);
@@ -220,9 +219,9 @@ class CarteraIntereses extends Command
         $total = $v_iva + $base;
 
         // Recuperar interes1, motivo: la version de pgsql no reotnra el modelo
-        $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
-        $rinterses1->intereses1_iva_valor = $v_iva;
-        $rinterses1->save();
+        // $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
+        // $rinterses1->intereses1_iva_valor = $v_iva;
+        // $rinterses1->save();
 
         $foot = new \stdClass();
         $foot->valor_factu = $valor_factu;

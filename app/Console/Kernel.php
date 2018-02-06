@@ -15,8 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\CarteraExtractos::class,
-        Commands\CarteraIntereses::class,
-        Commands\CarteraFel::class
+        Commands\CarteraIntereses::class
+        // Commands\CarteraFel::class
     ];
 
     /**

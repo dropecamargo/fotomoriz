@@ -45,6 +45,8 @@ class CarteraIntereses extends Command
             ini_set('memory_limit', '-1');
         }
 
+        Log::info($this->argument());
+
         // Preparar datos trim(argumen) para eliminar el { inicial y el } final
         $array = trim($this->argument('intereses'), '{}');
         foreach(explode(",", $array) as $item) {

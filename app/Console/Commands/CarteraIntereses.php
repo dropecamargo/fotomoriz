@@ -187,6 +187,7 @@ class CarteraIntereses extends Command
         $i = 1;
         $valor_factu = $base = $subtotal = 0;
         $formula = $this->intereses['intereses1_tasa'] / 100;
+        Log::error($detalle);
         foreach( $detalle as $cierre ){
             // Calcular intereses formula (valor * tasa ) / 30 -> dias * dias_a_cobrar
             $v_interes = ( ($cierre->valor * $formula) / 30) * $cierre->acobrar;

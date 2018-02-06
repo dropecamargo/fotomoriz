@@ -143,8 +143,7 @@ class CarteraIntereses extends Command
                 }
             }
 
-            // DB::commit();
-            DB::rollback();
+            DB::commit();
             Log::info('Se completo la rutina con exito.');
         }catch(\Exception $e){
             DB::rollback();

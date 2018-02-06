@@ -14,9 +14,7 @@
 		<tbody>
 			@foreach( $intereses as $interes )
 				{{--*/
-					$total = $iva = $base = 0;
-					$parseiva = $empresa->empresa_iva / 100;
-					$iva = $parseiva * $interes->intereses;
+					$iva = $interes->valoriva * ($empresa->empresa_iva/100);
 					$total = $iva + $interes->intereses;
 				/*--}}
 				<tr class="{{ $interes->intereses1_anulado ? 'line-red' : '' }}">

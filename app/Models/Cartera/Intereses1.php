@@ -4,7 +4,7 @@ namespace App\Models\Cartera;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\BaseModel;
-use DB;
+use DB, Validator;
 
 class Intereses1 extends BaseModel
 {
@@ -24,7 +24,7 @@ class Intereses1 extends BaseModel
      *
      * @var array
      */
-    protected $fillable = ['intereses1_tasa', 'intereses1_dias_gracia', 'intereses1_fecha', 'intereses1_observaciones', 'intereses1_fecha_corte'];
+    protected $fillable = ['intereses1_tasa', 'intereses1_dias_gracia', 'intereses1_fecha', 'intereses1_observaciones', 'intereses1_fecha_corte', 'intereses1_iva_porcentaje', 'intereses1_iva_valor'];
 
     /**
      * The attributes that are mass nullable fields to null.
@@ -32,6 +32,22 @@ class Intereses1 extends BaseModel
      * @var array
      */
     protected $nullable = ['intereses1_fecha_corte', 'intereses1_usuario_anulo', 'intereses1_fecha_anulo', 'intereses1_hora_anulo', 'intereses1_fecha_cierre'];
+
+    public function isValid($data)
+    {
+        $rules = [
+            'intereses1_tasa' => 'required|max:4',
+            'intereses1_dias_gracia' => 'required|numeric',
+            'intereses1_fecha' => 'required|date_format:Y-m-d'
+        ];
+
+        $validator = Validator::make($data, $rules);
+        if ($validator->passes()) {
+            return true;
+        }
+        $this->errors = $validator->errors();
+        return false;
+    }
 
     public static function validarExiste( $tercero, $doc, $num, $suc, $cuo ){
         $query = Intereses1::query();

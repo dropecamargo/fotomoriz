@@ -13,7 +13,7 @@
 
     <section class="content">
         <div id="roles-main">
-            <div class="box box-success">
+            <div class="box box-danger">
                 <div class="box-body">
                     <div class="table-responsive">
                         <table id="roles-search-table" class="table table-bordered table-striped" cellspacing="0" width="100%">

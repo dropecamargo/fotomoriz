@@ -38,21 +38,27 @@ class ReporteInteresesGeneradosController extends Controller
             $fechaaux = $anoaux."-".$mesaux."-01";
             $fechacierre = date("Y-m-d", strtotime("$fechaaux -1 day"));
 
+            // Recuperar empresa
             $empresa = Empresa::getEmpresa();
 
+            // Recuperar intereses1 
             $query = Intereses1::query();
             $query->select('intereses1_numero', 'intereses1_sucursal', 'intereses1_anulado', 'intereses1_tercero', DB::raw("SUM(intereses2_interes) as intereses"), DB::raw("(CASE WHEN tercero_persona = 'N'
                         THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 ||
                                 (CASE WHEN (tercero_razon_social IS NOT NULL AND tercero_razon_social != '') THEN (' - ' || tercero_razon_social) ELSE '' END)
                             )
                         ELSE tercero_razon_social END)
-                    AS tercero_nombre"));
+                    AS tercero_nombre"), DB::raw("SUM( (((intereses2_saldo-factura1_iva)*intereses1_tasa / 100) / 30) * intereses2_dias_a_cobrar) as valoriva"));
             $query->where('intereses1_fecha_cierre', $fechacierre);
             $query->where('intereses1_sucursal', '=', '1');
             $query->join('tercero', 'intereses1_tercero', '=', 'tercero_nit');
             $query->join('intereses2', function ($join){
                 $join->on('intereses1_numero', '=', 'intereses2_numero');
                 $join->on('intereses1_sucursal', '=', 'intereses2_sucursal');
+            });
+            $query->join('factura1', function ($join){
+                $join->on('intereses2_num_origen', '=', 'factura1_numero');
+                $join->on('intereses2_suc_origen', '=', 'factura1_sucursal');
             });
             $query->groupBy('intereses1_numero', 'intereses1_sucursal', 'intereses1_tercero', 'tercero_persona', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_razon_social', 'intereses1_anulado');
             $query->orderBy('intereses1_numero');

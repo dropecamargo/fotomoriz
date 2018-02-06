@@ -22,6 +22,9 @@ app || (app = {});
         initialize : function() {
             this.detalleInteresList = new app.Intereses2List();
 
+            // Recuperar empresa IVA
+            this.empresaiva = this.$('#empresa_iva').val();
+
             // Reference views
             this.referenceViews();
 
@@ -82,7 +85,8 @@ app || (app = {});
                 collection: this.detalleInteresList,
                 parameters: {
                     dataFilter: {
-                        interes: this.model.get('id')
+                        interes: this.model.get('id'),
+                        empresa_iva: parseInt(this.empresaiva)
                     }
                }
             });

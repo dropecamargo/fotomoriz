@@ -68,6 +68,10 @@ app || (app = {});
         totalize: function () {
             var data = this.collection.totalize();
 
+            // Calcular iva y total
+            var iva = data.iva * (this.parameters.dataFilter.empresa_iva/100);
+            var total = iva + data.intereses;
+
             if(this.$subtotal.length) {
                 this.$subtotal.html( window.Misc.currency( data.subtotal ) );
             }
@@ -77,11 +81,11 @@ app || (app = {});
             }
 
             if(this.$totaliva.length) {
-                this.$totaliva.html( window.Misc.currency( data.totaliva ) );
+                this.$totaliva.html( window.Misc.currency( iva ) );
             }
 
             if(this.$total.length) {
-                this.$total.html( window.Misc.currency( data.total ) );
+                this.$total.html( window.Misc.currency( total ) );
             }
         },
 

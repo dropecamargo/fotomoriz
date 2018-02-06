@@ -23,7 +23,7 @@
         </section>
 
         <section class="content">
-            <div class="box box-success" id="spinner-main">
+            <div class="box box-danger" id="spinner-main">
                 <div class="box-body">
                     <form method="POST" accept-charset="UTF-8" id="form-roles" data-toggle="validator">
                         <div class="row">

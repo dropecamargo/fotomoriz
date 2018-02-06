@@ -65,7 +65,7 @@ app || (app = {});
                     { data: 'intereses1_enviado', name: 'intereses1_enviado' }
                 ],
                 order: [
-                	[ 6, 'desc' ]
+                	[ 1, 'desc', 6, 'desc' ]
                 ],
                 columnDefs: [
                     {
@@ -103,6 +103,13 @@ app || (app = {});
                         }
                     }
                 ],
+                fnRowCallback: function( row, data ) {
+                    if ( !data.intereses1_anulado ) {
+                        $(row).css( {"color":"#00a65a"} );
+                    }else {
+                        $(row).css( {"color":"red"} );
+                    }
+                }
             });
 
             this.enviarinteresesSearchTable.on( 'draw', function () {

@@ -159,8 +159,11 @@
 	<body>
 		<script type="text/php">
 		    if (isset($pdf)) {
+				$font = Font_Metrics::get_font("DejaVu Sans", "normal");
+				$text = html_entity_decode("P&aacute;gina {PAGE_NUM} de {PAGE_COUNT}", ENT_QUOTES, "UTF-8");
+
 				// Configurar (positionX, positionY, textp, font-family, font-size, font-color, word_space, char_space, angle)
-				$pdf->page_text(279, $pdf->get_height() - 15, utf8_decode("Pagina {PAGE_NUM} de {PAGE_COUNT}"), 'DejaVu Sans', 7, array(0,0,0), 0.0, 0.0, 0.0);
+				$pdf->page_text(279, $pdf->get_height() - 15, $text, $font, 7, array(0,0,0), 0.0, 0.0, 0.0);
 		    }
 		</script>
 

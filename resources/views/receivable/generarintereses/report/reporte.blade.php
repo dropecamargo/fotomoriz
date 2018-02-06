@@ -1,4 +1,4 @@
-@extends('receivable.generarintereses.layout', ['type' => 'pdf', 'title' => $title])
+@extends('receivable.generarintereses.report.layout', ['type' => 'pdf', 'title' => $title])
 
 @section('content')
 	<table class="tbtitle">
@@ -41,9 +41,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			{{--*/ $subtotal = $iva = $base = $parseIva = $total = $cobrados = 0; /*--}}
+			{{--*/ $cobrados = 0; /*--}}
 			@foreach( $interes['detalle'] as $item )
-			{{--*/ $cobrados = abs($item->intereses2_dias_a_cobrar) - abs($item->intereses2_dias_mora); /*--}}
+				{{--*/ $cobrados = abs($item->intereses2_dias_a_cobrar) - abs($item->intereses2_dias_mora); /*--}}
 				<tr>
 					<td class="left size-7">{{ $item->documento }}</td>
 					<td class="right size-7">{{ $item->intereses2_num_origen }}</td>
@@ -56,33 +56,28 @@
 					<td class="right size-7">{{ number_format($item->intereses2_saldo, 2, ',', '.') }}</td>
 					<td class="right size-7">{{ number_format($item->intereses2_interes, 2, ',', '.') }}</td>
 				</tr>
-				{{--*/ $subtotal += $item->intereses2_saldo; /*--}}
-				{{--*/ $base += $item->intereses2_interes; /*--}}
 			@endforeach
 		</tbody>
 		<tfoot>
-			{{--*/ $parseIva = $empresa->empresa_iva / 100; /*--}}
-			{{--*/ $iva = $base * $parseIva; /*--}}
-			{{--*/ $total = $iva + $base; /*--}}
 			<tr>
 				<td class="bold right" colspan="8">SUBTOTAL</td>
-				<td class="bold right">{{ number_format($subtotal, 2, ',', '.')}}</td>
-				<td class="bold right">{{ number_format($base, 2, ',', '.')}}</td>
+				<td class="bold right">{{ number_format($interes['footer']->subtotal, 2, ',', '.')}}</td>
+				<td class="bold right">{{ number_format($interes['footer']->base, 2, ',', '.')}}</td>
 			</tr>
 			<tr>
 				<td class="bold right" colspan="8">IVA</td>
-				<td class="bold right"><small>(Base Iva {{ number_format($base, 2, ',', '.') }})</small></td>
-				<td class="bold right">{{ number_format($iva, 2, ',', '.')}}</td>
+				<td class="bold right"><small>(Base Iva {{ number_format($interes['footer']->valor_factu, 2, ',', '.') }})</small></td>
+				<td class="bold right">{{ number_format($interes['footer']->v_iva, 2, ',', '.')}}</td>
 			</tr>
 			<tr>
 				<td class="bold right" colspan="8">TOTAL</td>
-				<td colspan="2" class="bold right">{{ number_format($total, 2, ',', '.') }}</td>
+				<td colspan="2" class="bold right">{{ number_format($interes['footer']->total, 2, ',', '.') }}</td>
 			</tr>
 		</tfoot>
 	</table>
 	<br>
 	<div>
-		<p><b>SON: {{ \NumeroALetras::convertir( intval($total), 'PESOS' ) }}</b></p>
+		<p><b>SON: {{ \NumeroALetras::convertir( intval($interes['footer']->total), 'PESOS' ) }}</b></p>
 	</div>
 
 	<div class="footer">

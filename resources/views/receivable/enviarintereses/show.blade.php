@@ -57,6 +57,9 @@
             </div>
         </div>
 
+        {{--*/ $empresa = App\Models\Base\Empresa::getEmpresa(); /*--}}
+        <input type="hidden" id="empresa_iva" name="empresa_iva" value="{{ $empresa->empresa_iva }}">
+
         <div class="box-header with-border">
             <div class="row">
                 @if( $enviarinteres->intereses1_anulado )

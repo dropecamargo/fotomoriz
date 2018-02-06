@@ -34,10 +34,17 @@ app || (app = {});
             }, 0);
         },
 
+        iva: function() {
+            return this.reduce(function(sum, model) {
+                return sum + (((model.get('intereses2_saldo') - model.get('factura1_iva'))*model.get('intereses1_tasa')/100)/30)*model.get('intereses2_dias_a_cobrar')
+            }, 0);
+        },
+
         totalize: function() {
             var subtotal = this.subtotal();
             var intereses = this.intereses();
-            return { 'subtotal': subtotal, 'intereses': intereses }
+            var iva = this.iva();
+            return { 'subtotal': subtotal, 'intereses': intereses, 'iva': iva }
         },
    });
 

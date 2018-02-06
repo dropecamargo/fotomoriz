@@ -13,7 +13,7 @@
     </section>
 
     <section class="content">
-        <div class="box box-success" id="rol-show">
+        <div class="box box-danger" id="rol-show">
             <div class="box-body">
                 <div class="row">
                     <div class="form-group col-md-6">

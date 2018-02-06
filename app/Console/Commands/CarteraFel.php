@@ -112,7 +112,7 @@ class CarteraFel extends Command
                     }
 
                     $query = Factura2::query();
-                    $query->select( 'factura2_iva_porcentaje', DB::raw("SUM(factura2_iva_pesos * factura2_unidades_vendidas) AS valorretenido"), DB::raw("SUM( (factura2_precio_venta - factura2_descuento_pesos) * factura2_unidades_vendidas ) AS baseimponible") );
+                    $query->select('factura2_iva_porcentaje', DB::raw("SUM(factura2_iva_pesos * factura2_unidades_vendidas) AS valorretenido"), DB::raw("SUM( (factura2_precio_venta - factura2_descuento_pesos) * factura2_unidades_vendidas ) AS baseimponible") );
                     $query->where('factura2_numero', $factura->factura1_numero);
                     $query->where('factura2_sucursal', $factura->factura1_sucursal);
                     $query->groupBy('factura2_iva_porcentaje');

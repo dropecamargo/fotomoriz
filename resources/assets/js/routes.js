@@ -20,9 +20,12 @@ app || (app = {});
 
             'permisos(/)': 'getPermisosMain',
 
-            // Routes Cartera
+            // Generar intereses
+            'generarintereses(/)': 'getGenerarInteresesMain',
+
             'enviarintereses(/)': 'getEnviarInteresesMain',
             'enviarintereses/:enviarintereses(/)': 'getEnviarInteresesShow',
+
 
             'reporteverextractos(/)': 'getVerExtractosMain',
             'reporteverextractos/:reporteverextractos(/)': 'getVerExtractosShow',
@@ -149,6 +152,19 @@ app || (app = {});
             }
 
             this.mainPermisoView = new app.MainPermisoView( );
+        },
+
+        /**
+        * main view permisos
+        */
+        getGenerarInteresesMain: function () {
+
+            if ( this.mainGenerarInteresView instanceof Backbone.View ){
+                this.mainGenerarInteresView.stopListening();
+                this.mainGenerarInteresView.undelegateEvents();
+            }
+
+            this.mainGenerarInteresView = new app.MainGenerarInteresView( );
         },
 
         /**

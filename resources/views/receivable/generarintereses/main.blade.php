@@ -16,20 +16,7 @@
 <section class="content">
     <div class="box box-danger" id="intereses-main">
         <div class="box-body">
-            @if (Session::has('message'))
-            	<div class="alert alert-success">{{ Session::get('message') }}</div>
-            @endif
-            @if (count($errors) > 0)
-			    <div class="alert alert-danger">
-			        <ul>
-			            @foreach ($errors->all() as $error)
-			                <li>{{ $error }}</li>
-			            @endforeach
-			        </ul>
-			    </div>
-			@endif
-
-            {!! Form::open(['method'=>'get', 'id' => 'form-intereses', 'data-toggle' => 'validator']) !!}
+            {!! Form::open(['method'=>'POST', 'id' => 'form-generar-intereses', 'data-toggle' => 'validator']) !!}
                 <div class="box-body">
                     <div class="row">
                         <label for="intereses1_tasa" class="control-label col-sm-1 col-sm-offset-2">Tasa %</label>
@@ -41,7 +28,7 @@
                     <div class="row">
                         <label for="intereses1_dias_gracia" class="control-label col-sm-1 col-sm-offset-2">Dias gracia</label>
                         <div class="form-group col-sm-2">
-                            <input id="intereses1_dias_gracia" name="intereses1_dias_gracia" class="form-control input-sm" type="number" value="{{ old('intereses1_dias_gracia') }}" min="0" step="1" required>
+                            <input id="intereses1_dias_gracia" name="intereses1_dias_gracia" placeholder="Dias gracia" class="form-control input-sm" type="number" value="{{ old('intereses1_dias_gracia') }}" min="0" step="1" required>
                             <div class="help-block with-errors"></div>
                         </div>
                     </div>
@@ -52,7 +39,7 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
                                 </div>
-                                <input type="text" id="intereses1_fecha" name="intereses1_fecha" class="form-control input-sm datepicker" value="{{ old('intereses1_fecha') }}" required>
+                                <input type="text" id="intereses1_fecha" name="intereses1_fecha" placeholder="{{ date('Y-m-d') }}" class="form-control input-sm datepicker" value="{{ old('intereses1_fecha') }}" required>
                             </div>
                             <div class="help-block with-errors"></div>
                         </div>
@@ -88,7 +75,7 @@
 
                     <div class="row">
                         <div class="col-md-2 col-md-offset-5 col-sm-6 col-xs-6">
-                            <button type="submit" class="btn btn-default btn-sm btn-block">
+                            <button type="button" class="btn btn-default btn-sm btn-block sumbit-generarintereses">
                                 <i class="fa fa-file-text-o"></i> Generar intereses
                             </button>
                         </div>

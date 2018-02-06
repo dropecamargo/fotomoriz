@@ -22,11 +22,15 @@ class DetalleEnviarInteresController extends Controller
             $detalle = [];
             if( $request->has('interes') ){
                 $query = Intereses2::query();
-                $query->select('intereses2.*', 'documentos_nombre', DB::raw("intereses2_dias_mora - intereses2_dias_a_cobrar AS cobrados"));
+                $query->select('intereses2.*', 'intereses1_tasa', 'documentos_nombre', 'factura1_iva', DB::raw("intereses2_dias_mora - intereses2_dias_a_cobrar AS cobrados"));
                 $query->join('documentos', 'intereses2_doc_origen', '=', 'documentos_codigo');
                 $query->join('intereses1', function($join){
                     $join->on('intereses1_numero', '=', 'intereses2_numero');
                     $join->on('intereses1_sucursal', '=', 'intereses2_sucursal');
+                });
+                $query->join('factura1', function($join){
+                    $join->on('factura1_numero', '=', 'intereses2_num_origen');
+                    $join->on('factura1_sucursal', '=', 'intereses2_suc_origen');
                 });
                 $query->where('intereses1.id', $request->interes);
                 $query->orderBy('intereses2_dias_mora', 'desc');

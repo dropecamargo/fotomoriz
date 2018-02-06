@@ -215,21 +215,21 @@ class CarteraIntereses extends Command
             $data['detalle'][] = $newinteres2;
         }
 
-        $v_iva = $valor_factu * ( $empresa->empresa_iva / 100 );
-        $total = $v_iva + $base;
-
-        // Recuperar interes1, motivo: la version de pgsql no reotnra el modelo
+        // $v_iva = $valor_factu * ( $empresa->empresa_iva / 100 );
+        // $total = $v_iva + $base;
+        //
+        // // Recuperar interes1, motivo: la version de pgsql no reotnra el modelo
         // $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
         // $rinterses1->intereses1_iva_valor = $v_iva;
         // $rinterses1->save();
 
-        $foot = new \stdClass();
-        $foot->valor_factu = $valor_factu;
-        $foot->v_iva = $v_iva;
-        $foot->subtotal = $subtotal;
-        $foot->base = $base;
-        $foot->total = $total;
-        $data['footer'] = $foot;
+        // $foot = new \stdClass();
+        // $foot->valor_factu = $valor_factu;
+        // $foot->v_iva = $v_iva;
+        // $foot->subtotal = $subtotal;
+        // $foot->base = $base;
+        // $foot->total = $total;
+        // $data['footer'] = $foot;
 
         // Actualizar consecutivo
         $sucursal->sucursal_inter = $numero;

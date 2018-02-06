@@ -179,7 +179,7 @@ class CarteraIntereses extends Command
         $newinteres->intereses1_iva_porcentaje = $empresa->empresa_iva;
         $newinteres->save();
 
-        Log::info($newinteres);
+        Log::info('1');
 
         $data['interes'] = $newinteres;
 
@@ -212,7 +212,7 @@ class CarteraIntereses extends Command
             $newinteres2->intereses2_dias_a_cobrar = $cierre->acobrar;
             $newinteres2->intereses2_dias_mora = $cierre->dias;
             $newinteres2->save();
-            Log::error($newinteres2);
+            Log::error('2');
 
             $newinteres2->documento = $cierre->documento;
             $data['detalle'][] = $newinteres2;
@@ -225,7 +225,7 @@ class CarteraIntereses extends Command
         $rinterses1 = Intereses1::where('intereses1_numero', $newinteres->intereses1_numero)->where('intereses1_sucursal', $newinteres->intereses1_sucursal)->first();
         $rinterses1->intereses1_iva_valor = $v_iva;
         $rinterses1->save();
-        Log::info($rinterses1);
+        Log::info('3');
 
         $foot = new \stdClass();
         $foot->valor_factu = $valor_factu;
@@ -238,7 +238,7 @@ class CarteraIntereses extends Command
         // Actualizar consecutivo
         $sucursal->sucursal_inter = $numero;
         $sucursal->save();
-        Log::info($sucursal);
+        Log::info('4');
 
         return $data;
     }

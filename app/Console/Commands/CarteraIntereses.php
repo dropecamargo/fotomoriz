@@ -74,13 +74,13 @@ class CarteraIntereses extends Command
             if( !$documentos Instanceof Documentos ){
                 throw new \Exception('No es posible recuperar el documento.');
             }
-            Log::info($documentos);
+            Log::info('documentos');
 
             $empresa = Empresa::getEmpresa();
             if( !$empresa Instanceof Empresa ){
                 throw new \Exception('No es posible recuperar empresa.');
             }
-            Log::info($empresa);
+            Log::info('empresa');
 
             $terceros = Tercero::getTercerosCierrecartera($ano, $mes);
             Log::info(count($terceros));
@@ -90,7 +90,7 @@ class CarteraIntereses extends Command
                 if( !$sucursal Instanceof Sucursal ){
                     throw new \Exception('No es posible recuperar sucursal.');
                 }
-                Log::info($sucursal);
+                Log::info('sucursal');
 
                 // Recuperar o aumentar consecutive sucursal
                 $numero = $sucursal->sucursal_inter;
@@ -101,7 +101,7 @@ class CarteraIntereses extends Command
                 if( count($cierrecartera) <= 0 ){
                     continue;
                 }
-                Log::info($cierrecartera);
+                Log::info('cierrecartera');
 
                 // array detalle
                 $dias = 0;
@@ -112,6 +112,7 @@ class CarteraIntereses extends Command
                     if( $validar Instanceof Intereses1 ){
                         $dias = $validar->intereses2_dias_a_cobrar;
                     }
+                    Log::info('validar');
 
                     // Calcular dias a cobrar (diascobrados - diasmora)
                     $acobrar = abs($cierre->dias) - abs($dias);
@@ -128,6 +129,7 @@ class CarteraIntereses extends Command
                 if( !empty( $detalle ) ){
                     // El objecto contiene interes(preparado para guardar) y el detalle del interes
                     $interes = $this->agregarInteres( $documentos, $numero, $sucursal, $fechacierre, $tercero, $detalle, $empresa );
+                    Log::info('interes');
 
                     // Preparar datos para pdfs
                     $title = sprintf('%s %s %s %s', 'INTERES DE CLIENTE A', strtoupper(config('koi.meses')[$mes]), 'DEL', $ano);

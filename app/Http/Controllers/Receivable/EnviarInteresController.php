@@ -162,7 +162,7 @@ class EnviarInteresController extends Controller
                 return response()->json(['success' => false, 'errors' => trans('app.exception')]);
             }
         }
-        abort(403);
+        abort(404);
     }
 
     /**
@@ -203,6 +203,7 @@ class EnviarInteresController extends Controller
                             $email = explode(';', $interes->tercero_email);
                             $enviados->tercero_email = $email[0];
                         }
+                        $enviados->intereses1_id = $interes->id;
                         $enviados->ruta_archivo = $ruta;
                         $correos->enviados[] = $enviados;
                     }else{
@@ -214,19 +215,6 @@ class EnviarInteresController extends Controller
                         $noenviado->tercero_razon_social = $interes->tercero_razon_social;
                         $correos->noenviados[] = $noenviado;
                     }
-
-                    DB::beginTransaction();
-                    try{
-                        $interes->intereses1_enviado = true;
-                        $interes->save();
-
-                        DB::commit();
-                        Log::info('Se actualizo el tercero con exito!.');
-                    }catch(\Exception $e){
-                        DB::rollback();
-                        Log::error($e->getMessage());
-                        return response()->json(['success' => false, 'errors' => trans('app.exception')]);
-                    }
                 }
             }
 
@@ -235,17 +223,35 @@ class EnviarInteresController extends Controller
                 // Buscar archivos storage/app
                 $file = storage_path('app')."/DOC_CARTERA/INTERESES/$enviados->ruta_archivo";
                 if( Storage::has("DOC_CARTERA/INTERESES/$enviados->ruta_archivo") ){
-                    
+
                     // Preparar datos para enviar
                    $emails = ['wnieves@fotomoriz.com', $enviados->tercero_email];
                    try{
                        $datos = ['cliente' => $enviados, 'empresa' => $empresa];
-                       Mail::send('emails.intereses.enviado', $datos, function($msj) use ($file, $empresa, $emails){
+                       $mail = Mail::send('emails.intereses.enviado', $datos, function($msj) use ($file, $empresa, $emails){
                            $msj->from('wnieves@fotomoriz.com', $empresa->empresa_nombre);
                            $msj->to($emails);
                            $msj->subject('Interés');
                            $msj->attach($file);
                        });
+
+                       if( $mail ){
+                           DB::beginTransaction();
+                           try{
+                               // recuperar intereses y guardar
+                               $interes = Intereses1::find($enviados->intereses1_id);
+                               $interes->intereses1_enviado = true;
+                               $interes->save();
+
+                               DB::commit();
+                               Log::info('Se actualizo el tercero con exito!.');
+                           }catch(\Exception $e){
+                               DB::rollback();
+                               Log::error($e->getMessage());
+                               return response()->json(['success' => false, 'errors' => trans('app.exception')]);
+                           }
+                       }
+
                    }catch(\Exception $e){
                        $fail = new \stdClass();
                        $fail->tercero_nit = $enviados->tercero_nit;
@@ -278,6 +284,6 @@ class EnviarInteresController extends Controller
 
            return response()->json(['success' => true, 'msg' => "Se enviaron los intereses con exito!"]);
         }
-        abort(403);
+        abort(404);
     }
 }

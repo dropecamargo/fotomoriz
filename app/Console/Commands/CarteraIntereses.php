@@ -193,7 +193,7 @@ class CarteraIntereses extends Command
                 $factura = Factura1::select('factura1_iva')->where('factura1_numero', $cierre->numero)->where('factura1_sucursal', $cierre->sucursal)->first();
                 $valor_factu += ((($cierre->valor-$factura->factura1_iva)*$formula)/30)*$cierre->acobrar;
             }else{
-                $valor_factu = $v_interes;
+                $valor_factu += $v_interes;
             }
 
             $subtotal += $cierre->valor;

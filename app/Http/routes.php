@@ -56,8 +56,9 @@ Route::group(['middleware' => 'auth'], function(){
 	Route::resource('generarintereses', 'Receivable\GenerarInteresController', ['only' => ['index', 'store']]);
 	Route::group(['prefix' => 'enviarintereses'], function()
 	{
-		Route::get('anular/{enviarinteres}', ['as' => 'enviarintereses.anular', 'uses' => 'Receivable\EnviarInteresController@anular']);
 		Route::get('enviar', ['as' => 'enviarintereses.enviar', 'uses' => 'Receivable\EnviarInteresController@enviar']);
+		Route::get('anular/{enviarinteres}', ['as' => 'enviarintereses.anular', 'uses' => 'Receivable\EnviarInteresController@anular']);
+		Route::get('exportar/{enviarinteres}', ['as' => 'enviarintereses.exportar', 'uses' => 'Receivable\EnviarInteresController@exportar']);
 		Route::resource('detalle', 'Receivable\DetalleEnviarInteresController', ['only' => ['index']]);
 	});
 	Route::resource('enviarintereses', 'Receivable\EnviarInteresController', ['only' => ['index', 'show']]);

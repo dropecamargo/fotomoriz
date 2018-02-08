@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Cartera\Intereses1, App\Models\Base\Empresa;
-use Datatables, DB, Log, Storage, Mail;
+use App\Models\Cartera\Intereses1, App\Models\Cartera\Intereses2, App\Models\Base\Empresa;
+use Datatables, DB, Log, Storage, Mail, App, View;
 
 class EnviarInteresController extends Controller
 {
@@ -286,4 +286,68 @@ class EnviarInteresController extends Controller
         }
         abort(404);
     }
+
+
+        /**
+         * Export pdf the specified resource.
+         *
+         * @param  int  $id
+         * @return \Illuminate\Http\Response
+         */
+        public function exportar($id)
+        {
+            $query = Intereses1::query();
+            $query->select('intereses1.*', 'tercero_nit', DB::raw("(CASE WHEN tercero_persona = 'N' THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 || (CASE WHEN (tercero_razon_social IS NOT NULL AND tercero_razon_social != '') THEN (' - ' || tercero_razon_social) ELSE '' END) ) ELSE tercero_razon_social END) AS tercero_nombre"), DB::raw("EXTRACT(YEAR FROM intereses1_fecha_cierre) as ano"), DB::raw("EXTRACT(MONTH FROM intereses1_fecha_cierre) as mes"));
+            $query->join('tercero', 'intereses1_tercero', '=', 'tercero_nit');
+            $query->where('intereses1.id', $id);
+            $interes = $query->first();
+            if(!$interes instanceof Intereses1){
+                abort(404);
+            }
+
+            // Recuperar detalle
+            $query = Intereses2::query();
+            $query->select('intereses2.*', 'documentos_nombre', 'factura1_iva');
+            $query->join('documentos', 'intereses2_doc_origen', '=', 'documentos_codigo');
+            $query->leftJoin('factura1', function($join){
+                $join->on('factura1_numero', '=', 'intereses2_num_origen');
+                $join->on('factura1_sucursal', '=', 'intereses2_suc_origen');
+            });
+            $query->where('intereses2_numero', $interes->intereses1_numero);
+            $query->where('intereses2_sucursal', $interes->intereses1_sucursal);
+            $query->orderBy('intereses2_vencimiento', 'asc', 'intereses2_numero', 'desc');
+            $detalle = $query->get();
+
+            // Recuperar empresa
+            $empresa = Empresa::getEmpresa();
+            if(!$empresa instanceof Empresa){
+                abort(404);
+            }
+
+            // Preparar datos para pdfs
+            $title = sprintf('%s %s %s %s', 'INTERES DE CLIENTE A', strtoupper(config('koi.meses')[$interes->mes]), 'DEL', $interes->ano);
+
+            // Export pdf
+            $pdf = App::make('dompdf.wrapper');
+            $pdf->loadHTML(View::make('receivable.enviarintereses.export',  compact('interes', 'detalle', 'empresa', 'title'))->render());
+            return $pdf->stream(sprintf('%s_%s.pdf', 'interés', $interes->intereses1_tercero));
+
+           //  $interes = Intereses1::select('intereses1.*', DB::raw("EXTRACT(YEAR FROM intereses1_fecha_cierre) as ano"), DB::raw("EXTRACT(MONTH FROM intereses1_fecha_cierre) as mes"))->where('intereses1.id', $id)->first();
+           // if(!$interes instanceof Intereses1){
+           //     abort(404);
+           // }
+           //
+           //  // Construir ruta para recuperar archivo pdf
+           //  $ruta = "{$interes->ano}_{$interes->mes}/{$interes->intereses1_tercero}.pdf";
+           //
+           //  $file = storage_path('app')."/DOC_CARTERA/INTERESES/$ruta";
+           //
+           //  if( Storage::has("DOC_CARTERA/INTERESES/$ruta") ){
+           //      // Retornar url href
+           //      $url = url("storage/DOC_CARTERA/INTERESES/$ruta");
+           //
+           //      return redirect($url);
+           //  }
+           //  abort(404);
+        }
 }

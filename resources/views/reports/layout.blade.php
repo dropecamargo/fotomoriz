@@ -90,6 +90,25 @@
 					padding-left: 2px;
 				}
 
+				.itable {
+					width: 100%;
+					border-collapse: collapse;
+					font-size: 7;
+				}
+
+				.itable tr:nth-child(even) {
+					background-color: #f2f2f2
+				}
+
+				.itable th {
+					border: 1px solid black;
+					font-size: 6;
+				}
+
+				.itable td, th {
+					height: 19px;
+				}
+
 				.left {
 					text-align: left;
 				}
@@ -153,6 +172,12 @@
 					background-color: #E55536 !important;
 					color: #FFFFFF;
 				}
+
+				.footer {
+					width: 100%;
+					position: absolute;
+	    			bottom: 40;
+				}
 			</style>
 		@endif
 	</head>
@@ -170,7 +195,6 @@
 		{{-- Title --}}
 		{{--*/ $empresa = App\Models\Base\Empresa::getEmpresa(); /*--}}
 		@include('reports.title')
-		<br/>
 
 		@yield('content')
 	</body>

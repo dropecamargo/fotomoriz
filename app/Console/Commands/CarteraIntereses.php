@@ -131,7 +131,7 @@ class CarteraIntereses extends Command
                     switch ($type){
                         case 'pdf':
                             $pdf = App::make('dompdf.wrapper');
-                            $pdf->loadHTML( View::make('receivable.generarintereses.report.reporte', compact('tercero', 'interes', 'empresa', 'title', 'type'))->render());
+                            $pdf->loadHTML( View::make('receivable.generarintereses.reporte', compact('tercero', 'interes', 'empresa', 'title', 'type'))->render());
                             $pdf->setPaper('letter', 'portrait')->setWarnings(false);
                             $carpeta = "{$ano}_{$mes}";
                             $name = "{$tercero->tercero_nit}.pdf";
@@ -143,7 +143,8 @@ class CarteraIntereses extends Command
                 }
             }
 
-            DB::commit();
+            // DB::commit();
+            DB::rollback();
             Log::info('Se completo la rutina con exito.');
         }catch(\Exception $e){
             DB::rollback();

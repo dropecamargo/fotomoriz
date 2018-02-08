@@ -28,7 +28,7 @@ class DetalleEnviarInteresController extends Controller
                     $join->on('intereses1_numero', '=', 'intereses2_numero');
                     $join->on('intereses1_sucursal', '=', 'intereses2_sucursal');
                 });
-                $query->join('factura1', function($join){
+                $query->leftJoin('factura1', function($join){
                     $join->on('factura1_numero', '=', 'intereses2_num_origen');
                     $join->on('factura1_sucursal', '=', 'intereses2_suc_origen');
                 });

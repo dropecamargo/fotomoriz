@@ -1,4 +1,4 @@
-@extends('receivable.generarintereses.report.layout', ['type' => 'pdf', 'title' => $title])
+@extends('reports.layout', ['type' => 'pdf', 'title' => $title])
 
 @section('content')
 	<table class="tbtitle">

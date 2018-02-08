@@ -13,7 +13,8 @@ app || (app = {});
 
         el: '#enviarintereses-show',
         events: {
-            'click .anular-interes': 'amularInteres'
+            'click .anular-interes': 'amularInteres',
+            'click .export-interes': 'exportInteres'
         },
 
         /**
@@ -74,6 +75,16 @@ app || (app = {});
             });
 
             cancelConfirm.render();
+        },
+
+        /**
+        * export to PDF
+        */
+        exportInteres: function (e) {
+            e.preventDefault();
+
+            // Redirect to pdf
+            window.open( window.Misc.urlFull( Route.route('enviarintereses.exportar', { enviarinteres: this.model.get('id') })) );
         },
 
         /**

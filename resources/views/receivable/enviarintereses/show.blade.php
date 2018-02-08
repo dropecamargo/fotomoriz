@@ -10,9 +10,14 @@
     <div class="box box-danger" id="enviarintereses-show">
         <div class="box-body">
             <div class="row">
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-11">
                     <label class="control-label">Cliente</label>
                     <div>{{ $enviarinteres->tercero_nit }} - {{ $enviarinteres->tercero_nombre }}</div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-block btn-danger btn-sm export-interes">
+                        <i class="fa fa-file-pdf-o"></i>
+                    </button>
                 </div>
             </div>
             <div class="row">

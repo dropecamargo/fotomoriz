@@ -54,7 +54,6 @@ app || (app = {});
                 })
                 .done(function(resp) {
                     window.Misc.removeSpinner( _this.el );
-
                     if(!_.isUndefined(resp.success)) {
                         // response success or error
                         var text = resp.success ? '' : resp.errors;
@@ -66,9 +65,9 @@ app || (app = {});
                             alertify.error(text);
                             return;
                         }
-                    }
 
-                    window.Misc.successRedirect( resp.msg, window.Misc.urlFull(Route.route('generarintereses.index')) );
+                        window.Misc.successRedirect( resp.msg, window.Misc.urlFull(Route.route('generarintereses.index')) );
+                    }
                 })
                 .fail(function(jqXHR, ajaxOptions, thrownError) {
                     window.Misc.removeSpinner( _this.el );

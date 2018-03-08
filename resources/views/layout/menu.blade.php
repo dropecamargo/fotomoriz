@@ -38,18 +38,21 @@
         </ul>
     </li>
 
-    <li class="treeview {{ in_array(Request::segment(1), ['generarintereses', 'enviarintereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+    <li class="treeview {{ in_array(Request::segment(1), ['amortizaciones','generarintereses', 'enviarintereses', 'rintereses', 'reporteedades', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-suitcase"></i> <span>Cartera</span><i class="fa fa-angle-left pull-right"></i>
         </a>
 
         <ul class="treeview-menu">
             {{-- Modulos cartera --}}
-            <li class="{{ in_array(Request::segment(1), ['generarintereses', 'enviarintereses']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['generarintereses', 'enviarintereses', 'amortizaciones']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-wpforms"></i> Módulos <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
+                    <li class="{{ Request::segment(1) == 'amortizaciones' ? 'active' : '' }}">
+                        <a href="{{ route('amortizaciones.index') }}"><i class="fa fa-apple"></i> Amortizaciones</a>
+                    </li>
                     <li class="{{ Request::segment(1) == 'generarintereses' ? 'active' : '' }}">
                         <a href="{{ route('generarintereses.index') }}"><i class="fa fa-pie-chart"></i> Generar intereses</a>
                     </li>

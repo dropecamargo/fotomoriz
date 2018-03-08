@@ -61,6 +61,7 @@ Route::group(['middleware' => 'auth'], function(){
 		Route::get('exportar/{enviarinteres}', ['as' => 'enviarintereses.exportar', 'uses' => 'Receivable\EnviarInteresController@exportar']);
 		Route::resource('detalle', 'Receivable\DetalleEnviarInteresController', ['only' => ['index']]);
 	});
+	Route::resource('amortizaciones', 'Receivable\AmortizacionCreditoController', ['only' => ['index']]);
 	Route::resource('enviarintereses', 'Receivable\EnviarInteresController', ['only' => ['index', 'show']]);
 	Route::resource('rintereses', 'Report\ReporteInteresesGeneradosController', ['only' => ['index']]);
 

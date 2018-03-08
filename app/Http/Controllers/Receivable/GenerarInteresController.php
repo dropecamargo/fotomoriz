@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Receivable;
-define('ARTISAN_BINARY',base_path().'/artisan');
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Cartera\Intereses1;
@@ -54,6 +52,8 @@ class GenerarInteresController extends Controller
                     $intereses->ano = $request->ano;
                     $intereses->username = $user;
 
+                    // Definir la ruta del proyecto
+                    define('ARTISAN_BINARY',base_path().'/artisan');
                     call_in_background("cartera:intereses {$intereses}");
 
                     // Commit Transaction

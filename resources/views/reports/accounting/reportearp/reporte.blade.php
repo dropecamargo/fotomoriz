@@ -8,28 +8,28 @@
 			</tr>
 
 			<tr>
-				<th colspan="1" align="center"></th>
-				<th colspan="1" align="center"></th>
-				<th colspan="1" align="center"></th>
+				<th></th>
+				<th></th>
+				<th></th>
 				<th colspan="4" align="center">VENTAS</th>
-				<th colspan="1" align="center"></th>
+				<th></th>
 				<th colspan="4" align="center">EXISTENCIAS</th>
-				<th colspan="1" align="center"></th>
+				<th></th>
 				<th colspan="4" align="center">ROTACION</th>
-				<th colspan="1" align="center"></th>
-				<th colspan="1" align="center">TRANSITO</th>
+				<th></th>
+				<th align="center">TRANSITO</th>
 			</tr>
 
 			<tr>
-		    	<th width="60px" align="left">Gastos</th>
-				<th width="15px" align="left">ARP</th>
-				<th width="15px" align="left">Real</th>
-				<th width="15px" align="left">Var</th>
-				<th width="15px" align="left"></th>
-				<th width="15px" align="left">ARP</th>
-				<th width="15px" align="left">Real</th>
-				<th width="15px" align="left">Var</th>
-				<th width="15px" align="left">%</th>
+		    	<th align="left">Gastos</th>
+				<th align="left">ARP</th>
+				<th align="left">Real</th>
+				<th align="left">Var</th>
+				<th align="left"></th>
+				<th align="left">ARP</th>
+				<th align="left">Real</th>
+				<th align="left">Var</th>
+				<th align="left">%</th>
 			</tr>
 		</thead>
 		<tbody>

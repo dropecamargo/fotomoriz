@@ -62,7 +62,9 @@
             </div>
         </div>
 
-        {{--*/ $empresa = App\Models\Base\Empresa::getEmpresa(); /*--}}
+        @php
+            $empresa = App\Models\Base\Empresa::getEmpresa(); 
+        @endphp
         <input type="hidden" id="empresa_iva" name="empresa_iva" value="{{ $empresa->empresa_iva }}">
 
         <div class="box-header with-border">

@@ -34,22 +34,22 @@ class EnviarInteresController extends Controller
             return Datatables::of( $query )
                 ->filter(function($query) use ($request) {
                     // Mes
-                    if($request->has('intereses1_mes')){
-                        $query->whereRaw("EXTRACT(MONTH FROM intereses1_fecha) = '$request->intereses1_mes'");
+                    if( $request->filled('intereses1_mes') ){
+                        $query->whereMonth('intereses1_fecha', $request->intereses1_mes);
                     }
 
                     // Año
-                    if($request->has('intereses1_ano')){
-                        $query->whereRaw("EXTRACT(YEAR FROM intereses1_fecha) = '$request->intereses1_ano'");
+                    if( $request->filled('intereses1_ano') ){
+                        $query->whereYear('intereses1_fecha', $request->intereses1_ano);
                     }
 
                     // Numero
-                    if($request->has('intereses1_numero')){
+                    if( $request->filled('intereses1_numero') ){
                         $query->where('intereses1_numero', $request->intereses1_numero);
                     }
 
                     // Documento
-                    if($request->has('tercero_nit')) {
+                    if( $request->filled('tercero_nit') ) {
                         $query->where('intereses1_tercero', $request->tercero_nit);
                     }
                 })

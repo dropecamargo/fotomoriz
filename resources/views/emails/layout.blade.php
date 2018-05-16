@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 	</head>
 	<body>
-		{{--*/
+		@php
 			$bgcolor_inst = #00a65a;
 			$color_white = '#ffffff';
 			$font_weigth = 'normal';
@@ -35,7 +35,7 @@
 			$_inst_url = config('koi.app.site');
 			$_inst_name = config('koi.app.name');
 			$_inst_img = asset(config('koi.app.image.logo'));
-		/*--}}
+		@endphp
 
 		<table border="0" cellspacing="0" cellpadding="0" height="{{ $table_wrap_height }}" width="{{ $table_wrap_width }}">
 	        <tr>

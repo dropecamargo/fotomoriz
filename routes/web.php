@@ -2,12 +2,12 @@
 
 /*
 |--------------------------------------------------------------------------
-| Application Routes
+| Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
@@ -16,19 +16,15 @@
 | Routes Auth
 |--------------------------------------------------------------------------
 */
-Route::group(['prefix' => 'auth'], function(){
-	Route::post('login', ['as' => 'auth.login', 'uses' => 'Auth\AuthController@postLogin']);
-	Route::get('logout', ['as' => 'auth.logout', 'uses' => 'Auth\AuthController@getLogout']);
-	Route::get('integrate', ['as' => 'auth.integrate', 'uses' => 'Auth\AuthController@integrate']);
-});
-Route::get('login', ['as' => 'login', 'uses' => 'Auth\AuthController@getLogin']);
 
-/*
-|--------------------------------------------------------------------------
-| Secure Routes Application
-|--------------------------------------------------------------------------
-*/
-Route::group(['middleware' => 'auth'], function(){
+Route::group(['prefix' => 'auth'], function(){
+	Route::post('login', ['as' => 'auth.login', 'uses' => 'Auth\LoginController@postLogin']);
+	Route::get('logout', ['as' => 'auth.logout', 'uses' => 'Auth\LoginController@logout']);
+	Route::get('integrate', ['as' => 'auth.integrate', 'uses' => 'Auth\LoginController@integrate']);
+});
+Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginForm']);
+
+Route::middleware('auth')->group(function () {
 	Route::get('/', ['as' => 'dashboard', 'uses' => 'HomeController@index']);
 
 	/*
@@ -36,17 +32,22 @@ Route::group(['middleware' => 'auth'], function(){
 	| Admin Routes
 	|-------------------------
 	*/
-	Route::group(['prefix' => 'roles'], function()
-	{
+	Route::prefix('terceros')->name('terceros.')->group(function()	{
+		Route::get('search', ['as' => 'search', 'uses' => 'Admin\TerceroController@search']);
+	});
+	Route::resource('terceros', 'Admin\TerceroController', ['only' => ['index']]);
+
+	Route::prefix('tercerosinterno')->name('tercerosinterno.')->group(function()	{
+		Route::resource('roles', 'Admin\UsuarioRolController', ['only' => ['index', 'store', 'destroy']]);
+	});
+	Route::resource('tercerosinterno', 'Admin\TerceroInternoController', ['only' => ['index', 'show']]);
+
+	Route::prefix('roles')->name('roles.')->group(function() {
 		Route::resource('permisos', 'Admin\PermisoRolController', ['only' => ['index', 'update', 'destroy']]);
 	});
-	Route::group(['prefix' => 'terceros'], function()
-	{
-		Route::get('search', ['as' => 'terceros.search', 'uses' => 'Admin\TerceroController@search']);
-	});
 	Route::resource('roles', 'Admin\RolController', ['except' => ['destroy']]);
-	Route::resource('terceros', 'Admin\TerceroController', ['only' => ['index']]);
 	Route::resource('permisos', 'Admin\PermisoController', ['only' => ['index']]);
+	Route::resource('modulos', 'Admin\ModuloController', ['only' => ['index']]);
 
 	/*
 	|-------------------------
@@ -54,11 +55,11 @@ Route::group(['middleware' => 'auth'], function(){
 	|-------------------------
 	*/
 	Route::resource('generarintereses', 'Receivable\GenerarInteresController', ['only' => ['index', 'store']]);
-	Route::group(['prefix' => 'enviarintereses'], function()
+	Route::prefix('enviarintereses')->name('enviarintereses.')->group(function ()
 	{
-		Route::get('enviar', ['as' => 'enviarintereses.enviar', 'uses' => 'Receivable\EnviarInteresController@enviar']);
-		Route::get('anular/{enviarinteres}', ['as' => 'enviarintereses.anular', 'uses' => 'Receivable\EnviarInteresController@anular']);
-		Route::get('exportar/{enviarinteres}', ['as' => 'enviarintereses.exportar', 'uses' => 'Receivable\EnviarInteresController@exportar']);
+		Route::get('enviar', ['as' => 'enviar', 'uses' => 'Receivable\EnviarInteresController@enviar']);
+		Route::get('anular/{enviarinteres}', ['as' => 'anular', 'uses' => 'Receivable\EnviarInteresController@anular']);
+		Route::get('exportar/{enviarinteres}', ['as' => 'exportar', 'uses' => 'Receivable\EnviarInteresController@exportar']);
 		Route::resource('detalle', 'Receivable\DetalleEnviarInteresController', ['only' => ['index']]);
 	});
 	Route::resource('amortizaciones', 'Receivable\AmortizacionCreditoController', ['only' => ['index']]);

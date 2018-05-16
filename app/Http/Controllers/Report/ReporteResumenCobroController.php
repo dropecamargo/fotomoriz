@@ -17,7 +17,7 @@ class ReporteResumenCobroController extends Controller
      */
     public function index(Request $request)
     {
-		if($request->has('type'))
+		if($request->filled('type'))
         {
 			// llamadas efectuadas en rango de fecha
 			$query = DB::table('llamadacob');

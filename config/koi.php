@@ -34,94 +34,30 @@ return [
     'terceros' => [
         'tipo' => [
             'CC' => 'Cédula de Ciudadanía',
-            'TI' => 'Tarjeta de Identidad',
-            'CE' => 'Cédula de Extranjería',
-            'PA' => 'Pasaporte', 'NI' => 'Nit'
+            'NI' => 'Nit',
+            'XX' => 'Valide!!'
         ],
 
         'regimen' => [
             1 => 'Simplificado',
-            2 => 'Común',
-            3 => 'Especial'
+            2 => 'Común'
         ],
 
         'persona' => [
             'N' => 'Natural',
             'J' => 'Jurídica'
-        ],
-
-        'niif' => [
-            '1' => 'Plena',
-            '2' => 'Pymes',
-            '3' => 'Micro pymes'
         ]
     ],
 
-    'direcciones' => [
-        'nomenclatura' => [
-            'AC' => 'Avenida Calle',
-            'AK' => 'Avenida Carrera',
-            'CL' => 'Calle',
-            'KR' => 'Carrera',
-            'DG' => 'Diagonal',
-            'TV' => 'Transversal'
-        ],
-        'alfabeto' => [
-            'A' => 'A', 'B' => 'B', 'C' => 'C', 'D' => 'D', 'E' => 'E', 'F' => 'F', 'G' => 'G', 'H' => 'H', 'I' => 'I',
-            'J' => 'J', 'K' => 'K', 'L' => 'L', 'M' => 'M', 'N' => 'N', 'O' => 'O', 'P' => 'P', 'Q' => 'Q', 'R' => 'R',
-            'S' => 'S', 'T' => 'T', 'U' => 'U', 'V' => 'V', 'W' => 'W', 'X' => 'X', 'Y' => 'Y', 'Z' => 'Z'
-        ],
-        'cardinales' => [
-            'SUR' => 'Sur',
-            'ESTE' => 'Este',
-            'NORTE' => 'Norte'
-        ],
-        'complementos' => [
-            'APTO' => 'Apartamento',
-            'AGR' => 'Agrupación',
-            'CN' => 'Camino',
-            'CART' => 'Carretera',
-            'BLQ' => 'Bloque',
-            'BG' => 'Bodega',
-            'INT' => 'Interior',
-            'KM' => 'Kilómetro',
-            'LT' => 'Lote',
-            'MZ' => 'Manzana',
-            'MOD' => 'Módulo',
-            'MPAL' => 'Municipal',
-            'CS' => 'Casa',
-            'OF' => 'Oficina',
-            'CASER' => 'Caserío',
-            'PARC' => 'Parcela',
-            'P' => 'Piso',
-            'CC' => 'Centro Comercial',
-            'PLZ' => 'Plaza',
-            'CIR' => 'Circunvalar',
-            'PORT' => 'Portería',
-            'COMUNID' => 'Comunidad',
-            'PTO' => 'Puerto',
-            'CONJ' => 'Conjunto',
-            'RESG' => 'Resguardo',
-            'CONS' => 'Consultorio',
-            'RUR' => 'Rural',
-            'CORREG' => 'Corregimiento',
-            'SECT' => 'Sector',
-            'DPTAL' => 'Departamental',
-            'SUPERMZ' => 'Supermanzana',
-            'ED' => 'Edificio',
-            'TV' => 'Transversal',
-            'TRR' => 'Torre',
-            'ESQ' => 'Esquina',
-            'ESTAC' => 'Estación',
-            'ET' => 'Etapa',
-            'VDA' => 'Vereda',
-            'HAD' => 'Hacienda',
-            'UNID' => 'Unidad',
-            'UR' => 'Unidad resicencial',
-            'URB' => 'Urbanización',
-            'Vía' => 'VIA',
-            'ZN' => 'Zona'
-        ]
+    'puntoventa' => [
+        '1' => 'BOG-10100001',
+        '2' => 'MED-20020001',
+        '3' => 'CAL-30020001',
+        '4' => 'BAR-40020001',
+        '5' => 'PER-50020001',
+        '6' => 'VILL-60020001',
+        '7' => 'BUC-70020001',
+        '9' => 'NEI-80001421'
     ],
 
     'contabilidad' => [

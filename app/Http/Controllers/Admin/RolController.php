@@ -54,17 +54,14 @@ class RolController extends Controller
                     $rol->fill($data);
                     $rol->save();
 
-                    DB::rollback();
-                    return response()->json(['success' => false, 'errors' => 'PCAMARGO OK -> '.$rol->id]);
-
-                    // $id = $rol->getConnection()->getPdo()->lastInsertId();
+                    $id = $rol->getConnection()->getPdo()->lastInsertId();
 
                     // Commit Transaction
                     DB::commit();
 
                     // Forget cache
                     Cache::forget( Rol::$key_cache );
-                    return response()->json(['success' => true, 'id' => $rol->id]);
+                    return response()->json(['success' => true, 'id' => $id]);
                 }catch(\Exception $e){
                     DB::rollback();
                     Log::error($e->getMessage());

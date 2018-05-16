@@ -38,7 +38,7 @@ class Sucursal extends Model
             $query->select('sucursal_codigo','sucursal_nombre');
             $query->where('sucursal_activa', true);
             $query->orderby('sucursal_nombre', 'asc');
-            $collection = $query->lists('sucursal_nombre', 'sucursal_codigo');
+            $collection = $query->pluck('sucursal_nombre', 'sucursal_codigo');
 
             return $collection;
         });

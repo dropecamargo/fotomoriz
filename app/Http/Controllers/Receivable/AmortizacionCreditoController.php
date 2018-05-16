@@ -18,7 +18,7 @@ class AmortizacionCreditoController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('type')) {
+        if ($request->filled('type')) {
 
             // Reference attributes
             $interes = $request->amortizacion_interes / 100;

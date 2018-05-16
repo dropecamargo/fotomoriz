@@ -13,5 +13,4 @@ class Llamadacob extends Model
     public $timestamps = false;
 
     public $primaryKey = ['llamadacob_tercero', 'llamadacob_fecha', 'llamadacob_hora'];
-
 }

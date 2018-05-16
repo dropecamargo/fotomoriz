@@ -73,6 +73,7 @@ class CarteraFel extends Command
                 $query->join('tercero', 'factura1_tercero', '=', 'tercero_nit');
                 $query->join('municipios', 'tercero_municipios', '=', 'municipio_codigo');
                 $query->join('departamentos', 'municipio_departamento', '=', 'departamento_codigo');
+                $query->join('puntoventa', 'factura1_puntoventa', '=', 'puntoventa_numero');
                 $query->where('factura1_anulada', false);
                 $query->where(function($query) use ($mesi, $anoi){
                     $query->whereRaw("EXTRACT(MONTH FROM factura1_fecha_elaboro) >= $mesi");
@@ -82,61 +83,60 @@ class CarteraFel extends Command
                     $query->whereRaw("EXTRACT(MONTH FROM factura1_fecha_elaboro) <= $mesf");
                     $query->whereRaw("EXTRACT(YEAR FROM factura1_fecha_elaboro) <= $anof");
                 });
+                $query->where('factura1_puntoventa', '<>', '8');
                 $query->orderBy('factura1_fecha_elaboro');
+                $query->limit(5);
                 $facturas = $query->get();
 
                 foreach ( $facturas as $factura ) {
-                    // Insertar felfactura -> fel_encabezadofactura
-                    $felfactura = $this->insertFelFactura( $factura );
 
-                    $query = Factura2::query();
-                    $query->select('factura2.*', 'producto_nombre', 'producto_referencia', DB::raw("(factura2_precio_venta - factura2_descuento_pesos) AS baseimponible"));
-                    $query->join('producto', 'factura2_producto', '=', 'producto_serie');
-                    $query->where('factura2_numero', $factura->factura1_numero);
-                    $query->where('factura2_sucursal', $factura->factura1_sucursal);
-                    $productos = $query->get();
+                    // Validar que no exita en fel_factura
+                    $validfel = FelFactura::where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
+                    if( !$validfel instanceof FelFactura ){
+                        // Insertar felfactura -> fel_encabezadofactura
+                        $felfactura = $this->insertFelFactura( $factura );
 
-                    foreach( $productos as $producto ){
-                        $preciosinimpuestos = ($producto->factura2_precio_venta - $producto->factura2_descuento_pesos)*$producto->factura2_unidades_vendidas;
-                        $preciototal = ( $producto->factura2_precio_venta - $producto->factura2_descuento_pesos + $producto->factura2_iva_pesos) * $producto->factura2_unidades_vendidas;
+                        $query = Factura2::query();
+                        $query->select('factura2.*', 'producto_nombre', 'producto_referencia', DB::raw("((factura2_precio_venta-factura2_descuento_pesos)*factura2_unidades_vendidas) AS baseimponible, (factura2_iva_pesos * factura2_unidades_vendidas) AS valorretenido"));
+                        $query->join('producto', 'factura2_producto', '=', 'producto_serie');
+                        $query->where('factura2_numero', $factura->factura1_numero);
+                        $query->where('factura2_sucursal', $factura->factura1_sucursal);
+                        $productos = $query->get();
 
-                        $felproducto = new FelProducto;
-                        $felproducto->idfactura = $felfactura;
-                        $felproducto->codigoproducto = $producto->factura2_producto;
-                        $felproducto->descripcion = $producto->producto_nombre;
-                        $felproducto->referencia = $producto->producto_referencia;
-                        $felproducto->cantidad = $producto->factura2_unidades_vendidas;
-                        $felproducto->unidadmedida = 'UN';
-                        $felproducto->valorunitario = $producto->factura2_precio_venta;
-                        $felproducto->descuento = $producto->factura2_descuento_pesos;
-                        $felproducto->preciosinimpuestos = $preciosinimpuestos;
-                        $felproducto->preciototal = $preciototal;
-                        $felproducto->codigoimpuesto = '01';
-                        $felproducto->porcentajeimpuesto = $producto->factura2_iva_porcentaje;
-                        $felproducto->valorretenido = $producto->factura2_iva_pesos;
-                        $felproducto->baseimponible = $producto->baseimponible;
-                        $felproducto->save();
-                    }
+                        foreach( $productos as $producto ){
+                            $preciototal = ( $producto->factura2_precio_venta - $producto->factura2_descuento_pesos + $producto->factura2_iva_pesos) * $producto->factura2_unidades_vendidas;
 
-                    $query = Factura2::query();
-                    $query->select('factura2_iva_porcentaje', DB::raw("SUM(factura2_iva_pesos * factura2_unidades_vendidas) AS valorretenido"), DB::raw("SUM( (factura2_precio_venta - factura2_descuento_pesos) * factura2_unidades_vendidas ) AS baseimponible") );
-                    $query->where('factura2_numero', $factura->factura1_numero);
-                    $query->where('factura2_sucursal', $factura->factura1_sucursal);
-                    $query->groupBy('factura2_iva_porcentaje');
-                    $impuestos = $query->get();
+                            $felproducto = new FelProducto;
+                            $felproducto->idfactura = $felfactura->Id;
+                            $felproducto->codigoproducto = $producto->factura2_producto;
+                            $felproducto->descripcion = $producto->producto_nombre;
+                            $felproducto->cantidad = $producto->factura2_unidades_vendidas;
+                            $felproducto->unidadmedida = 'UN';
+                            $felproducto->descuento = $producto->factura2_descuento_pesos;
+                            $felproducto->preciosinimpuestos = $producto->valorretenido;
+                            $felproducto->preciototal = $preciototal;
+                            $felproducto->codigoimpuesto = '01';
+                            $felproducto->porcentajeimpuesto = $producto->factura2_iva_porcentaje;
+                            $felproducto->valorimpuesto = $producto->factura2_iva_pesos;
+                            $felproducto->baseimponible = $producto->baseimponible;
+                            $felproducto->idotroimpuesto = 0;
+                            $felproducto->precioUnitario = $producto->factura2_precio_venta;
+                            $felproducto->save();
 
-                    foreach ($impuestos as $impuesto) {
-                        $felimpuesto = new FelImpuestos;
-                        $felimpuesto->idfactura = $felfactura;
-                        $felimpuesto->codigoimpuesto = '01';
-                        $felimpuesto->porcentajeimpuesto = $impuesto->factura2_iva_porcentaje;
-                        $felimpuesto->valorretenido = $impuesto->valorretenido;
-                        $felimpuesto->baseimponible = $impuesto->baseimponible;
-                        $felimpuesto->save();
+                            $felimpuesto = new FelImpuestos;
+                            $felimpuesto->idfactura = $felfactura->Id;
+                            $felimpuesto->idproducto = $felproducto->Id;
+                            $felimpuesto->codigoimpuesto = '01';
+                            $felimpuesto->porcentajeimpuesto = $producto->factura2_iva_porcentaje;
+                            $felimpuesto->baseimponible = $producto->baseimponible;
+                            $felimpuesto->valorretenido = $producto->valorretenido;
+                            $felimpuesto->save();
+                        }
                     }
                 }
 
-                DB::commit();
+                DB::rollback();
+                // DB::commit();
                 $this->info('Se completo la rutina de factura electronica con exito.');
             }catch(\Exception $e){
                 DB::rollback();
@@ -147,28 +147,14 @@ class CarteraFel extends Command
     }
 
     public static function insertFelFactura( $factura ){
+        Log::info("+");
         $fecha = "$factura->factura1_fecha_elaboro $factura->factura1_hora_elaboro";
         $totalfactura = $factura->baseimporte + $factura->factura1_iva;
 
         $felfactura = new FelFactura;
         $felfactura->tokenempresa = '238d7e9f0d8e218fd4ce83bc8d58e7a36bbdf7e9';
-        $felfactura->idtablaorigen = $factura->factura1_numero;
-        $felfactura->tipodocumento = '01';
-        $felfactura->prefijo = $factura->factura1_prefijo;
-        $felfactura->consecutivo = $factura->factura1_numero;
-        $felfactura->fechafacturacion = $fecha;
-        $felfactura->ordencompra = '';
-        $felfactura->moneda = 'COP';
-        $felfactura->totalimportebruto = $factura->factura1_bruto;
-        $felfactura->totalbaseimponible = $factura->baseimporte;
-        $felfactura->totalfactura = $totalfactura;
-        $felfactura->mediopago = '10';
-        $felfactura->descripcion = substr($factura->factura1_observaciones, 0, 240);
-        $felfactura->incoterm = '';
-        $felfactura->consecutivofacturamodificada = 0;
-        $felfactura->cufefacturamodificada = '';
-        $felfactura->fechafacturamodificada = $fecha;
-        $felfactura->tipopersona = $factura->tercero_persona == 'J' ? '1' : '2';
+        $felfactura->tokenpassword = '293ec00f1fde9e58599b3edc00b7f9ddf0739b9c';
+        $felfactura->tipodepersona = $factura->tercero_persona == 'J' ? '1' : '2';
         $felfactura->razonsocial = $factura->tercero_razon_social;
         $felfactura->primernombre = $factura->tercero_nombre1;
         $felfactura->segundonombre = $factura->tercero_nombre2;
@@ -180,23 +166,40 @@ class CarteraFel extends Command
             $felfactura->tipoidentificacion =  31;
         }
         $felfactura->numeroidentificacion = $factura->tercero_nit;
-        $felfactura->regimen = $factura->tercero_regimen == '1' ? 0 : 2;
-        $felfactura->email = empty($factura->tercero_email) ? '' : $factura->tercero_email;
-        $felfactura->pais = 'CO';
-        $felfactura->departamento = $factura->municipio_nombre;
-        $felfactura->ciudad = $factura->departamento_nombre;
-        $felfactura->bariolocalidad = '';
+        $felfactura->email = !empty($factura->tercero_email) ? $factura->tercero_email : '';
+        $felfactura->departamento = $factura->departamento_nombre;
+        $felfactura->barriolocalidad = '';
+        $felfactura->ciudad = $factura->municipio_nombre;
         $felfactura->direccion = $factura->tercero_direccion;
+        $felfactura->pais = 'CO';
         $felfactura->telefono = $factura->tercero_telefono;
+        $felfactura->regimen = $factura->tercero_regimen == '1' ? 0 : 2;
         $felfactura->aplicafel = 'NO';
-        $felfactura->cufe = '';
-        $felfactura->estadoactual = '';
-        $felfactura->fecharespuesta = $fecha;
-        $felfactura->tokenpassword = '293ec00f1fde9e58599b3edc00b7f9ddf0739b9c';
+        $felfactura->tipoDocumento = '01';
+        $felfactura->prefijo = $factura->factura1_prefijo;
+        $felfactura->consecutivo = $factura->factura1_numero;
+        $felfactura->rango = config('koi.puntoventa')[$factura->factura1_puntoventa];
+        $felfactura->fechafacturación = $fecha;
+        $felfactura->consecutivofacturamodificada = 0;
+        $felfactura->cufefacturamodificada = '';
+        $felfactura->fechafacturamodificada = $fecha;
+        $felfactura->motivonota = '';
+        $felfactura->incoterms = '';
+        $felfactura->estatuspago = '';
+        $felfactura->fechavencimiento = $fecha;
+        $felfactura->moneda = 'COP';
+        $felfactura->mediodepago = '10';
         $felfactura->totaldescuentos = $factura->totaldescuentos;
+        $felfactura->totalsinimpuestos = $factura->factura1_bruto;
+        $felfactura->totalbaseimponible = $factura->baseimporte;
+        $felfactura->totalfactura = $totalfactura;
+        $felfactura->decripcion = substr($factura->factura1_observaciones, 0, 240);
+        $felfactura->cufe = '';
+        $felfactura->estadoactual = 0;
+        $felfactura->fecharespuesta = $fecha;
+        $felfactura->informacionAdicional = '';
         $felfactura->save();
 
-        $id = $felfactura->getConnection()->getPdo()->lastInsertId();
-        return $id;
+        return $felfactura;
     }
 }

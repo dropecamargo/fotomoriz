@@ -2,6 +2,7 @@
 /modules
 /storage/exports
 /storage/app
+public/storage
 /resources/assets/libs
 /node_modules
 Homestead.yaml

@@ -18,7 +18,7 @@ class ReporteEntradasSalidasController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('type'))
+        if($request->filled('type'))
         {
             DB::beginTransaction();
             try{
@@ -114,7 +114,7 @@ class ReporteEntradasSalidasController extends Controller
             // Generate file
             switch ($type) {
                 case 'xls':
-                    Excel::create(sprintf('%s_%s_%s', 'reporte_entradas_salidas', date('Y_m_d'), date('H_m_s')), function($excel) use($fecha_inicio, $fecha_final, $sucursal, $auxiliar, $title, $type) {
+                    Excel::create(sprintf('%s_%s_%s', 'reporte_entradas_salidas', date('Y_m_d'), date('H_m_s')), function($excel) use ($fecha_inicio, $fecha_final, $sucursal, $auxiliar, $title, $type) {
                     $excel->sheet('Excel', function($sheet) use($fecha_inicio, $fecha_final, $sucursal, $auxiliar, $title, $type) {
                             $sheet->loadView('reports.inventory.reporteentradassalidas.reporte', compact('fecha_inicio','fecha_final','sucursal','auxiliar', 'title', 'type'));
                             $sheet->setFontSize(8);

@@ -18,12 +18,12 @@ class ReporteInteresesGeneradosController extends Controller
      */
     public function index(Request $request)
     {
-        // if( env('APP_ENV') == 'local'){
+        if( env('APP_ENV') == 'local'){
             ini_set('memory_limit', '-1');
             set_time_limit(0);
-        // }
+        }
 
-        if( $request->has('type') ){
+        if( $request->filled('type') ){
             // Fechas filtro mes y ano
             $mes = $request->mes;
             $ano = $request->ano;
@@ -41,7 +41,7 @@ class ReporteInteresesGeneradosController extends Controller
             // Recuperar empresa
             $empresa = Empresa::getEmpresa();
 
-            // Recuperar intereses1 
+            // Recuperar intereses1
             $query = Intereses1::query();
             $query->select('intereses1_numero', 'intereses1_sucursal', 'intereses1_anulado', 'intereses1_tercero', DB::raw("SUM(intereses2_interes) as intereses"), DB::raw("(CASE WHEN tercero_persona = 'N'
                         THEN (tercero_nombre1 || ' ' || tercero_nombre2 || ' ' || tercero_apellido1 || ' ' || tercero_apellido2 ||

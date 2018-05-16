@@ -59,8 +59,12 @@
 
 			<tr>
 				<th align="left"> SUBTOTAL CARTERA VENCIDA(1)</th>
-				{{--*/ $sbvencida = $sbvencer = $totalcartera = 0; /*--}}
-				{{--*/ $sbvencida = $datos->resumencartera['m_0'] + $datos->resumencartera['m_30'] + $datos->resumencartera['m_60'] + $datos->resumencartera['m_90'] + $datos->resumencartera['m_180'] + $datos->resumencartera['m_360']; /*--}}
+				@php
+					$sbvencida = $sbvencer = $totalcartera = 0;
+					$sbvencida = $datos->resumencartera['m_0'] + $datos->resumencartera['m_30'] + $datos->resumencartera['m_60'] + $datos->resumencartera['m_90'] + $datos->resumencartera['m_180'] + $datos->resumencartera['m_360'];
+					$sbvencer = $datos->resumencartera['pv_m_0'] + $datos->resumencartera['pv_m_30'];
+					$totalcartera = $sbvencida + $sbvencer;
+				@endphp
 				<th class="right">$ {{ number_format($sbvencida, 2, ',', '.') }}</th>
 			</tr>
 			<tr>
@@ -76,12 +80,10 @@
 			</tr>
 			<tr>
 				<th align="left"> SUBTOTAL CARTERA POR VENCER</th>
-				{{--*/ $sbvencer = $datos->resumencartera['pv_m_0'] + $datos->resumencartera['pv_m_30']; /*--}}
 				<th class="right">$ {{ number_format($sbvencer, 2, ',', '.') }}</th>
 			</tr>
 			<tr>
 				<th align="left"> TOTAL CARTERA</th>
-				{{--*/ $totalcartera = $sbvencida + $sbvencer; /*--}}
 				<th class="right">$ {{ number_format($totalcartera, 2, ',', '.') }}</th>
 			</tr>
 		</thead>

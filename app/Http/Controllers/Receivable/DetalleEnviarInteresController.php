@@ -20,7 +20,7 @@ class DetalleEnviarInteresController extends Controller
     {
         if( $request->ajax() ){
             $detalle = [];
-            if( $request->has('interes') ){
+            if( $request->filled('interes') ){
                 $query = Intereses2::query();
                 $query->select('intereses2.*', 'intereses1_tasa', 'documentos_nombre', 'factura1_iva', DB::raw("intereses2_dias_mora - intereses2_dias_a_cobrar AS cobrados"));
                 $query->join('documentos', 'intereses2_doc_origen', '=', 'documentos_codigo');

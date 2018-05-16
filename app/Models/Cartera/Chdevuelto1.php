@@ -35,7 +35,6 @@ class Chdevuelto1 extends Model
         $query->whereRaw('documentos_codigo = chdevuelto1_documentos');
         $query->whereRaw('chdevuelto1_saldo > 0');
         $query->orderBy('chdevuelto1_fecha', 'asc');
-
         return $query->get();
     }
 }

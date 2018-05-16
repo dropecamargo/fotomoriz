@@ -35,7 +35,7 @@ class Unidaddecision extends Model
             $query = Unidaddecision::query();
             $query->select('unidaddecision_codigo','unidaddecision_nombre');
             $query->orderby('unidaddecision_nombre', 'asc');
-            $collection = $query->lists('unidaddecision_nombre', 'unidaddecision_codigo');
+            $collection = $query->pluck('unidaddecision_nombre', 'unidaddecision_codigo');
             return $collection;
         });
     }

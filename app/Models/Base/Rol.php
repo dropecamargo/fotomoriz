@@ -7,6 +7,13 @@ use Validator, Cache;
 
 class Rol extends EntrustRole
 {
+    /**
+    * The database connection used by the model.
+    *
+    * @var string
+    */
+    protected $connection = 'framework';
+
     public $timestamps = false;
 
     /**
@@ -15,6 +22,8 @@ class Rol extends EntrustRole
      * @var static string
      */
     public static $key_cache = '_troles';
+
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +35,7 @@ class Rol extends EntrustRole
     public function isValid($data)
     {
         $rules = [
-            'name' => 'alpha|unique:rol',
+            'name' => 'alpha|unique:framework.rol',
             'display_name' => 'required',
         ];
 
@@ -53,7 +62,7 @@ class Rol extends EntrustRole
         return Cache::rememberForever( self::$key_cache , function() {
             $query = Rol::query();
             $query->orderBy('display_name', 'asc');
-            $collection = $query->lists('display_name', 'rol.id');
+            $collection = $query->pluck('display_name', 'rol.id');
 
             $collection->prepend('', '');
             return $collection;
@@ -66,7 +75,7 @@ class Rol extends EntrustRole
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = "entrust_permissions_for_role_{$this->$rolePrimaryKey}_$module";
         return Cache::tags(config('entrust.permission_role_table'))->remember($cacheKey, config('cache.ttl'), function () use($module) {
-            return $this->perms()->join('modulo', 'modulo.id', '=', 'permiso_rol.module_id')->where('modulo.name', $module)->get();
+            return $this->perms()->join('modulo1', 'modulo1.id', '=', 'permiso_rol.module_id')->where('modulo1.name', $module)->get();
         });
     }
 

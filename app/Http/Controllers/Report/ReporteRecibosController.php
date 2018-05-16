@@ -17,7 +17,7 @@ class ReporteRecibosController extends Controller
      */
     public function index(Request $request)
     {
-		if($request->has('type'))
+		if($request->filled('type'))
         {
 			// recibos efectuadas en rango de fecha
 			$query = DB::table('recibo2');

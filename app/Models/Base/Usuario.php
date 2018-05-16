@@ -9,14 +9,14 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Illuminate\Notifications\Notifiable;
 
+use App\Models\BaseModel;
 use Validator, DB, Cache;
 
-class Usuario extends Model implements AuthenticatableContract,
-                                    CanResetPasswordContract
+class Usuario extends BaseModel implements AuthenticatableContract, CanResetPasswordContract
 {
-    use Authenticatable, CanResetPassword;
-    use EntrustUserTrait;
+    use Authenticatable, Notifiable, EntrustUserTrait, CanResetPassword;
 
     /**
     * The database connection used by the model.
@@ -90,8 +90,6 @@ class Usuario extends Model implements AuthenticatableContract,
         } else {
             $validateAll = false;
         }
-
-        // dd($this->can('crear', 'ordenes'));
 
         // Return based on option
         if ($options['return_type'] == 'boolean') {

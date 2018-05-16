@@ -8,15 +8,15 @@
 			</tr>
 
 			<tr>
-				<th width="20px" align="left">Nit</th>
-				<th width="60px" align="left">Nombre Tercero</th>
-				<th width="20px" align="left">Fecha</th>
-				<th width="20px" align="center">Hora</th>
-				<th width="20px" align="center">Concepto</th>
-				<th width="20px" align="center">Nombre Concepto</th>
-				<th width="20px" align="left">Proxima Llamada</th>
-				<th width="20px" align="center">T. Interno</th>
-				<th width="60px" align="left">Nombre</th>
+				<th align="left">Nit</th>
+				<th align="left">Nombre Tercero</th>
+				<th align="left">Fecha</th>
+				<th align="center">Hora</th>
+				<th align="center">Concepto</th>
+				<th align="center">Nombre Concepto</th>
+				<th align="left">Proxima Llamada</th>
+				<th align="center">T. Interno</th>
+				<th align="left">Nombre</th>
 			</tr>
 		</thead>
 		<tbody>

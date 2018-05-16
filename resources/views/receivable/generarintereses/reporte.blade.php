@@ -41,9 +41,11 @@
 			</tr>
 		</thead>
 		<tbody>
-			{{--*/ $cobrados = 0; /*--}}
+			@php $cobrados = 0; @endphp
 			@foreach( $interes['detalle'] as $item )
-				{{--*/ $cobrados = abs($item->intereses2_dias_a_cobrar) - abs($item->intereses2_dias_mora); /*--}}
+				@php
+					$cobrados = abs($item->intereses2_dias_a_cobrar) - abs($item->intereses2_dias_mora);
+				@endphp
 				<tr>
 					<td class="left size-7">{{ $item->documento }}</td>
 					<td class="right size-7">{{ $item->intereses2_num_origen }}</td>

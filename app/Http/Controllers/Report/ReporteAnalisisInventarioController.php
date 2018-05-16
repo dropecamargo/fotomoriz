@@ -19,7 +19,7 @@ class ReporteAnalisisInventarioController extends Controller
     public function index(Request $request)
     {
         //
-		if($request->has('type'))
+		if($request->filled('type'))
         {
 			DB::beginTransaction();
             try{
@@ -342,7 +342,7 @@ class ReporteAnalisisInventarioController extends Controller
 							$sheet->loadView('reports.inventory.reporteanalisisinventario.reporte', compact('mes', 'ano', 'xmeses', 'nmes0', 'nmes1', 'nmes2', 'nmes3', 'nmes4',  'auxiliar', 'title', 'type'));
 							$sheet->setFontSize(8);
 						});
-                        
+
 						$title = sprintf('%s', 'Analisis Inventario  Unidades');
 						$excel->sheet('Excel', function($sheet) use($mes, $ano, $xmeses, $nmes0, $nmes1, $nmes2, $nmes3, $nmes4, $auxiliar, $title, $type){
 							$sheet->loadView('reports.inventory.reporteanalisisinventario.reporte2', compact('mes', 'ano', 'xmeses', 'nmes0', 'nmes1', 'nmes2', 'nmes3', 'nmes4',  'auxiliar', 'title', 'type'));

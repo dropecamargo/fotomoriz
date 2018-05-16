@@ -3,21 +3,19 @@
 @section('content')
 	<table class="rtable" border="0" cellspacing="0" cellpadding="0">
 		<thead>
-
-
 			<tr>
-				<th width="20px" align="left">Nit</th>
-				<th width="60px" align="left">Nombre Tercero</th>
-				<th width="20px" align="left">Cheque</th>
-				<th width="20px" align="left">Banco</th>
-				<th width="20px" align="left">Fecha Registrado</th>
-				<th width="20px" align="left">Fecha Cheque</th>
-				<th width="20px" align="center">Girador</th>
-				<th width="20px" align="center">Valor</th>
-				<th width="25px" align="center">Central de Riesgo</th>
-				<th width="20px" align="center">Numero Sistema</th>
-				<th width="20px" align="center">Sucursal</th>
-				<th width="60px" align="left">Observaciones</th>
+				<th align="left">Nit</th>
+				<th align="left">Nombre Tercero</th>
+				<th align="left">Cheque</th>
+				<th align="left">Banco</th>
+				<th align="left">Fecha Registrado</th>
+				<th align="left">Fecha Cheque</th>
+				<th align="center">Girador</th>
+				<th align="center">Valor</th>
+				<th align="center">Central de Riesgo</th>
+				<th align="center">Numero Sistema</th>
+				<th align="center">Sucursal</th>
+				<th align="left">Observaciones</th>
 			</tr>
 		</thead>
 		<tbody>

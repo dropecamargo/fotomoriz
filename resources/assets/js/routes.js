@@ -14,11 +14,15 @@ app || (app = {});
             'login(/)': 'getLogin',
 
             // Routes Admin
+            'tercerosinterno(/)': 'getTercerosInternoMain',
+            'tercerosinterno/:tercerointerno(/)': 'getTercerosInternoShow',
+
             'roles(/)': 'getRolesMain',
             'roles/create(/)': 'getRolesCreate',
-            'roles/:rol/edit(/)': 'getRolesEdit',
+            'roles/:roles/edit(/)': 'getRolesEdit',
 
             'permisos(/)': 'getPermisosMain',
+            'modulos(/)': 'getModulosMain',
 
             // Generar intereses
             'generarintereses(/)': 'getGenerarInteresesMain',
@@ -93,6 +97,33 @@ app || (app = {});
         },
 
         /**
+        * show view main tercerosinterno
+        */
+        getTercerosInternoMain: function () {
+            if ( this.mainTerceroInternoView instanceof Backbone.View ){
+                this.mainTerceroInternoView.stopListening();
+                this.mainTerceroInternoView.undelegateEvents();
+            }
+
+            this.mainTerceroInternoView = new app.MainTerceroInternoView( );
+        },
+
+        /**
+        * show view show tercerosinterno
+        */
+        getTercerosInternoShow: function (tercerointerno) {
+            this.tercerointernoModel = new app.TerceroInternoModel();
+            this.tercerointernoModel.set({'id': tercerointerno}, {'silent':true});
+
+            if ( this.showTerceroInternoView instanceof Backbone.View ){
+                this.showTerceroInternoView.stopListening();
+                this.showTerceroInternoView.undelegateEvents();
+            }
+
+            this.showTerceroInternoView = new app.ShowTerceroInternoView({ model: this.tercerointernoModel });
+        },
+
+        /**
         * show view main roles
         */
         getRolesMain: function () {
@@ -123,9 +154,9 @@ app || (app = {});
         /**
         * show view edit roles
         */
-        getRolesEdit: function (rol) {
+        getRolesEdit: function (roles) {
             this.rolModel = new app.RolModel();
-            this.rolModel.set({'id': rol}, {silent: true});
+            this.rolModel.set({'id': roles}, {silent: true});
 
             if ( this.editRolView instanceof Backbone.View ){
                 this.editRolView.stopListening();
@@ -152,6 +183,19 @@ app || (app = {});
             }
 
             this.mainPermisoView = new app.MainPermisoView( );
+        },
+
+        /**
+        * show main view modulos
+        */
+        getModulosMain: function () {
+
+            if ( this.mainModuloView instanceof Backbone.View ){
+                this.mainModuloView.stopListening();
+                this.mainModuloView.undelegateEvents();
+            }
+
+            this.mainModuloView = new app.MainModuloView( );
         },
 
         /**

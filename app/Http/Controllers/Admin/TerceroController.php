@@ -32,12 +32,12 @@ class TerceroController extends Controller
             return Datatables::of($query)
                 ->filter(function($query) use($request) {
                     // Documento
-                    if($request->has('tercero_nit')) {
+                    if($request->filled('tercero_nit')) {
                         $query->where('tercero_nit', $request->tercero_nit);
                     }
 
                     // Nombre
-                    if($request->has('tercero_nombre')) {
+                    if($request->filled('tercero_nombre')) {
                         $query->where(function ($query) use($request) {
                             $query->whereRaw("tercero_nombre1 LIKE '%{$request->tercero_nombre}%'");
                             $query->orWhereRaw("tercero_nombre2 LIKE '%{$request->tercero_nombre}%'");

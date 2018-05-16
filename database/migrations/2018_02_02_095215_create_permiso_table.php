@@ -12,7 +12,9 @@ class CreatePermisoTable extends Migration
      */
     public function up()
     {
-        Schema::create('permiso', function (Blueprint $table) {
+        Schema::connection('framework')->create('permiso', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
@@ -27,6 +29,6 @@ class CreatePermisoTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('permiso');
+        Schema::connection('framework')->dropIfExists('permiso');
     }
 }

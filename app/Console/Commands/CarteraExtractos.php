@@ -148,7 +148,7 @@ class CarteraExtractos extends Command
                 $consignaciones = DB::select($sqlconsig)[0];
 
                 // Preparar titulo & tipo para los archivos
-                $title = sprintf('%s %s %s %s', 'EXTRACTO DE CLIENTE A', $fechas->nombre_mes_escogido, 'DEL', $fechas->ano_actual);
+                $title = "EXTRACTO DE CLIENTE A $fechas->nombre_mes_escogido DEL $fechas->ano_actual";
                 $type = 'pdf';
 
                 // Datos 2° parte
@@ -201,7 +201,7 @@ class CarteraExtractos extends Command
                         break;
                 }
             }
-
+            
             // Recorrer clientes con correos validos
             foreach ($correos->enviados as $enviados) {
 

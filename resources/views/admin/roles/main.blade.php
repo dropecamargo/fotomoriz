@@ -56,6 +56,62 @@
                         </div>
                     </form>
 
+                    <% if( typeof(id) !== 'undefined' && !_.isUndefined(id) && !_.isNull(id) && id != '' && name != 'admin' ) { %>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <div class="nav-tabs-custom">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a href="#tab_modulos" data-toggle="tab">Permisos</a></li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="tab_modulos">
+                                            <div class="box-group">
+                                                @foreach(App\Models\Base\Modulo::getModules() as $father)
+                                                    <div id="wrapper-father-{{ $father->id }}" class="panel box box-whithout-border">
+                                                        <div class="box-header">
+                                                            <h1 class="box-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse_{{ $father->id }}">{{ $father->display_name }}</a>
+                                                            </h1>
+                                                        </div>
+                                                        <div id="collapse_{{ $father->id }}" class="panel-collapse collapse">
+                                                            <div class="box-body">
+                                                                <table class="table table-condensed">
+                                                                    @foreach($father->childrens as $children)
+                                                                        <tr>
+                                                                            <th>
+                                                                                <a class="toggle-children" data-resource="{{ $children->id }}" data-father="{{ $father->id }}" data-nivel1="{{ $children->nivel1 }}" data-nivel2="{{ $children->nivel2 }}" data-toggle="collapse" data-parent="#accordion" href="#collapse_children_{{ $children->id }}">
+                                                                                    {{ $children->display_name }}
+                                                                                </a>
+                                                                                <div id="collapse_children_{{ $children->id }}" class="collapse">
+                                                                                    <table id="wrapper-permisions-{{ $children->id }}" class="table table-striped">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th style="width: 30%"></th>
+                                                                                                <% _.each(permissions, function(permission) { %>
+                                                                                                    <th style="width: 10%" class="text-center"><%- permission.display_name %></th>
+                                                                                                <% }); %>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            {{-- Render permissions --}}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </th>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
                 </div>
             </div>
         </section>

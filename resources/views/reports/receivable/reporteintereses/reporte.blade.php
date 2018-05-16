@@ -13,10 +13,10 @@
 		</thead>
 		<tbody>
 			@foreach( $intereses as $interes )
-				{{--*/
+				@php
 					$iva = $interes->valoriva * ($empresa->empresa_iva/100);
 					$total = $iva + $interes->intereses;
-				/*--}}
+				@endphp
 				<tr class="{{ $interes->intereses1_anulado ? 'line-red' : '' }}">
 					<td>{{ $interes->intereses1_numero }}</td>
 					<td>{{ $interes->intereses1_tercero }}</td>

@@ -138,7 +138,9 @@
 	</head>
 	<body>
 		{{-- Title --}}
-		{{--*/ $empresa = App\Models\Base\Empresa::getEmpresa(); /*--}}
+		@php
+			$empresa = App\Models\Base\Empresa::getEmpresa();
+		@endphp
 		@include('reports.title')
 		<br/>
 

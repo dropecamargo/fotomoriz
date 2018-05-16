@@ -14,11 +14,10 @@
                         <th>Archivo</th>
                     </tr>
                 </thead>
-                <tbody>
-
-                </tbody>
+                <tbody></tbody>
             </table>
-        </div>
+        </div><br>
+
         <div class="box-footer with-border">
             <div class="row">
                 <div class="col-md-2 col-md-offset-5 col-sm-6 col-xs-6 text-left">

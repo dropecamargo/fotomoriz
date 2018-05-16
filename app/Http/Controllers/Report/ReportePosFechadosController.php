@@ -18,7 +18,7 @@ class ReportePosFechadosController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('type'))
+        if($request->filled('type'))
         {
             DB::beginTransaction();
             try

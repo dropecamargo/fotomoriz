@@ -8,46 +8,44 @@
 			</tr>
 
 			<tr>
-				<th colspan="1" align="center"></th>
-				<th colspan="1" align="center"></th>
-				<th colspan="1" align="center"></th>
+				<th colspan="3" align="center"></th>
 				<th colspan="4" align="center">VENTAS</th>
-				<th colspan="1" align="center"></th>
+				<th></th>
 				<th colspan="4" align="center">EXISTENCIAS</th>
-				<th colspan="1" align="center"></th>
+				<th></th>
 				<th colspan="4" align="center">ROTACION</th>
-				<th colspan="1" align="center"></th>
+				<th></th>
 				<th colspan="2" align="center">TRANSITO</th>
 			</tr>
 
 			<tr>
-				<th width="60px" align="left">Linea</th>
-				<th width="20px" align="left">Referencia</th>
-				<th width="80px" align="left">Producto</th>
+				<th align="left">Linea</th>
+				<th align="left">Referencia</th>
+				<th align="left">Producto</th>
 				@if($xmeses==4)
-					<th width="20px" align="left">{{ $nmes1 }}</th>
-					<th width="20px" align="left">{{ $nmes2 }}</th>
-					<th width="20px" align="left">{{ $nmes3 }}</th>
-					<th width="20px" align="left">{{ $nmes4 }}</th>
+					<th align="left">{{ $nmes1 }}</th>
+					<th align="left">{{ $nmes2 }}</th>
+					<th align="left">{{ $nmes3 }}</th>
+					<th align="left">{{ $nmes4 }}</th>
 				@else
-					<th width="20px" align="left">{{ $nmes0 }}</th>
-					<th width="20px" align="left">{{ $nmes1 }}</th>
-					<th width="20px" align="left">{{ $nmes2 }}</th>
-					<th width="20px" align="left">{{ $nmes3 }}</th>
+					<th align="left">{{ $nmes0 }}</th>
+					<th align="left">{{ $nmes1 }}</th>
+					<th align="left">{{ $nmes2 }}</th>
+					<th align="left">{{ $nmes3 }}</th>
 				@endif
-				<th width="20px" align="left">Promedio</th>
-				<th width="20px" align="left">{{ $nmes1 }}</th>
-				<th width="20px" align="left">{{ $nmes2 }}</th>
-				<th width="20px" align="left">{{ $nmes3 }}</th>
-				<th width="20px" align="left">{{ $nmes4 }}</th>
-				<th width="20px" align="left"></th>
-				<th width="20px" align="left">{{ $nmes1 }}</th>
-				<th width="20px" align="left">{{ $nmes2 }}</th>
-				<th width="20px" align="left">{{ $nmes3 }}</th>
-				<th width="20px" align="left">{{ $nmes4 }}</th>
-				<th width="20px" align="left"></th>
-				<th width="20px" align="left">Importaciones</th>
-				<th width="20px" align="left">Nacionales</th>
+				<th align="left">Promedio</th>
+				<th align="left">{{ $nmes1 }}</th>
+				<th align="left">{{ $nmes2 }}</th>
+				<th align="left">{{ $nmes3 }}</th>
+				<th align="left">{{ $nmes4 }}</th>
+				<th align="left"></th>
+				<th align="left">{{ $nmes1 }}</th>
+				<th align="left">{{ $nmes2 }}</th>
+				<th align="left">{{ $nmes3 }}</th>
+				<th align="left">{{ $nmes4 }}</th>
+				<th align="left"></th>
+				<th align="left">Importaciones</th>
+				<th align="left">Nacionales</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -61,7 +59,7 @@
 					<td align="rigth">{{ $item->unidad2 }}</td>
 					<td align="rigth">{{ $item->unidad3 }}</td>
 					<td align="rigth">{{ $item->unidad4 }}</td>
-					{{--*/  $promedio=($item->unidad1+$item->unidad2+$item->unidad3+$item->unidad4)/4 ;  /*--}}
+					@php $promedio = ($item->unidad1+$item->unidad2+$item->unidad3+$item->unidad4)/4; @endphp
 					<th align="rigth">{{ $promedio }}</th>
 					<td align="rigth">{{ $item->unidad5 }}</td>
 					<td align="rigth">{{ $item->unidad6 }}</td>

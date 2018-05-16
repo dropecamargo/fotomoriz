@@ -21,7 +21,7 @@ class ReporteArpController extends Controller
         /**
         * Request has type
         **/
-		if($request->has('type')){
+		if($request->filled('type')){
 			DB::beginTransaction();
             try{
 				//campos auxiliar
@@ -41,10 +41,8 @@ class ReporteArpController extends Controller
 				$query->where('asiento2n_ano', $request->ano);
 				$query->where('asiento2n_clase', '5');
 				$query->where(function ($query){
-					$query->where(function($query){
-						$query->where('asiento2n_grupo', '1');
-						$query->orwhere('asiento2n_grupo', '2');
-					});
+					$query->where('asiento2n_grupo', '1');
+					$query->orwhere('asiento2n_grupo', '2');
 				});
 				$query->orderby('asiento2n_plancuentasn');
                 $gastos = $query->get();

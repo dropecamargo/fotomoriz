@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use View, Excel, App, DB, Log;
 use App\Models\Base\AuxiliarReporte;
+use View, Excel, App, DB, Log;
 
 class ReporteEdadesController extends Controller
 {
@@ -18,7 +18,7 @@ class ReporteEdadesController extends Controller
      */
     public function index(Request $request)
     {
-		if($request->has('type'))
+		if($request->filled('type'))
         {
 			DB::beginTransaction();
             try{

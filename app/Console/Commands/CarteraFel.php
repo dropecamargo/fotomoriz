@@ -76,23 +76,23 @@ class CarteraFel extends Command
                 $query->join('puntoventa', 'factura1_puntoventa', '=', 'puntoventa_numero');
                 $query->where('factura1_anulada', false);
                 $query->where(function($query) use ($mesi, $anoi){
-                    $query->whereRaw("EXTRACT(MONTH FROM factura1_fecha_elaboro) >= $mesi");
-                    $query->whereRaw("EXTRACT(YEAR FROM factura1_fecha_elaboro) >= $anoi");
+                    $query->whereMonth('factura1_fecha_elaboro', '>=', $mesi);
+                    $query->whereYear('factura1_fecha_elaboro', '>=', $anoi);
                 });
                 $query->where(function($query)  use ($mesf, $anof){
-                    $query->whereRaw("EXTRACT(MONTH FROM factura1_fecha_elaboro) <= $mesf");
-                    $query->whereRaw("EXTRACT(YEAR FROM factura1_fecha_elaboro) <= $anof");
+                    $query->whereMonth('factura1_fecha_elaboro', '<=', $mesf);
+                    $query->whereYear('factura1_fecha_elaboro', '<=', $anof);
                 });
                 $query->where('factura1_puntoventa', '<>', '8');
                 $query->orderBy('factura1_fecha_elaboro');
-                $query->limit(5);
                 $facturas = $query->get();
 
                 foreach ( $facturas as $factura ) {
 
                     // Validar que no exita en fel_factura
-                    $validfel = FelFactura::where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
+                    $validfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
                     if( !$validfel instanceof FelFactura ){
+
                         // Insertar felfactura -> fel_encabezadofactura
                         $felfactura = $this->insertFelFactura( $factura );
 
@@ -135,8 +135,8 @@ class CarteraFel extends Command
                     }
                 }
 
-                DB::rollback();
-                // DB::commit();
+                DB::commit();
+                Log::info('Se completo la rutina de factura electronica con exito.');
                 $this->info('Se completo la rutina de factura electronica con exito.');
             }catch(\Exception $e){
                 DB::rollback();
@@ -147,7 +147,6 @@ class CarteraFel extends Command
     }
 
     public static function insertFelFactura( $factura ){
-        Log::info("+");
         $fecha = "$factura->factura1_fecha_elaboro $factura->factura1_hora_elaboro";
         $totalfactura = $factura->baseimporte + $factura->factura1_iva;
 

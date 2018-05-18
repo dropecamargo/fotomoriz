@@ -32,7 +32,7 @@ class Factura1 extends Model
     /**
     *  Function getFacturaInteres -> intereses
     **/
-    public static function getFacturaInteres( $fechamora )
+    public static function getFacturaInteres($fechamora)
     {
         $query = Factura1::query();
         $query->select('factura1_numero as numero', 'factura1_documentos as docu', 'factura1_sucursal as sucursal', 'factura1_fecha as expedicion', 'factura3_cuota as cuota', 'factura3_vencimiento as vencimiento', DB::raw("DATE(factura3_vencimiento - $fechamora ) as dias"), 'factura3_saldo as valor', 'documentos_nombre as documento');
@@ -51,5 +51,23 @@ class Factura1 extends Model
         $query->orderBy('factura3_vencimiento', 'asc');
 
         return $query->get();
+    }
+
+    /**
+    *  consula para traer las facturas para generar la rutina de fels
+    **/
+    public static function getFacturasElectronicas($fechai, $fechaf)
+    {
+        $query = Factura1::query();
+        $query->select('factura1.*', 'tercero_persona', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_tipodocumento', 'tercero_nit', 'tercero_regimen', 'tercero_email', 'municipio_nombre', 'departamento_nombre', 'tercero_direccion', 'tercero_telefono', DB::raw("(factura1_descuento_0 + factura1_descuento_30 + factura1_descuento_60 + factura1_descuento_90 + factura1_descuento_120) AS totaldescuentos"), DB::raw("(factura1_bruto - factura1_descuento) AS baseimporte"));
+        $query->join('tercero', 'factura1_tercero', '=', 'tercero_nit');
+        $query->join('municipios', 'tercero_municipios', '=', 'municipio_codigo');
+        $query->join('departamentos', 'municipio_departamento', '=', 'departamento_codigo');
+        $query->join('puntoventa', 'factura1_puntoventa', '=', 'puntoventa_numero');
+        $query->where('tercero_tipodocumento', '<>', 'XX');
+        $query->where('factura1_puntoventa', '<>', '8');
+        $query->orderBy('factura1_fecha');
+
+        return $query;
     }
 }

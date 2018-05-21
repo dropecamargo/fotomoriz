@@ -79,31 +79,21 @@ class CarteraFel extends Command
                 $this->info('Generando rutina de factura electronica.');
 
                 // Consulta para traer facturas en el rango de fechas
-                $facturas = Factura1::getFacturasElectronicas($fechai, $fechaf)->where('factura1_anulada', false)->whereBetween('factura1_fecha', [$fechai, $fechaf])->get();
+                $facturas = Factura1::getFacturasElectronicas($fechai, $fechaf);
+                $bar = $this->output->createProgressBar(count($facturas));
                 foreach ($facturas as $factura) {
                     // Validar que no exita en fel_factura
                     $validfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
                     if( !$validfel instanceof FelFactura ){
                         // Insertar felfactura -> fel_encabezadofactura
-                        $this->insertFelFactura($factura, 'FACT');
+                        $this->insertFelFactura($factura, $factura->tipo);
                     }
+                    $bar->advance();
                 }
-
-                // Consulta para traer facturas en el rango de fechas
-                $devoluciones = Factura1::getFacturasElectronicas($fechai, $fechaf)->where('factura1_anulada', false)->whereBetween('factura1_fecha', [$fechai, $fechaf])->join('devolucion1', 'factura1_numero', '=', 'devolucion1_factura_numero')->get();
-                foreach ($devoluciones as $devolucion) {
-                    // Insertar felfactura -> fel_encabezadofactura
-                    $this->insertFelFactura($devolucion, 'DEVO');
-                }
-
-                $anuladas = Factura1::getFacturasElectronicas($fechai, $fechaf)->where('factura1_anulada', true)->whereBetween('factura1_fecha_anulacion', [$fechai, $fechaf])->get();
-                foreach ($anuladas as $anulada) {
-                    // Insertar felfactura -> fel_encabezadofactura
-                    $this->insertFelFactura($anulada, 'ANUL');
-                }
+                $bar->finish();
 
                 DB::commit();
-                $this->info("Se completo la rutina de factura electronica con exito.");
+                $this->info("\nSe completo la rutina de factura electronica con exito.");
             }catch(\Exception $e){
                 DB::rollback();
                 Log::error($e->getMessage());
@@ -191,7 +181,6 @@ class CarteraFel extends Command
         $felfactura->save();
 
         if( $type == 'DEVO' ){
-
             $query = Devolucion2::query();
             $query->select('devolucion2.*', 'producto_nombre', DB::raw("((devolucion2_precio-devolucion2_descuento)*devolucion2_cantidad) AS baseimponible, (devolucion2_iva*devolucion2_cantidad) AS valorretenido"));
             $query->join('producto', 'devolucion2_producto', '=', 'producto_serie');
@@ -228,9 +217,7 @@ class CarteraFel extends Command
                 $felimpuesto->valorretenido = $producto->valorretenido;
                 $felimpuesto->save();
             }
-
         }else{
-
             $query = Factura2::query();
             $query->select('factura2.*', 'producto_nombre', DB::raw("((factura2_precio_venta-factura2_descuento_pesos)*factura2_unidades_vendidas) AS baseimponible, (factura2_iva_pesos * factura2_unidades_vendidas) AS valorretenido"));
             $query->join('producto', 'factura2_producto', '=', 'producto_serie');
@@ -267,7 +254,6 @@ class CarteraFel extends Command
                 $felimpuesto->valorretenido = $producto->valorretenido;
                 $felimpuesto->save();
             }
-
         }
 
         return;

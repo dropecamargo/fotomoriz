@@ -79,7 +79,6 @@ class Factura1 extends Model
             $join->on('factura1_sucursal', '=', 'devolucion1_factura_sucursal');
         });
         $query->orderBy('factura1_fecha');
-
         return $query->get();
     }
 }

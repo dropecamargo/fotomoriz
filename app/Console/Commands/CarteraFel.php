@@ -13,14 +13,14 @@ class CarteraFel extends Command
      *
      * @var string
      */
-    protected $signature = 'cartera:fel';
+    protected $signature = 'cartera:facturas';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Comando para generar fels';
+    protected $description = 'Comando para generar facturas electronicas.';
 
     /**
      * Create a new command instance.
@@ -39,18 +39,31 @@ class CarteraFel extends Command
         $this->line('Bienvenido a la rutina de facturas electronicas.');
 
         // Preguntas de la rutina && validar
-        $mesi = intval($this->ask("Digite el mes con el cual inicia la rutina (1 a 12)"));
-        if( !($mesi > 0 && $mesi <= 12) ) {
+        $dayi = intval( $this->ask("Digite el dia con el cual inicia la rutina")  );
+        if( $dayi < 1 || $dayi > 31 ) {
+            $this->error('El filtro de dia no es valido.');
+            return;
+        }
+        // Preguntas de la rutina && validar
+        $mesi = intval( $this->ask("Digite el mes con el cual inicia la rutina (1 a 12)") );
+        if( $mesi < 1 || $mesi > 12 ) {
             $this->error('El filtro de mes no es valido.');
             return;
         }
-        $anoi = intval($this->ask("Digite el año con el cual inicia la rutina ($this->anoincial a $this->anoactual)"));
+        $anoi = intval( $this->ask("Digite el año con el cual inicia la rutina ($this->anoincial a $this->anoactual)") );
         if( $anoi < $this->anoincial || $anoi > $this->anoactual ) {
             $this->error("El rango de años permitidos es de $this->anoincial hasta $this->anoactual");
             return;
         }
-        $mesf = intval($this->ask("Digite el mes con el cual finaliza la rutina (1 a 12)") );
-        if( !($mesf > 0 && $mesf <= 12) ) {
+
+        // Preguntas de la rutina && validar
+        $dayf = intval( $this->ask("Digite el dia con el cual finaliza la rutina") );
+        if( $dayf < 1 || $dayf > 31 ) {
+          $this->error('El filtro de dia no es valido.');
+          return;
+        }
+        $mesf = intval( $this->ask("Digite el mes con el cual finaliza la rutina (1 a 12)") );
+        if( $mesf < 1 || $mesf > 12 ) {
             $this->error('El filtro de mes no es valido.');
             return;
         }
@@ -61,19 +74,15 @@ class CarteraFel extends Command
         }
 
         // Validar que fecha inicial no sea mayor a la final
-        if( ($mesi > $mesf && $anoi == $anof) || $anoi > $anof ) {
-            $this->error('La fecha final no puede ser mayor a la inicial');
+        $fechai = date('Y-m-d', strtotime("$anoi-$mesi-$dayi"));
+        $fechaf = date('Y-m-d', strtotime("$anof-$mesf-$dayf"));
+        if( $fechaf < $fechai ) {
+            $this->error('La fecha final no puede ser menor a la inicial');
             return;
         }
 
-        // fechainicial && fechafinal para el between
-        $dayf = date('t',strtotime("$anof-$mesf-01"));
-
-        $fechai = "$anoi-$mesi-01";
-        $fechaf = "$anof-$mesf-$dayf";
-
-        // Iniciar rutina
-        if( $this->confirm("El mes y año que ha digitado es ".config('koi.meses')[$mesi]." $anoi y ".config('koi.meses')[$mesf]." $anof ?", true) ){
+        // Confirmar rutina
+        if( $this->confirm("Las fechas para el filtro inician en $fechai y terminan en $fechaf?", true) ){
             DB::beginTransaction();
             try{
                 $this->info('Generando rutina de factura electronica.');
@@ -96,7 +105,6 @@ class CarteraFel extends Command
                 $this->info("\nSe completo la rutina de factura electronica con exito.");
             }catch(\Exception $e){
                 DB::rollback();
-                Log::error($e->getMessage());
                 $this->error("No se pudo ejecutar la rutina con exito.");
             }
         }

@@ -13,7 +13,7 @@ class CarteraFel extends Command
      *
      * @var string
      */
-    protected $signature = 'cartera:facturas';
+    protected $signature = 'cartera:facturas {fechai} {fechaf}';
 
     /**
      * The console command description.
@@ -38,40 +38,14 @@ class CarteraFel extends Command
     {
         $this->line('Bienvenido a la rutina de facturas electronicas.');
 
-        // Preguntas de la rutina && validar
-        $dayi = intval( $this->ask("Digite el dia con el cual inicia la rutina")  );
-        if( $dayi < 1 || $dayi > 31 ) {
-            $this->error('El filtro de dia no es valido.');
-            return;
-        }
-        // Preguntas de la rutina && validar
-        $mesi = intval( $this->ask("Digite el mes con el cual inicia la rutina (1 a 12)") );
-        if( $mesi < 1 || $mesi > 12 ) {
-            $this->error('El filtro de mes no es valido.');
-            return;
-        }
-        $anoi = intval( $this->ask("Digite el año con el cual inicia la rutina ($this->anoincial a $this->anoactual)") );
-        if( $anoi < $this->anoincial || $anoi > $this->anoactual ) {
-            $this->error("El rango de años permitidos es de $this->anoincial hasta $this->anoactual");
+        if( strlen($this->argument('fechai')) != 10 || strlen($this->argument('fechaf')) != 10 ){
+            $this->error("Las fechas son incorrectas formato (YYYY.MM.DD)");
             return;
         }
 
-        // Preguntas de la rutina && validar
-        $dayf = intval( $this->ask("Digite el dia con el cual finaliza la rutina") );
-        if( $dayf < 1 || $dayf > 31 ) {
-          $this->error('El filtro de dia no es valido.');
-          return;
-        }
-        $mesf = intval( $this->ask("Digite el mes con el cual finaliza la rutina (1 a 12)") );
-        if( $mesf < 1 || $mesf > 12 ) {
-            $this->error('El filtro de mes no es valido.');
-            return;
-        }
-        $anof = intval($this->ask("Digite el año con el cual finaliza la rutina ($this->anoincial a $this->anoactual)"));
-        if( $anof < $this->anoincial || $anof > $this->anoactual ) {
-            $this->error("El rango de años permitidos es de $this->anoincial hasta $this->anoactual");
-            return;
-        }
+        // Convertir en fecha
+        list($anoi,$mesi,$dayi) = explode('.', $this->argument('fechai'));
+        list($anof,$mesf,$dayf) = explode('.', $this->argument('fechaf'));
 
         // Validar que fecha inicial no sea mayor a la final
         $fechai = date('Y-m-d', strtotime("$anoi-$mesi-$dayi"));
@@ -82,31 +56,29 @@ class CarteraFel extends Command
         }
 
         // Confirmar rutina
-        if( $this->confirm("Las fechas para el filtro inician en $fechai y terminan en $fechaf?", true) ){
-            DB::beginTransaction();
-            try{
-                $this->info('Generando rutina de factura electronica.');
+        DB::beginTransaction();
+        try{
+            $this->info('Generando rutina de factura electronica.');
 
-                // Consulta para traer facturas en el rango de fechas
-                $facturas = Factura1::getFacturasElectronicas($fechai, $fechaf);
-                $bar = $this->output->createProgressBar(count($facturas));
-                foreach ($facturas as $factura) {
-                    // Validar que no exita en fel_factura
-                    $validfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
-                    if( !$validfel instanceof FelFactura ){
-                        // Insertar felfactura -> fel_encabezadofactura
-                        $this->insertFelFactura($factura, $factura->tipo);
-                    }
-                    $bar->advance();
+            // Consulta para traer facturas en el rango de fechas
+            $facturas = Factura1::getFacturasElectronicas($fechai, $fechaf);
+            $bar = $this->output->createProgressBar(count($facturas));
+            foreach ($facturas as $factura) {
+                // Validar que no exita en fel_factura
+                $validfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
+                if( !$validfel instanceof FelFactura ){
+                    // Insertar felfactura -> fel_encabezadofactura
+                    $this->insertFelFactura($factura, $factura->tipo);
                 }
-                $bar->finish();
-
-                DB::commit();
-                $this->info("\nSe completo la rutina de factura electronica con exito.");
-            }catch(\Exception $e){
-                DB::rollback();
-                $this->error("No se pudo ejecutar la rutina con exito.");
+                $bar->advance();
             }
+            $bar->finish();
+
+            DB::commit();
+            $this->info("\nSe completo la rutina de factura electronica con exito.");
+        }catch(\Exception $e){
+            DB::rollback();
+            $this->error("No se pudo ejecutar la rutina con exito.");
         }
     }
 

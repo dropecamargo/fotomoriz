@@ -195,7 +195,7 @@
 		@php
 			$empresa = App\Models\Base\Empresa::getEmpresa();
 		@endphp
-		
+
 		@include('reports.title')
 
 		@yield('content')

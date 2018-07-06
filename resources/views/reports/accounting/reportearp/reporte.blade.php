@@ -1,44 +1,115 @@
-@extends('reports.layout', ['type' => $type, 'title' => $title])
+@extends('reports.accounting.reportearp.layout', ['type' => $type, 'title' => $title])
 
 @section('content')
-	<table class="rtable" border="0" cellspacing="0" cellpadding="0">
-		<thead>
-			<tr>
-				<th colspan="11" align="center">Mes: {{ $mes}}  Año: {{ $ano }} </th>
-			</tr>
+	<table class="rtable" border="1" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="3" class="noborder"></td>
+			<td align="center" class="bold-cell">UNIDAD DE DECISION:</td>
+			<td class="noborder"></td>
+			<td colspan="3" align="center">{{ $unidad }}</td>
+			<td class="noborder"></td>
+			<td colspan="4" align="center" class="bold-cell">FECHA:</td>
+			<td class="noborder"></td>
+			<td colspan="3" align="center"> {{ $mes }} / {{ $ano }} </td>
+		</tr>
 
-			<tr>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th colspan="4" align="center">VENTAS</th>
-				<th></th>
-				<th colspan="4" align="center">EXISTENCIAS</th>
-				<th></th>
-				<th colspan="4" align="center">ROTACION</th>
-				<th></th>
-				<th align="center">TRANSITO</th>
-			</tr>
+		<tr>
+			<td colspan="17" class="noborder"></td>
+		</tr>
 
+		<tr>
+			<td class="noborder"></td>
+			<td class="noborder"></td>
+			<td class="noborder"></td>
+			<td rowspan="2" align="center" class="bold-cell">GASTOS</td>
+			<td class="noborder"></td>
+			<td colspan="3" align="center" class="bold-cell">MES</td>
+			<td class="noborder"></td>
+			<td colspan="4" align="center" class="bold-cell">ACUMULADO</td>
+			<td class="noborder"></td>
+			<td align="center" class="bold-cell">ARP</td>
+			<td colspan="2" align="center" class="bold-cell">DISPONIBLE</td>
+		</tr>
+
+		<tr>
+	    	<td class="noborder"></td>
+	    	<td class="noborder"></td>
+	    	<td class="noborder"></td>
+	    	<td class="noborder"></td>
+	    	<td class="noborder"></td>
+			<td align="center" class="bold-cell">ARP</td>
+			<td align="center" class="color-cell bold-cell">REAL</td>
+			<td align="center" class="bold-cell">VAR</td>
+			<td class="noborder"></td>
+			<td align="center" class="bold-cell">ARP</td>
+			<td align="center" class="color-cell bold-cell">REAL</td>
+			<td align="center" class="bold-cell">VAR</td>
+			<td align="center" class="bold-cell">%</td>
+			<td class="noborder"></td>
+			<td align="center" class="bold-cell">AÑO</td>
+			<td align="center" class="bold-cell">$</td>
+			<td align="center" class="bold-cell">%</td>
+		</tr>
+		@php
+			$arpmestotal = $realmestotal = $arpacutotal = $realacutotal = 0;
+		@endphp
+
+		@foreach($auxiliar as $item)
+			@php
+				$varmes = $item->mes - $item->arpmes;
+				$varacu = $item->anoacu - $item->arpacu;
+				$promedioacu = ($item->anoacu > 0) ? ($item->arpacu/$item->anoacu)-1 : 0;
+
+				$arpmestotal += $item->arpmes;
+				$realmestotal += $item->mes;
+				$arpacutotal += $item->arpacu;
+				$realacutotal += $item->anoacu;
+			@endphp
 			<tr>
-		    	<th align="left">Gastos</th>
-				<th align="left">ARP</th>
-				<th align="left">Real</th>
-				<th align="left">Var</th>
-				<th align="left"></th>
-				<th align="left">ARP</th>
-				<th align="left">Real</th>
-				<th align="left">Var</th>
-				<th align="left">%</th>
+			    <td align="left">{{ $item->codigo }}</td>
+			    <td align="left">{{ $item->cuenta }}</td>
+			    <td align="left">[ ID ]</td>
+				<td align="rigth">[ GASTOS ]</td>
+				<td class="noborder"></td>
+				<td align="center">{{ number_format($item->arpmes,2,',','.') }}</td>
+				<td align="center" class="color-cell">{{ number_format($item->mes,2,',','.') }}</td>
+				<td align="center">{{ number_format($varmes,2,',','.') }}</td>
+				<td class="noborder"></td>
+				<td align="center">{{ number_format($item->arpacu,2,',','.') }}</td>
+				<td align="center" class="color-cell">{{ number_format($item->anoacu,2,',','.') }}</td>
+				<td align="center">{{ number_format($varacu,2,',','.') }}</td>
+				<td align="center">{{ number_format($promedioacu,2,',','.') }}%</td>
+				<td class="noborder"></td>
+				<td align="center">{{ number_format(0,2,',','.') }}</td>
+				<td align="center">{{ number_format(0,2,',','.') }}</td>
+				<td align="center">{{ number_format(0,2,',','.') }}</td>
 			</tr>
-		</thead>
-		<tbody>
-			@foreach($auxiliar as $item)
-				<tr>
-				    <td align="left">{{ $item->cuenta }}</td>
-					<td align="rigth">{{ $item->mes }}</td>
-				</tr>
-			@endforeach
-		</tbody>
+		@endforeach
+
+		@php
+			$mespromediototal = ($realmestotal > 0) ? ($arpmestotal/$realmestotal)-1 : 0;
+			$acupromediototal = ($realacutotal > 0) ? ($arpacutotal/$realacutotal)-1 : 0;
+			$acuvartotal = $realacutotal - $arpacutotal;
+		@endphp
+
+		<tr>
+			<td class="noborder"></td>
+			<td class="noborder"></td>
+			<td class="noborder"></td>
+			<td class="bold-cell">Total</td>
+			<td class="noborder"></td>
+			<td align="center">{{ number_format($arpmestotal,2,',','.') }}</td>
+			<td align="center">{{ number_format($realmestotal,2,',','.') }}</td>
+			<td align="center">{{ number_format($mespromediototal,2,',','.') }}%</td>
+			<td class="noborder"></td>
+			<td align="center">{{ number_format($arpacutotal,2,',','.') }}</td>
+			<td align="center">{{ number_format($realacutotal,2,',','.') }}</td>
+			<td align="center">{{ number_format($acuvartotal,2,',','.') }}</td>
+			<td align="center">{{ number_format($acupromediototal,2,',','.') }}%</td>
+			<td class="noborder"></td>
+			<td align="center">{{ number_format(0,2,',','.') }}</td>
+			<td align="center">{{ number_format(0,2,',','.') }}</td>
+			<td align="center">{{ number_format(0,2,',','.') }}</td>
+		</tr>
 	</table>
 @stop

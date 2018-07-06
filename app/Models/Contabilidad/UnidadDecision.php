@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Base;
+namespace App\Models\Contabilidad;
 
 use Illuminate\Database\Eloquent\Model;
 use Cache;
 
-class Unidaddecision extends Model
+class UnidadDecision extends Model
 {
     /**
      * The database table used by the model.
@@ -25,14 +25,14 @@ class Unidaddecision extends Model
      */
     public static $key_cache = '_unidaddecision';
 
- 	public static function getUnidaddecision()
+    public static function getUnidadesDecision()
     {
         if (Cache::has( self::$key_cache )) {
             return Cache::get( self::$key_cache );
         }
 
         return Cache::rememberForever( self::$key_cache , function() {
-            $query = Unidaddecision::query();
+            $query = UnidadDecision::query();
             $query->select('unidaddecision_codigo','unidaddecision_nombre');
             $query->orderby('unidaddecision_nombre', 'asc');
             $collection = $query->pluck('unidaddecision_nombre', 'unidaddecision_codigo');

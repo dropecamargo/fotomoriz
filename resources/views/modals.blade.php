@@ -78,3 +78,48 @@
 		</div>
 	{!! Form::close() !!}
 </script>
+
+<!-- Modal import file -->
+<div class="modal fade" id="modal-import-file-component" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
+		<div class="modal-content">
+			<div class="modal-header small-box {{ config('koi.template.bg') }}">
+				<button type="button" class="close icon-close-koi" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="inner-title-modal modal-title"></h4>
+			</div>
+			<div class="box box-solid" id="modal-wrapper-import-file">
+				<form  id="form-import-component" data-toggle="validator">
+					<div class="modal-body">
+						<div class="content-modal">
+
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-primary btn-sm btn-import">Continuar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/template" id="import-data-tpl">
+	<div class="row">
+		<div class="form-group col-md-12">
+			<div class="input-group">
+				<label class="input-group-btn">
+					<span class="btn btn-primary btn-sm">
+						Buscar <input type="file" id="file" name="file" class="selectfile">
+					</span>
+				</label>
+				<input type="text" class="form-control input-sm" readonly>
+			</div>
+			<span class="help-block">
+				Por favor, seleccione un archivo tipo <b>.xls </b>
+			</span>
+		</div>
+	</div>
+</script>

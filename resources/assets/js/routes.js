@@ -30,9 +30,11 @@ app || (app = {});
             'enviarintereses(/)': 'getEnviarInteresesMain',
             'enviarintereses/:enviarintereses(/)': 'getEnviarInteresesShow',
 
-
             'reporteverextractos(/)': 'getVerExtractosMain',
             'reporteverextractos/:reporteverextractos(/)': 'getVerExtractosShow',
+
+            // Routes accounting
+            'presupuestosg(/)': 'getPresupuestoGastosMain',
         },
 
         /**
@@ -258,6 +260,20 @@ app || (app = {});
             }
 
             this.showVerExtractoView = new app.ShowVerExtractoView({ id: reporteverextractos });
+        },
+
+        /**
+        * Routes Accounting
+        * main view presupuestos gastos
+        */
+        getPresupuestoGastosMain: function () {
+
+            if ( this.mainPresupuestoGastosView instanceof Backbone.View ){
+                this.mainPresupuestoGastosView.stopListening();
+                this.mainPresupuestoGastosView.undelegateEvents();
+            }
+
+            this.mainPresupuestoGastosView = new app.MainPresupuestoGastosView( );
         },
     }) );
 

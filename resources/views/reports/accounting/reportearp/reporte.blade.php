@@ -3,10 +3,10 @@
 @section('content')
 	<table class="rtable" border="1" cellspacing="0" cellpadding="0">
 		<tr>
-			<td colspan="3" class="noborder"></td>
+			<td class="noborder"></td>
 			<td align="center" class="bold-cell">UNIDAD DE DECISION:</td>
 			<td class="noborder"></td>
-			<td colspan="3" align="center">{{ $unidad }}</td>
+			<td colspan="3" align="center">{{ $unidad->unidaddecision_nombre }}</td>
 			<td class="noborder"></td>
 			<td colspan="4" align="center" class="bold-cell">FECHA:</td>
 			<td class="noborder"></td>
@@ -19,8 +19,6 @@
 
 		<tr>
 			<td class="noborder"></td>
-			<td class="noborder"></td>
-			<td class="noborder"></td>
 			<td rowspan="2" align="center" class="bold-cell">GASTOS</td>
 			<td class="noborder"></td>
 			<td colspan="3" align="center" class="bold-cell">MES</td>
@@ -32,8 +30,6 @@
 		</tr>
 
 		<tr>
-	    	<td class="noborder"></td>
-	    	<td class="noborder"></td>
 	    	<td class="noborder"></td>
 	    	<td class="noborder"></td>
 	    	<td class="noborder"></td>
@@ -68,8 +64,6 @@
 			<tr>
 			    <td align="left">{{ $item->codigo }}</td>
 			    <td align="left">{{ $item->cuenta }}</td>
-			    <td align="left">[ ID ]</td>
-				<td align="rigth">[ GASTOS ]</td>
 				<td class="noborder"></td>
 				<td align="center">{{ number_format($item->arpmes,2,',','.') }}</td>
 				<td align="center" class="color-cell">{{ number_format($item->mes,2,',','.') }}</td>
@@ -93,8 +87,6 @@
 		@endphp
 
 		<tr>
-			<td class="noborder"></td>
-			<td class="noborder"></td>
 			<td class="noborder"></td>
 			<td class="bold-cell">Total</td>
 			<td class="noborder"></td>

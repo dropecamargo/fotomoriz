@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
 	| Contabilidad Routes
 	|-------------------------
 	*/
+	Route::resource('presupuestosg', 'Accounting\PresupuestoGastoController', ['only' => ['index']]);
 	Route::resource('reportearp', 'Report\ReporteArpController', ['only' => ['index']]);
 
 	/*
@@ -86,4 +87,14 @@ Route::middleware('auth')->group(function () {
 	*/
 	Route::resource('reporteentradassalidas', 'Report\ReporteEntradasSalidasController', ['only' => ['index']]);
 	Route::resource('reporteanalisisinventario', 'Report\ReporteAnalisisInventarioController', ['only' => ['index']]);
+
+	/*
+	|-------------------------
+	| Imports Routes
+	|-------------------------
+	*/
+	Route::prefix('import')->name('import.')->group(function()
+	{
+		Route::post('presupuestog' ,['as' =>'presupuestosg','uses'=>'Accounting\PresupuestoGastoController@import'] );
+	});
 });

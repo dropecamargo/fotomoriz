@@ -117,12 +117,24 @@
         </ul>
     </li>
 
-    <li class="treeview {{ in_array(Request::segment(1), ['reportearp']) ? 'active' : '' }}">
+    <li class="treeview {{ in_array(Request::segment(1), ['presupuestosg', 'reportearp']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-book"></i> <span>Contabilidad</span><i class="fa fa-angle-left pull-right"></i>
         </a>
 
         <ul class="treeview-menu">
+            {{-- Modulos Contabilidad --}}
+            <li class="{{ in_array(Request::segment(1), ['presupuestosg']) ? 'active' : '' }}">
+                <a href="#">
+                    <i class="fa fa-wpforms"></i> Módulos <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ Request::segment(1) == 'presupuestosg' ? 'active' : '' }}">
+                        <a href="{{ route('presupuestosg.index') }}"><i class="fa fa-wrench"></i> Presupuestos</a>
+                    </li>
+                </ul>
+            </li>
+
             {{-- Reportes inventario --}}
             <li class="{{ in_array(Request::segment(1), ['reportearp']) ? 'active' : '' }}">
                 <a href="#">

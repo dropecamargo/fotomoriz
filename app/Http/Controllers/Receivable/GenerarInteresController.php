@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Receivable;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Cartera\Intereses1;
+use App\Models\Receivable\Intereses1;
 use Auth;
 
 class GenerarInteresController extends Controller

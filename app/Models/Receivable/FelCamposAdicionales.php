@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Cartera;
+namespace App\Models\Receivable;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FelFactura extends Model
+class FelCamposAdicionales extends Model
 {
     /**
     * The database connection used by the model.
@@ -18,7 +18,7 @@ class FelFactura extends Model
      *
      * @var string
      */
-    protected $table = 'fel_factura';
+    protected $table = 'fel_camposadicionales';
 
     protected $primaryKey = 'Id';
 

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Base\Tercero, App\Models\Base\Empresa, App\Models\Cartera\CierreCartera, App\Models\Cartera\Factura1, App\Models\Cartera\Devolucion1, App\Models\Cartera\Nota1, App\Models\Cartera\Recibo1, App\Models\Cartera\Anticipo1, App\Models\Cartera\Chdevuelto1, App\Models\Cartera\Factoring1, App\Models\Cartera\Pagare1;
+use App\Models\Base\Tercero, App\Models\Base\Empresa, App\Models\Receivable\CierreCartera, App\Models\Receivable\Factura1, App\Models\Receivable\Devolucion1, App\Models\Receivable\Nota1, App\Models\Receivable\Recibo1, App\Models\Receivable\Anticipo1, App\Models\Receivable\Chdevuelto1, App\Models\Receivable\Factoring1, App\Models\Receivable\Pagare1;
 use DB, View, App, Log, Storage, Mail;
 
 class CarteraExtractos extends Command
@@ -201,7 +201,7 @@ class CarteraExtractos extends Command
                         break;
                 }
             }
-            
+
             // Recorrer clientes con correos validos
             foreach ($correos->enviados as $enviados) {
 

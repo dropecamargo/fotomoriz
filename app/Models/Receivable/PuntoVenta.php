@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models\Cartera;
+namespace App\Models\Receivable;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Intereses2 extends Model
+class PuntoVenta extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'intereses2';
+    protected $table = 'puntoventa';
 
     public $timestamps = false;
 

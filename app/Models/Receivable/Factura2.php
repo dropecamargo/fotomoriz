@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Cartera;
+namespace App\Models\Receivable;
 
 use Illuminate\Database\Eloquent\Model;
 

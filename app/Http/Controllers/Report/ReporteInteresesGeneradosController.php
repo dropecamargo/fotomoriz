@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Cartera\Intereses1, App\Models\Base\Empresa;
+use App\Models\Receivable\Intereses1, App\Models\Base\Empresa;
 use View, App, DB, Log;
 
 class ReporteInteresesGeneradosController extends Controller

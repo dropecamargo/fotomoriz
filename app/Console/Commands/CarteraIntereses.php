@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Base\Tercero, App\Models\Cartera\CierreCartera, App\Models\Cartera\Factura1, App\Models\Cartera\Pagare1, App\Models\Cartera\Factoring1, App\Models\Cartera\Chdevuelto1, App\Models\Cartera\Intereses1, App\Models\Cartera\Intereses2,  App\Models\Cartera\Documentos, App\Models\Base\Sucursal, App\Models\Base\Empresa;
+use App\Models\Base\Tercero, App\Models\Receivable\CierreCartera, App\Models\Receivable\Factura1, App\Models\Receivable\Pagare1, App\Models\Receivable\Factoring1, App\Models\Receivable\Chdevuelto1, App\Models\Receivable\Intereses1, App\Models\Receivable\Intereses2,  App\Models\Receivable\Documentos, App\Models\Base\Sucursal, App\Models\Base\Empresa;
 use DB, View, App, Log, Storage;
 
 class CarteraIntereses extends Command

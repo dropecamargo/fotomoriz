@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Cartera\Intereses2;
+use App\Models\Receivable\Intereses2;
 use DB;
 
 class DetalleEnviarInteresController extends Controller

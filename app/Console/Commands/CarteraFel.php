@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Cartera\Factura1, App\Models\Cartera\Factura2, App\Models\Cartera\FelFactura, App\Models\Cartera\FelProducto, App\Models\Cartera\FelImpuestos, App\Models\Cartera\Devolucion2;
+use App\Models\Receivable\Factura1, App\Models\Receivable\Factura2, App\Models\Receivable\FelFactura, App\Models\Receivable\FelProducto, App\Models\Receivable\FelImpuestos, App\Models\Receivable\FelCamposAdicionales, App\Models\Receivable\PuntoVenta, App\Models\Receivable\Devolucion2;
 use Log, DB, Validator;
 
 class CarteraFel extends Command
@@ -29,8 +29,6 @@ class CarteraFel extends Command
      */
     public function __construct()
     {
-        $this->anoincial = config('koi.app.ano');
-        $this->anoactual = date('Y');
         parent::__construct();
     }
 
@@ -65,10 +63,14 @@ class CarteraFel extends Command
             $bar = $this->output->createProgressBar(count($facturas));
             foreach ($facturas as $factura) {
                 // Validar que no exita en fel_factura
-                $validfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
-                if( !$validfel instanceof FelFactura ){
+                $existsfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
+                if( !$existsfel instanceof FelFactura ){
                     // Insertar felfactura -> fel_encabezadofactura
-                    $this->insertFelFactura($factura, $factura->tipo);
+                    $validfel = $this->insertFelFactura($factura, $factura->tipo);
+                    if($validfel != 'OK'){
+                        DB::rollback();
+                        return $this->error($validfel);
+                    }
                 }
                 $bar->advance();
             }
@@ -85,7 +87,7 @@ class CarteraFel extends Command
     /***
     * Funcion para genrear la factura electronica los parametros (factura, type(FACT,ANUL))
     **/
-    public static function insertFelFactura( $factura, $type ){
+    public static function insertFelFactura($factura, $type){
         $fecha = $factura->factura1_fecha;
         $totalfactura = $factura->baseimporte + $factura->factura1_iva;
 
@@ -159,6 +161,20 @@ class CarteraFel extends Command
         $felfactura->fecharespuesta = $fecha;
         $felfactura->informacionAdicional = '';
         $felfactura->save();
+
+        // Consultar punto de venta para llenar los campos de fel_camposadicionales
+        $puntoventa = PuntoVenta::where('puntoventa_numero', $factura->factura1_puntoventa)->first();
+        if(!$puntoventa instanceof PuntoVenta){
+            return "No se ha podido encontrar el punto de venta, porfavor consulte con el administrado.";
+        }
+        // Insertar en la table fel_camposadicionales
+        $felcamposadicionales = new FelCamposAdicionales;
+        $felcamposadicionales->idfactura = $felfactura->Id;
+        $felcamposadicionales->nombrecampo = $factura->factura1_numero;
+        $felcamposadicionales->valorcampo = $puntoventa->puntoventa_resolucion;
+        $felcamposadicionales->controlinterno1 = '';
+        $felcamposadicionales->controlinterno2 = '';
+        $felcamposadicionales->save();
 
         if( $type == 'DEVO' ){
             $query = Devolucion2::query();
@@ -236,6 +252,6 @@ class CarteraFel extends Command
             }
         }
 
-        return;
+        return 'OK';
     }
 }

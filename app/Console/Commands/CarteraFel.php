@@ -140,7 +140,7 @@ class CarteraFel extends Command
         $felfactura->tipoDocumento = $tipoDocumento;
         $felfactura->prefijo = $factura->factura1_prefijo;
         $felfactura->consecutivo = $factura->factura1_numero;
-        $felfactura->rango = config('koi.puntoventa')[$factura->factura1_puntoventa];
+        $felfactura->rango = "$factura->puntoventa_prefijo-$factura->puntoventa_desde";
         $felfactura->fechafacturación = $fechafacturación;
         $felfactura->consecutivofacturamodificada = $consecutivofacturamodificada;
         $felfactura->cufefacturamodificada = '';

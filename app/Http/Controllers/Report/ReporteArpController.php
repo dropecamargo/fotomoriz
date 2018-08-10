@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Models\Base\AuxiliarReporte, App\Models\Accounting\UnidadDecision, App\Models\Accounting\PresupuestoGasto;
+use App\Models\Base\AuxiliarReporte, App\Models\Accounting\UnidadDecision, App\Models\Accounting\PresupuestoGasto, App\Models\Accounting\PlanCuentasN;
 use View, Excel, App, DB, Log;
 
 class ReporteArpController extends Controller
@@ -22,6 +22,11 @@ class ReporteArpController extends Controller
         * Request has type
         **/
 		if($request->filled('type')){
+            if( env('APP_ENV') == 'local'){
+                ini_set('memory_limit', '-1');
+                set_time_limit(0);
+            }
+
 			DB::beginTransaction();
             try{
                 //campos auxiliar
@@ -106,28 +111,25 @@ class ReporteArpController extends Controller
 				{
 					case 'xls':
 						Excel::create( sprintf('%s_%s_%s', 'reporte_arp', date('Y_m_d'), date('H_m_s') ), function($excel) use($mes, $ano, $nmes, $title, $type){
-
-                                $unidades = UnidadDecision::select('unidaddecision_codigo', 'unidaddecision_nombre')->where('unidaddecision_activa', true)->orderby('unidaddecision_nombre', 'asc')->get();
+                                $unidades = UnidadDecision::select('unidaddecision_codigo', 'unidaddecision_nombre')->where('unidaddecision_activa', true)->orderby('unidaddecision_codigo', 'asc')->get();
                                 foreach ($unidades as $unidad){
-                                    // para generar reporte
-    								$query = AuxiliarReporte::query();
-    								$query->select('plancuentasn_nombre as cuenta', 'plancuentasn_cuenta as codigo', 'cin2 as nivel1', 'cin3 as nivel2',
-                                        DB::raw('
-                                            sum(cdb1)/1000000 as mes,
-                                            sum(cdb2)/1000000 as anoacu,
-                                            sum(cdb3)/1000000 as arpmes,
-                                            sum(cdb4)/1000000 as arpacu'
-                                        )
-                                    );
-                                    $query->where('cin1', $unidad->unidaddecision_codigo);
-                                    $query->join('plancuentasn', 'cbi1', '=', 'plancuentasn_cuenta');
-                                    $query->groupBy('cuenta', 'codigo', 'nivel1', 'nivel2');
-                                    $query->orderby('codigo');
-                                    $auxiliar = $query->get();
 
-                                    if( count($auxiliar) <= 0 ){
-                                        continue;
-                                    }
+                                    $sentencia = "
+                                            SELECT cuenta, codigo, nivel1, nivel2, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
+                                            FROM (
+                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
+                                                FROM auxiliarreporte
+                                                INNER JOIN plancuentasn ON auxiliarreporte.cbi1 = plancuentasn.plancuentasn_cuenta
+                                                WHERE cin1 = $unidad->unidaddecision_codigo
+                                                GROUP BY cuenta, codigo, nivel1, nivel2
+                                            UNION
+                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
+                                                FROM plancuentasn
+                                                WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0
+                                                GROUP BY cuenta, codigo, nivel1, nivel2
+                                            ) x
+                                            GROUP BY cuenta, codigo, nivel1, nivel2";
+                                    $auxiliar = DB::select($sentencia);
 
                                     $expression = array( "[","]","*","?",":","/",'"',"\\");
                                     $name = str_replace($expression, '', $unidad->unidaddecision_nombre);

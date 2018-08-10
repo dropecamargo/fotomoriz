@@ -65,18 +65,18 @@
 			    <td align="left">{{ $item->codigo }}</td>
 			    <td align="left">{{ $item->cuenta }}</td>
 				<td class="noborder"></td>
-				<td align="center">{{ number_format($item->arpmes,2,',','.') }}</td>
-				<td align="center" class="color-cell">{{ number_format($item->mes,2,',','.') }}</td>
-				<td align="center">{{ number_format($varmes,2,',','.') }}</td>
+				<td align="center">{!! " ".number_format($item->arpmes,2,',','.') !!}</td>
+				<td align="center" class="color-cell">{!! " ".number_format($item->mes,2,',','.') !!}</td>
+				<td align="center">{!! " ".number_format($varmes,2,',','.') !!}</td>
 				<td class="noborder"></td>
-				<td align="center">{{ number_format($item->arpacu,2,',','.') }}</td>
-				<td align="center" class="color-cell">{{ number_format($item->anoacu,2,',','.') }}</td>
-				<td align="center">{{ number_format($varacu,2,',','.') }}</td>
-				<td align="center">{{ number_format($promedioacu,2,',','.') }}%</td>
+				<td align="center">{!! " ".number_format($item->arpacu,2,',','.') !!}</td>
+				<td align="center" class="color-cell">{!! " ".number_format($item->anoacu,2,',','.') !!}</td>
+				<td align="center">{!! " ".number_format($varacu,2,',','.') !!}</td>
+				<td align="center">{!! " ".number_format($promedioacu,2,',','.') !!}%</td>
 				<td class="noborder"></td>
-				<td align="center">{{ number_format(0,2,',','.') }}</td>
-				<td align="center">{{ number_format(0,2,',','.') }}</td>
-				<td align="center">{{ number_format(0,2,',','.') }}</td>
+				<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+				<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+				<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
 			</tr>
 		@endforeach
 
@@ -90,18 +90,18 @@
 			<td class="noborder"></td>
 			<td class="bold-cell">Total</td>
 			<td class="noborder"></td>
-			<td align="center">{{ number_format($arpmestotal,2,',','.') }}</td>
-			<td align="center">{{ number_format($realmestotal,2,',','.') }}</td>
-			<td align="center">{{ number_format($mespromediototal,2,',','.') }}%</td>
+			<td align="center">{!! " ".number_format($arpmestotal,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format($realmestotal,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format($mespromediototal,2,',','.') !!}%</td>
 			<td class="noborder"></td>
-			<td align="center">{{ number_format($arpacutotal,2,',','.') }}</td>
-			<td align="center">{{ number_format($realacutotal,2,',','.') }}</td>
-			<td align="center">{{ number_format($acuvartotal,2,',','.') }}</td>
-			<td align="center">{{ number_format($acupromediototal,2,',','.') }}%</td>
+			<td align="center">{!! " ".number_format($arpacutotal,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format($realacutotal,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format($acuvartotal,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format($acupromediototal,2,',','.') !!}%</td>
 			<td class="noborder"></td>
-			<td align="center">{{ number_format(0,2,',','.') }}</td>
-			<td align="center">{{ number_format(0,2,',','.') }}</td>
-			<td align="center">{{ number_format(0,2,',','.') }}</td>
+			<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+			<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
 		</tr>
 	</table>
 @stop

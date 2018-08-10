@@ -22,10 +22,10 @@ class ReporteArpController extends Controller
         * Request has type
         **/
 		if($request->filled('type')){
-            if( env('APP_ENV') == 'local'){
+            // if( env('APP_ENV') == 'local'){
                 ini_set('memory_limit', '-1');
                 set_time_limit(0);
-            }
+            // }
 
 			DB::beginTransaction();
             try{

@@ -49,6 +49,15 @@
 					color: #FFFFFF;
 				}
 
+				.configtable {
+					width: 100%;
+				    border-collapse: collapse;
+				}
+
+				.configtable th {
+					font-size: 6;
+				}
+
 				.rtable {
 					width: 100%;
 				    border-collapse: collapse;

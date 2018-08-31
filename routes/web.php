@@ -74,6 +74,13 @@ Route::middleware('auth')->group(function () {
 
 	/*
 	|-------------------------
+	| Comercial Routes
+	|-------------------------
+	*/
+	Route::resource('reportesabanacobros', 'Report\ReporteSabanaCostoController', ['only' => ['index']]);
+
+	/*
+	|-------------------------
 	| Contabilidad Routes
 	|-------------------------
 	*/

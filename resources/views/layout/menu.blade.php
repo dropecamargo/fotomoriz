@@ -117,6 +117,28 @@
         </ul>
     </li>
 
+    <li class="treeview {{ in_array(Request::segment(1), ['reportesabanacobros']) ? 'active' : '' }}">
+        <a href="{{ route('dashboard') }}">
+            <i class="fa fa-globe"></i> <span>Comercial</span><i class="fa fa-angle-left pull-right"></i>
+        </a>
+
+        <ul class="treeview-menu">
+            {{-- Reportes inventario --}}
+            <li class="{{ in_array(Request::segment(1), ['reportesabanacobros']) ? 'active' : '' }}">
+                <a href="#">
+                    <i class="fa fa-bar-chart-o"></i> Reportes <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ in_array(Request::segment(1), ['reportesabanacobros']) ? 'active' : '' }}">
+                        <a href="{{ route('reportesabanacobros.index') }}">
+                            <i class="fa fa-circle-o"></i><span>Sabana de ventas costos</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
     <li class="treeview {{ in_array(Request::segment(1), ['presupuestosg', 'reportearp']) ? 'active' : '' }}">
         <a href="{{ route('dashboard') }}">
             <i class="fa fa-book"></i> <span>Contabilidad</span><i class="fa fa-angle-left pull-right"></i>

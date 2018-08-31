@@ -65,8 +65,8 @@ class CarteraFel extends Command
                 // Validar que no exita en fel_factura
                 $existsfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
                 if( !$existsfel instanceof FelFactura ){
-                    // Insertar felfactura -> fel_encabezadofactura
-                    $validfel = $this->insertFelFactura($factura, $factura->tipo);
+                    // Validar factura
+                    $validfel = $this->validateFelFactura($factura, $factura->tipo);
                     if($validfel != 'OK'){
                         DB::rollback();
                         return $this->error($validfel);
@@ -87,7 +87,7 @@ class CarteraFel extends Command
     /***
     * Funcion para genrear la factura electronica los parametros (factura, type(FACT,ANUL))
     **/
-    public static function insertFelFactura($factura, $type){
+    public static function validateFelFactura($factura, $type){
         $fecha = $factura->factura1_fecha;
         $totalfactura = $factura->baseimporte + $factura->factura1_iva;
 
@@ -128,7 +128,7 @@ class CarteraFel extends Command
         $felfactura->segundoapellido = $factura->tercero_apellido2;
         $felfactura->tipoidentificacion = $factura->tercero_tipodocumento == 'CC' ? 13 : 31;
         $felfactura->numeroidentificacion = $factura->tercero_nit;
-        $felfactura->email = !empty($factura->tercero_email) ? $factura->tercero_email : '';
+        $felfactura->email = !empty($factura->tercero_email) ? $factura->tercero_email : 'sistemas@fotomoriz.com';
         $felfactura->departamento = $factura->departamento_nombre;
         $felfactura->barriolocalidad = '';
         $felfactura->ciudad = $factura->municipio_nombre;
@@ -140,7 +140,7 @@ class CarteraFel extends Command
         $felfactura->tipoDocumento = $tipoDocumento;
         $felfactura->prefijo = $factura->factura1_prefijo;
         $felfactura->consecutivo = $factura->factura1_numero;
-        $felfactura->rango = "$factura->puntoventa_prefijo-$factura->puntoventa_desde";
+        $felfactura->rango = ($factura->puntoventa_prefijo) ? "$factura->puntoventa_prefijo-$factura->puntoventa_desde" : "$factura->puntoventa_desde";
         $felfactura->fechafacturación = $fechafacturación;
         $felfactura->consecutivofacturamodificada = $consecutivofacturamodificada;
         $felfactura->cufefacturamodificada = '';
@@ -162,19 +162,31 @@ class CarteraFel extends Command
         $felfactura->informacionAdicional = '';
         $felfactura->save();
 
-        // Consultar punto de venta para llenar los campos de fel_camposadicionales
-        $puntoventa = PuntoVenta::where('puntoventa_numero', $factura->factura1_puntoventa)->first();
-        if(!$puntoventa instanceof PuntoVenta){
-            return "No se ha podido encontrar el punto de venta, porfavor consulte con el administrado.";
-        }
         // Insertar en la table fel_camposadicionales
         $felcamposadicionales = new FelCamposAdicionales;
         $felcamposadicionales->idfactura = $felfactura->Id;
-        $felcamposadicionales->nombrecampo = $factura->factura1_numero;
-        $felcamposadicionales->valorcampo = $puntoventa->puntoventa_resolucion;
+        $felcamposadicionales->nombrecampo = '10027';
+        $felcamposadicionales->valorcampo = $factura->puntoventa_resolucion;
         $felcamposadicionales->controlinterno1 = '';
         $felcamposadicionales->controlinterno2 = '';
+        $felcamposadicionales->campopdf = 1;
+        $felcamposadicionales->campoxml = 1;
         $felcamposadicionales->save();
+
+        // Cuando la factura es anulada, cree un registro con valores normales
+        if( $type == 'ANUL'){
+            $anulfelfactura = $felfactura->replicate();
+            $anulfelfactura->tipoDocumento = '01';
+            $anulfelfactura->motivonota = '';
+            $anulfelfactura->fechafacturación = $fecha;
+            $anulfelfactura->fechafacturamodificada = $fecha;
+            $anulfelfactura->consecutivofacturamodificada = 0;
+            $anulfelfactura->save();
+
+            $anulfelcamposadicionales = $felcamposadicionales->replicate();
+            $anulfelcamposadicionales->idfactura = $anulfelfactura->Id;
+            $anulfelcamposadicionales->save();
+        }
 
         if( $type == 'DEVO' ){
             $query = Devolucion2::query();
@@ -249,6 +261,16 @@ class CarteraFel extends Command
                 $felimpuesto->baseimponible = $producto->baseimponible;
                 $felimpuesto->valorretenido = $producto->valorretenido;
                 $felimpuesto->save();
+
+                if( $type == 'ANUL'){
+                    $anulfelproducto = $felproducto->replicate();
+                    $anulfelproducto->idfactura = $anulfelfactura->Id;
+                    $anulfelproducto->save();
+
+                    $anulfelimpuesto = $felimpuesto->replicate();
+                    $anulfelimpuesto->idfactura = $anulfelfactura->Id;
+                    $anulfelimpuesto->save();
+                }
             }
         }
 

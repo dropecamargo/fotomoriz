@@ -43,4 +43,16 @@ class Sucursal extends Model
             return $collection;
         });
     }
+
+ 	public static function getSucursalesCommercial()
+    {
+        $query = Sucursal::query();
+        $query->select('sucursal_codigo', 'sucursal_nombre');
+        $query->join('puntoventa', 'sucursal_codigo', '=', 'puntoventa.puntoventa_sucursal');
+        $query->where('puntoventa_prefijo', '<>', '');
+        $query->orderBy('sucursal_codigo');
+
+        $collection = $query->pluck('sucursal_nombre', 'sucursal_codigo');
+        return $collection;
+    }
 }

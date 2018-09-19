@@ -59,7 +59,7 @@ class Factura1 extends Model
     public static function getFacturasElectronicas($fechai, $fechaf)
     {
         $query = Factura1::query();
-        $query->select('factura1_fecha', 'factura1_iva', 'factura1_fecha_anulacion', 'factura1_numero', 'factura1_sucursal', 'factura1_prefijo', 'factura1_bruto', 'factura1_observaciones', 'tercero_persona', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_tipodocumento', 'puntoventa_resolucion', 'tercero_nit', 'tercero_regimen', 'tercero_email', 'tercero_direccion', 'tercero_telefono', 'devolucion1_factura_numero', 'devolucion1_numero', 'devolucion1_sucursal', 'municipio_nombre', 'departamento_nombre', 'puntoventa_prefijo', 'puntoventa_desde', DB::raw("(factura1_descuento_0+factura1_descuento_30+factura1_descuento_60+factura1_descuento_90+factura1_descuento_120) AS totaldescuentos, (factura1_bruto-factura1_descuento) AS baseimporte, CASE WHEN(factura1_anulada=false) AND (devolucion1_factura_numero IS NULL) THEN 'FACT' WHEN (factura1_anulada = true) AND (devolucion1_factura_numero IS NULL) THEN 'ANUL' WHEN (factura1_anulada=false) AND (devolucion1_factura_numero IS NOT NULL) THEN 'DEVO' ELSE '' END as tipo"));
+        $query->select('factura1_fecha', 'factura1_iva', 'factura1_fecha_anulacion', 'factura1_numero', 'factura1_sucursal', 'factura1_prefijo', 'factura1_bruto', 'factura1_observaciones', 'tercero_persona', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_tipodocumento', 'puntoventa_resolucion', 'tercero_nit', 'tercero_regimen', 'tercero_email', 'tercero_email2', 'tercero_direccion', 'tercero_telefono', 'devolucion1_factura_numero', 'devolucion1_numero', 'devolucion1_sucursal', 'municipio_nombre', 'departamento_nombre', 'puntoventa_prefijo', 'puntoventa_desde', DB::raw("(factura1_descuento_0+factura1_descuento_30+factura1_descuento_60+factura1_descuento_90+factura1_descuento_120) AS totaldescuentos, (factura1_bruto-factura1_descuento) AS baseimporte, CASE WHEN(factura1_anulada=false) AND (devolucion1_factura_numero IS NULL) THEN 'FACT' WHEN (factura1_anulada = true) AND (devolucion1_factura_numero IS NULL) THEN 'ANUL' WHEN (factura1_anulada=false) AND (devolucion1_factura_numero IS NOT NULL) THEN 'DEVO' ELSE '' END as tipo"));
         $query->join('tercero', 'factura1_tercero', '=', 'tercero_nit');
         $query->join('municipios', 'tercero_municipios', '=', 'municipio_codigo');
         $query->join('departamentos', 'municipio_departamento', '=', 'departamento_codigo');
@@ -75,6 +75,7 @@ class Factura1 extends Model
         $query->orWhere(function($query) use ($fechai, $fechaf) {
             $query->whereBetween('factura1_fecha_anulacion', [$fechai, $fechaf])->where('factura1_anulada', true);
         });
+        $query->whereRaw("factura1_fecha <> factura1_fecha_anulacion");
         $query->orderBy('factura1_fecha');
         return $query->get();
     }

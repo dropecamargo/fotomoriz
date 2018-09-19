@@ -21,8 +21,8 @@
                     <div class="row">
                         <div class="col-md-offset-2 col-md-7">
                             <select class="form-control select2-default" name="filtersucursales[]" multiple="multiple" data-placeholder="Sucursales">
-                                <option value="all">Todas</option>
-                                @foreach( App\Models\Base\Sucursal::getSucursales() as $key => $value )
+                                <option value="0">Todas</option>
+                                @foreach( App\Models\Base\Sucursal::getSucursalesCommercial() as $key => $value )
                                     <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach
                             </select>
@@ -66,9 +66,9 @@
 
 					<div class="row">
 						<div class="col-md-2 col-md-offset-5 col-sm-6 col-xs-6">
-							{{-- <button type="submit" class="btn btn-default btn-sm btn-block btn-export-pdf-koi-component">
+							<button type="submit" class="btn btn-default btn-sm btn-block btn-export-pdf-koi-component">
 								<i class="fa fa-file-text-o"></i> {{ trans('app.pdf') }}
-							</button> --}}
+							</button>
 						</div>
 					</div>
 				</div>
@@ -76,13 +76,13 @@
 		</div>
 
         @if (count($errors) > 0)
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 	</section>
 @stop

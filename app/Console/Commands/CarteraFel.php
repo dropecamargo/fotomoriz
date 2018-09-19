@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Receivable\Factura1, App\Models\Receivable\Factura2, App\Models\Receivable\FelFactura, App\Models\Receivable\FelProducto, App\Models\Receivable\FelImpuestos, App\Models\Receivable\FelCamposAdicionales, App\Models\Receivable\PuntoVenta, App\Models\Receivable\Devolucion2;
-use Log, DB, Validator;
+use App\Models\Receivable\Factura1, App\Models\Receivable\Factura2, App\Models\Receivable\FelFactura, App\Models\Receivable\FelProducto, App\Models\Receivable\FelImpuestos, App\Models\Receivable\FelCamposAdicionales, App\Models\Receivable\Devolucion2;
+use Log, DB;
 
 class CarteraFel extends Command
 {
@@ -77,9 +77,11 @@ class CarteraFel extends Command
             $bar->finish();
 
             DB::commit();
+            Log::info("Se completo la rutina de factura electronica con exito.");
             $this->info("\nSe completo la rutina de factura electronica con exito.");
         }catch(\Exception $e){
             DB::rollback();
+            Log::error("No se pudo ejecutar la rutina con exito.");
             $this->error("No se pudo ejecutar la rutina con exito.");
         }
     }
@@ -128,7 +130,13 @@ class CarteraFel extends Command
         $felfactura->segundoapellido = $factura->tercero_apellido2;
         $felfactura->tipoidentificacion = $factura->tercero_tipodocumento == 'CC' ? 13 : 31;
         $felfactura->numeroidentificacion = $factura->tercero_nit;
-        $felfactura->email = !empty($factura->tercero_email) ? $factura->tercero_email : 'sistemas@fotomoriz.com';
+        if ( !empty($factura->tercero_email2) ){
+            $felfactura->email = $factura->tercero_email2;
+        }else if ( !empty($factura->tercero_email) ){
+            $felfactura->email = $factura->tercero_email;
+        }else {
+            $felfactura->email = 'sistemas@fotomoriz.com';
+        }
         $felfactura->departamento = $factura->departamento_nombre;
         $felfactura->barriolocalidad = '';
         $felfactura->ciudad = $factura->municipio_nombre;
@@ -177,14 +185,14 @@ class CarteraFel extends Command
         if( $type == 'ANUL'){
             $anulfelfactura = $felfactura->replicate();
             $anulfelfactura->tipoDocumento = '01';
-            $anulfelfactura->motivonota = '';
+            $anulfelfactura->motivonota = $motivonota;
             $anulfelfactura->fechafacturación = $fecha;
             $anulfelfactura->fechafacturamodificada = $fecha;
             $anulfelfactura->consecutivofacturamodificada = 0;
             $anulfelfactura->save();
 
             $anulfelcamposadicionales = $felcamposadicionales->replicate();
-            $anulfelcamposadicionales->idfactura = $anulfelfactura->Id;
+            $anulfelcamposadicionales->idfactura = $anulfelfacturas->Id;
             $anulfelcamposadicionales->save();
         }
 

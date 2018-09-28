@@ -55,16 +55,39 @@
 				}
 
 				.configtable th, td {
-					height: 16px;
+					height: 15px;
 					font-size: 6;
 				}
 
+				.agrupacion {
+					font-size: 8;
+					margin: 0;
+					padding: 0 10;
+				}
+
 				.grupos {
-					padding-left: 20px;
+					font-size: 8;
+					padding: 0 5 5 10;
+					margin: 0 0 5 0;
 				}
 
 				.unificaciones {
-					padding-left: 40px;
+					padding: 0 5 5 20;
+					margin: 0 0 5 0;
+				}
+
+				.detalle-unificaciones {
+					padding: 0 5 5 10;
+					margin: 0 0 5 0;
+				}
+
+				*:empty {
+				    display:none;
+				}
+
+				.detalles {
+					padding: 0 5 0 20;
+					margin-bottom: 10px;
 				}
 
 				.rtable {

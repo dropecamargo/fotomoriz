@@ -7,105 +7,161 @@
     	</thead>
     </table>
 
-    <div class="container">
-        @foreach ( $data as $agrupacion )
-            <div class="agrupacion">
-                {{ $agrupacion->agrupacion }}
+    @foreach ( $data as $agrupacion )
+        <div class="agrupacion" style="border: 1px solid black;">
+            <h4>{{ $agrupacion->agrupacion }}</h4>
 
-                @foreach ( $agrupacion->grupos as $grupo )
-                    <div class="grupos">
-                        {{ $grupo->grupo }}
-                    </div>
+            @foreach ( $agrupacion->grupos as $key => $grupo )
+                <div class="grupos" style="border: 1px solid blue;">
+                    <h4>{{ $grupo->grupo }}</h4>
 
+                    @php
+                        $totalgrupos = [];
+                    @endphp
                     @foreach ( $grupo->unificaciones as $unificacion )
-                        <div class="unificaciones">
+                        <!-- Variables para calcular total en cada row -->
+                        @php
+                            $uventas = $udescuentos = $udevoluciones = $utotal = $upresupuesto = $uporcentaje = $ucosto = $umargen = $upmargen = 0;
+                        @endphp
+                        <div class="unificaciones" style="border: 1px solid yellow;">
                             <table class="configtable" border="1">
                                 <thead>
                                     <tr>
-                                        <th width="15%" colspan="2" class="noborder">{{ $unificacion->unificacion }}</th>
+                                        <th colspan="11" class="noborder">{{ $unificacion->unificacion }}</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <th class="color-blue noborder">{{ $item['sucursal'] }}</th>
+                                            <th class="noborder" width="10%"><a href="#">{{ $item['sucursal'] }}</a></th>
                                         @endforeach
-                                        <th width="10%" class="color-blue noborder">TOTAL</th>
+                                        <th width="10%" class="noborder">TOTAL</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>VENTAS</th>
+                                        <th colspan="11">VENTAS</th>
                                         @foreach ( $unificacion->detalle as $item )
+                                            @php $uventas += $item['ventas'] @endphp
                                             <td class="right">{{ number_format($item['ventas'], 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        <th class="right">{{ number_format($uventas, 2, ',', '.') }}</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>DESCUENTOS</th>
+                                        <th colspan="11">DESCUENTOS</th>
                                         @foreach ( $unificacion->detalle as $item )
+                                            @php $udescuentos += $item['descuentos'] @endphp
                                             <td class="right">{{ number_format($item['descuentos'], 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        <th class="right">{{ number_format($udescuentos, 2, ',', '.') }}</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>DEVOLUCIONES</th>
+                                        <th colspan="11">DEVOLUCIONES</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <td class="right">{{ number_format(0, 2, ',', '.') }}</td>
+                                            @php $udevoluciones += $item['devoluciones'] @endphp
+                                            <td class="right">{{ number_format($item['devoluciones'], 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        <th class="right">{{ number_format($udevoluciones, 2, ',', '.') }}</th>
+
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>TOTAL</th>
+                                        <th colspan="11">TOTAL</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <td class="right">{{ number_format(0, 2, ',', '.') }}</td>
+                                            @php $utotal += $item['total'] @endphp
+                                            <td class="right">{{ number_format($item['total'], 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        <th class="right">{{ number_format($utotal, 2, ',', '.') }}</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>PRESUPUESTO</th>
+                                        <th colspan="11">PRESUPUESTO</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <td class="right">{{ number_format(0, 2, ',', '.') }}</td>
+                                            @php $upresupuesto += $item['presupuesto'] @endphp
+                                            <td class="right">{{ number_format($item['presupuesto'], 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        <th class="right">{{ number_format($upresupuesto, 2, ',', '.') }}</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>PORCENTAJE</th>
+                                        <th colspan="11">PORCENTAJE</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <td class="right">0%</td>
+                                           @php
+                                                $porcentaje = $item['presupuesto'] != 0 ? ($item['total']*100)/$item['presupuesto'] : 0;
+                                           @endphp
+                                           <td class="right">{{ number_format($porcentaje, 2, '.', '') }}%</td>
                                         @endforeach
-                                        <th>0</th>
+                                        @php $uporcentaje = ($utotal != 0 && $upresupuesto != 0) ? ($utotal*100)/$upresupuesto : 0; @endphp
+                                        <th class="right">{{ number_format($uporcentaje, 2, '.', '') }}%</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>COSTO</th>
+                                        <th colspan="11">COSTO</th>
                                         @foreach ( $unificacion->detalle as $item )
+                                            @php $ucosto += $item['costos'] @endphp
                                             <td class="right">{{ number_format($item['costos'], 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        <th class="right">{{ number_format($ucosto, 2, ',', '.') }}</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>MARGEN</th>
+                                        <th colspan="11">MARGEN</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <td class="right">{{ number_format(0, 2, ',', '.') }}</td>
+                                            @php $margen = $item['total']-$item['costos'] @endphp
+                                            <td class="right">{{ number_format($margen, 2, ',', '.') }}</td>
                                         @endforeach
-                                        <th>0</th>
+                                        @php $umargen = $utotal-$ucosto; @endphp
+                                        <th class="right">{{ number_format($umargen, 2, ',', '.') }}</th>
                                     </tr>
                                     <tr>
-                                        <th class="noborder"></th>
-                                        <th>P_MARGEN</th>
+                                        <th colspan="11">P_MARGEN</th>
                                         @foreach ( $unificacion->detalle as $item )
-                                            <td class="right">0%</td>
+                                            @php
+                                                $p_margen = ($item['total'] != 0) ? (100*($item['total']-$item['costos']))/$item['total'] : 0;
+                                            @endphp
+                                            <td class="right">{{ number_format($p_margen, '2', ',', '') }}%</td>
                                         @endforeach
-                                        <th>0</th>
+                                        @php $upmargen = ($utotal != 0) ? (100*($utotal-$ucosto))/$utotal : 0; @endphp
+                                        <th class="right">{{ number_format($upmargen, 2, ',', '') }}%</th>
                                     </tr>
                                 </thead>
                             </table>
+                            <br>
                         </div>
                     @endforeach
-                @endforeach
-            </div>
-        @endforeach
+
+                    <div class="detalle-unificaciones">
+                        <table class="configtable" border="1">
+                        <thead>
+                            <tr>
+                                <th colspan="4">Totales grupo {{ $key+1 }}: {{ $grupo->grupo }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Ventas</th>
+                            </tr>
+                            <tr>
+                                <th>Descuentos</th>
+                            </tr>
+                            <tr>
+                                <th>Devoluciones</th>
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            @endforeach
+        <div class="detalles">
+            <table class="configtable" border="1">
+                <thead>
+                    <tr>
+                        <th width="10%">Linea</th>
+                        <th>BOGOTA</th>
+                        <th>MEDELLIN</th>
+                        <th>CALI</th>
+                        <th>BARRANQUILLA</th>
+                        <th>PEREIRA</th>
+                        <th>BUCARAMANGA</th>
+                        <th>VILLAVICENCIO</th>
+                        <th>NEIVA</th>
+                        <th width="10%">Total</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
     </div>
+    @endforeach
 @stop

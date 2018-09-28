@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Receivable\Factura1, App\Models\Receivable\Factura2, App\Models\Receivable\FelFactura, App\Models\Receivable\FelProducto, App\Models\Receivable\FelImpuestos, App\Models\Receivable\FelCamposAdicionales, App\Models\Receivable\Devolucion2;
+use App\Models\Receivable\Factura1, App\Models\Receivable\Factura2, App\Models\Receivable\FelFactura, App\Models\Receivable\FelProducto, App\Models\Receivable\FelImpuestos, App\Models\Receivable\FelCamposAdicionales, App\Models\Receivable\Devolucion1, App\Models\Receivable\Devolucion2;
 use Log, DB;
 
 class CarteraFel extends Command
@@ -53,23 +53,78 @@ class CarteraFel extends Command
             return;
         }
 
+        $fechaanterior = date('Y-m-d', strtotime($fechai . "-1 day"));
+
         // Confirmar rutina
         DB::beginTransaction();
         try{
+            // Msg de bienvenida
             $this->info('Generando rutina de factura electronica.');
 
-            // Consulta para traer facturas en el rango de fechas
-            $facturas = Factura1::getFacturasElectronicas($fechai, $fechaf);
-            $bar = $this->output->createProgressBar(count($facturas));
-            foreach ($facturas as $factura) {
-                // Validar que no exita en fel_factura
-                $existsfel = FelFactura::where('tipoDocumento', '01')->where('prefijo', $factura->factura1_prefijo)->where('consecutivo', $factura->factura1_numero)->first();
-                if( !$existsfel instanceof FelFactura ){
-                    // Validar factura
-                    $validfel = $this->validateFelFactura($factura, $factura->tipo);
-                    if($validfel != 'OK'){
+// Facturas
+$facturas = Factura1::query()
+    ->select('factura1_numero AS numero', 'factura1_sucursal AS sucursal', 'factura1_fecha AS fecha', 'factura1_iva AS iva', 'factura1_bruto AS totalsinimpuestos', 'factura1_observaciones AS observaciones', 'factura1_fecha_anulacion AS anulacion', DB::raw("(factura1_descuento_0+factura1_descuento_30+factura1_descuento_60+factura1_descuento_90+factura1_descuento_120) AS totaldescuentos, (factura1_bruto-factura1_descuento) AS totalbaseimponible"), 'tercero_persona', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_tipodocumento', 'tercero_nit', 'tercero_regimen', 'tercero_email', 'tercero_email2', 'tercero_direccion', 'tercero_telefono', 'municipio_nombre', 'departamento_nombre', 'puntoventa_resolucion AS pv_resolucion', 'puntoventa_prefijo AS prefijo', 'puntoventa_desde AS pv_desde', DB::raw("puntoventa_prefijo AS f_prefijo, NULL AS f_numero, NULL AS f_fecha, 'FACT' AS tipo"))
+    ->join('tercero', 'factura1_tercero', '=', 'tercero_nit')
+    ->join('municipios', 'tercero_municipios', '=', 'municipio_codigo')
+    ->join('departamentos', 'municipio_departamento', '=', 'departamento_codigo')
+    ->join('puntoventa', 'factura1_puntoventa', '=', 'puntoventa_numero')
+    ->where('factura1_puntoventa', '<>', '8')
+    ->whereBetween('factura1_fecha', [$fechai, $fechaf])
+    ->where('factura1_anulada', false)
+    ->where(function($query) use ($fechai, $fechaf) {
+        $query->whereBetween('factura1_fecha', [$fechai, $fechaf])
+            ->where('factura1_anulada', false);
+    })
+    ->orWhere(function($query) use ($fechai, $fechaf) {
+        $query->whereBetween('factura1_fecha_anulacion', [$fechai, $fechaf])
+            ->where('factura1_anulada', true);
+    })
+    ->whereColumn('factura1_fecha', '<>', 'factura1_fecha_anulacion');
+
+// Facturas Anuladas
+$anuladas = Factura1::query()
+    ->select('factura1_numero AS numero', 'factura1_sucursal AS sucursal', 'factura1_fecha AS fecha', 'factura1_iva AS iva', 'factura1_bruto AS totalsinimpuestos', 'factura1_observaciones AS observaciones', 'factura1_fecha_anulacion AS anulacion', DB::raw("(factura1_descuento_0+factura1_descuento_30+factura1_descuento_60+factura1_descuento_90+factura1_descuento_120) AS totaldescuentos, (factura1_bruto-factura1_descuento) AS totalbaseimponible"), 'tercero_persona', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_tipodocumento', 'tercero_nit', 'tercero_regimen', 'tercero_email', 'tercero_email2', 'tercero_direccion', 'tercero_telefono', 'municipio_nombre', 'departamento_nombre', 'puntoventa_resolucion AS pv_resolucion', DB::raw("'NC' || puntoventa_prefijo AS prefijo, 1 AS pv_desde"), 'puntoventa_prefijo AS f_prefijo', 'factura1_numero AS f_numero', 'factura1_fecha AS f_fecha', DB::raw("'ANUL' AS tipo"))
+    ->join('tercero', 'factura1_tercero', '=', 'tercero_nit')
+    ->join('municipios', 'tercero_municipios', '=', 'municipio_codigo')
+    ->join('departamentos', 'municipio_departamento', '=', 'departamento_codigo')
+    ->join('puntoventa', 'factura1_puntoventa', '=', 'puntoventa_numero')
+    ->where('factura1_puntoventa', '<>', '8')
+    ->whereBetween('factura1_fecha_anulacion', [$fechai, $fechaf])
+    ->where('factura1_anulada', true)
+    ->whereColumn('factura1_fecha', '<>', 'factura1_fecha_anulacion')
+    ->unionAll($facturas);
+
+// Devoluciones
+$devoluciones = Devolucion1::query()
+    ->select('devolucion1_numero AS numero', 'devolucion1_sucursal AS sucursal', 'devolucion1_fecha_elaboro AS fecha', 'devolucion1_iva AS iva', 'devolucion1_bruto AS totalsinimpuestos', 'devolucion1_observaciones AS observaciones', DB::raw("NULL AS anulacion"), 'devolucion1_descuento AS totaldescuentos', DB::raw("(devolucion1_bruto-devolucion1_descuento) AS totalbaseimponible"), 'tercero_persona', 'tercero_razon_social', 'tercero_nombre1', 'tercero_nombre2', 'tercero_apellido1', 'tercero_apellido2', 'tercero_tipodocumento', 'tercero_nit', 'tercero_regimen', 'tercero_email', 'tercero_email2', 'tercero_direccion', 'tercero_telefono', 'municipio_nombre', 'departamento_nombre', 'puntoventa_resolucion AS pv_resolucion', DB::raw("'NC' || puntoventa_prefijo AS prefijo"), DB::raw("1 AS pv_desde"), 'puntoventa_prefijo AS f_prefijo', 'factura1_numero AS f_numero', 'factura1_fecha AS f_fecha', DB::raw("'DEVO' AS tipo"))
+    // ->where('devolucion1_fecha_elaboro', $fechaanterior)
+    ->whereBetween('devolucion1_fecha_elaboro', [$fechai, $fechaf])
+    ->join('factura1', function($join){
+        $join->on('factura1_numero', '=', 'devolucion1_factura_numero')
+            ->on('factura1_sucursal', '=', 'devolucion1_factura_sucursal');
+    })
+    ->join('tercero', 'devolucion1_tercero', '=', 'tercero.tercero_nit')
+    ->join('municipios', 'tercero_municipios', '=', 'municipio_codigo')
+    ->join('departamentos', 'municipio_departamento', '=', 'departamento_codigo')
+    ->join('puntoventa', 'factura1_puntoventa', '=', 'puntoventa_numero')
+    ->where('factura1_puntoventa', '<>', '8')
+    ->unionAll($anuladas)
+    ->orderBy('fecha', 'asc')
+    ->get();
+
+            // Variable con los datos
+            $datos = $devoluciones;
+
+            $bar = $this->output->createProgressBar(count($datos));
+            foreach ($datos as $dato) {
+                // Validar que no se repitan fels
+                $validarfactura = FelFactura::where('prefijo', $dato->prefijo)->where('consecutivo', $dato->numero)->first();
+                if( !$validarfactura instanceof FelFactura ){
+                    // Insertar items en fel factura
+                    $insertitem = $this->insertFelFactura($dato, $dato->tipo);
+                    if($insertitem != 'OK'){
                         DB::rollback();
-                        return $this->error($validfel);
+                        return $this->error($insertitem);
                     }
                 }
                 $bar->advance();
@@ -81,77 +136,113 @@ class CarteraFel extends Command
             $this->info("\nSe completo la rutina de factura electronica con exito.");
         }catch(\Exception $e){
             DB::rollback();
-            Log::error("No se pudo ejecutar la rutina con exito.");
+            Log::error($e->getMessage());
             $this->error("No se pudo ejecutar la rutina con exito.");
         }
     }
 
     /***
-    * Funcion para genrear la factura electronica los parametros (factura, type(FACT,ANUL))
+    * Funcion para genrear la factura electronica los parametros (items, type(FACT,ANUL,DEVO))
     **/
-    public static function validateFelFactura($factura, $type){
-        $fecha = $factura->factura1_fecha;
-        $totalfactura = $factura->baseimporte + $factura->factura1_iva;
+    public static function insertFelFactura($dato, $type) {
+        Log::info("$type - $dato->f_numero - $dato->fecha - $dato->f_fecha - $dato->anulacion");
 
-        switch ($type) {
+        // Preparar datos fecha->factura1_fecha/devolucion1_fecha_elaboro
+        $fecha = $dato->fecha;
+        $totalfactura = $dato->totalbaseimponible + $dato->iva;
+        $estadoactual = 0;
+        // Validar que tenga email2, email1 o por defecto wnieves@fotomoriz.com
+        if ( !empty($dato->tercero_email2) ){
+            $email = $dato->tercero_email2;
+        }else if ( !empty($dato->tercero_email) ){
+            $email = $dato->tercero_email;
+        }else {
+            $email = 'wnieves@fotomoriz.com';
+        }
+
+        // Validar que tercero_mail contenga @ && que no contengan varios email con ;
+        $validarcorreo = strpos($email, '@');
+        if($validarcorreo !== false){
+            $validar = strpos($email, ';');
+            if($validar !== false){
+                $email = explode(';', $email);
+                $email = $email[0];
+            }
+        }
+
+        switch ( $type ) {
             case 'FACT':
                 $tipoDocumento = '01';
                 $motivonota = '';
                 $fechafacturación = $fecha;
                 $fechafacturamodificada = $fecha;
                 $consecutivofacturamodificada = 0;
+                $cufefacturamodificada = '';
                 break;
 
             case 'ANUL':
                 $tipoDocumento = '04';
                 $motivonota = 2;
-                $fechafacturación = $factura->factura1_fecha_anulacion;
-                $fechafacturamodificada = $factura->factura1_fecha;
-                $consecutivofacturamodificada = $factura->factura1_numero;
+                $fechafacturación = $dato->anulacion;
+                $cufefacturamodificada = '';
+                $consecutivofacturamodificada = 0;
                 break;
 
             case 'DEVO':
                 $tipoDocumento = '04';
                 $motivonota = 1;
-                $fechafacturación = $factura->devolucion1_fecha_elaboro;
-                $fechafacturamodificada = $factura->factura1_fecha;
-                $consecutivofacturamodificada = $factura->factura1_numero;
+                $fechafacturación = $fecha;
+                $consecutivofacturamodificada = $dato->f_numero;
                 break;
         }
 
+        if( $type != 'FACT' ){
+
+            // Recuperar fel_factura anterior en caso de ser anul o devo
+            $prevfactura = FelFactura::where('prefijo', $dato->f_prefijo)->where('consecutivo', $dato->f_numero)->first();
+            if( !$prevfactura instanceof FelFactura ){
+                return "OK";
+            }
+
+            if( $type == 'DEVO' ){
+                if( date('Y-m-d', strtotime($prevfactura->fechafacturación)) <= date('Y-m-d', strtotime("2018-09-01"))){
+                    $estadoactual = 5;
+                }
+            }
+
+            $cufefacturamodificada = $prevfactura->cufe;
+            $fechafacturamodificada = $prevfactura->fechafacturación;
+        }
+
+
+        // Preparando los datos de fel_factura
         $felfactura = new FelFactura;
         $felfactura->tokenempresa = '238d7e9f0d8e218fd4ce83bc8d58e7a36bbdf7e9';
         $felfactura->tokenpassword = '293ec00f1fde9e58599b3edc00b7f9ddf0739b9c';
-        $felfactura->tipodepersona = $factura->tercero_persona == 'J' ? '1' : '2';
-        $felfactura->razonsocial = $factura->tercero_razon_social;
-        $felfactura->primernombre = $factura->tercero_nombre1;
-        $felfactura->segundonombre = $factura->tercero_nombre2;
-        $felfactura->primerapellido = $factura->tercero_apellido1;
-        $felfactura->segundoapellido = $factura->tercero_apellido2;
-        $felfactura->tipoidentificacion = $factura->tercero_tipodocumento == 'CC' ? 13 : 31;
-        $felfactura->numeroidentificacion = $factura->tercero_nit;
-        if ( !empty($factura->tercero_email2) ){
-            $felfactura->email = $factura->tercero_email2;
-        }else if ( !empty($factura->tercero_email) ){
-            $felfactura->email = $factura->tercero_email;
-        }else {
-            $felfactura->email = 'sistemas@fotomoriz.com';
-        }
-        $felfactura->departamento = $factura->departamento_nombre;
+        $felfactura->tipodepersona = $dato->tercero_persona == 'J' ? '1' : '2';
+        $felfactura->razonsocial = $dato->tercero_razon_social;
+        $felfactura->primernombre = $dato->tercero_nombre1;
+        $felfactura->segundonombre = $dato->tercero_nombre2;
+        $felfactura->primerapellido = $dato->tercero_apellido1;
+        $felfactura->segundoapellido = $dato->tercero_apellido2;
+        $felfactura->tipoidentificacion = $dato->tercero_tipodocumento == 'CC' ? 13 : 31;
+        $felfactura->numeroidentificacion = $dato->tercero_nit;
+        $felfactura->email = $email;
+        $felfactura->departamento = $dato->departamento_nombre;
         $felfactura->barriolocalidad = '';
-        $felfactura->ciudad = $factura->municipio_nombre;
-        $felfactura->direccion = $factura->tercero_direccion;
+        $felfactura->ciudad = $dato->municipio_nombre;
+        $felfactura->direccion = $dato->tercero_direccion;
         $felfactura->pais = 'CO';
-        $felfactura->telefono = $factura->tercero_telefono;
-        $felfactura->regimen = $factura->tercero_regimen == '1' ? 0 : 2;
-        $felfactura->aplicafel = 'NO';
+        $felfactura->telefono = $dato->tercero_telefono;
+        $felfactura->regimen = $dato->tercero_regimen == '1' ? 0 : 2;
+        $felfactura->aplicafel = 'SI';
         $felfactura->tipoDocumento = $tipoDocumento;
-        $felfactura->prefijo = $factura->factura1_prefijo;
-        $felfactura->consecutivo = $factura->factura1_numero;
-        $felfactura->rango = ($factura->puntoventa_prefijo) ? "$factura->puntoventa_prefijo-$factura->puntoventa_desde" : "$factura->puntoventa_desde";
+        $felfactura->prefijo = $dato->prefijo;
+        $felfactura->consecutivo = $dato->numero;
+        $felfactura->rango = ($dato->prefijo) ? "$dato->prefijo-$dato->pv_desde" : "$dato->pv_desde";
         $felfactura->fechafacturación = $fechafacturación;
         $felfactura->consecutivofacturamodificada = $consecutivofacturamodificada;
-        $felfactura->cufefacturamodificada = '';
+        $felfactura->cufefacturamodificada = $cufefacturamodificada;
         $felfactura->fechafacturamodificada = $fechafacturamodificada;
         $felfactura->motivonota = $motivonota;
         $felfactura->incoterms = '';
@@ -159,49 +250,52 @@ class CarteraFel extends Command
         $felfactura->fechavencimiento = $fecha;
         $felfactura->moneda = 'COP';
         $felfactura->mediodepago = '10';
-        $felfactura->totaldescuentos = $factura->totaldescuentos;
-        $felfactura->totalsinimpuestos = $factura->factura1_bruto;
-        $felfactura->totalbaseimponible = $factura->baseimporte;
+        $felfactura->totaldescuentos = $dato->totaldescuentos;
+        $felfactura->totalsinimpuestos = $dato->totalsinimpuestos;
+        $felfactura->totalbaseimponible = $dato->totalbaseimponible;
         $felfactura->totalfactura = $totalfactura;
-        $felfactura->decripcion = substr($factura->factura1_observaciones, 0, 240);
+        $felfactura->decripcion = substr($dato->observaciones, 0, 240);
         $felfactura->cufe = '';
-        $felfactura->estadoactual = 0;
+        $felfactura->estadoactual = $estadoactual;
         $felfactura->fecharespuesta = $fecha;
         $felfactura->informacionAdicional = '';
         $felfactura->save();
 
-        // Insertar en la table fel_camposadicionales
-        $felcamposadicionales = new FelCamposAdicionales;
-        $felcamposadicionales->idfactura = $felfactura->Id;
-        $felcamposadicionales->nombrecampo = '10027';
-        $felcamposadicionales->valorcampo = $factura->puntoventa_resolucion;
-        $felcamposadicionales->controlinterno1 = '';
-        $felcamposadicionales->controlinterno2 = '';
-        $felcamposadicionales->campopdf = 1;
-        $felcamposadicionales->campoxml = 1;
-        $felcamposadicionales->save();
-
-        // Cuando la factura es anulada, cree un registro con valores normales
-        if( $type == 'ANUL'){
-            $anulfelfactura = $felfactura->replicate();
-            $anulfelfactura->tipoDocumento = '01';
-            $anulfelfactura->motivonota = $motivonota;
-            $anulfelfactura->fechafacturación = $fecha;
-            $anulfelfactura->fechafacturamodificada = $fecha;
-            $anulfelfactura->consecutivofacturamodificada = 0;
-            $anulfelfactura->save();
-
-            $anulfelcamposadicionales = $felcamposadicionales->replicate();
-            $anulfelcamposadicionales->idfactura = $anulfelfacturas->Id;
-            $anulfelcamposadicionales->save();
+        // No crear registro en campos adicionales cuando es devolucion
+        if( $type != 'DEVO'){
+            // Insertar en la table fel_camposadicionales
+            $felcamposadicionales = new FelCamposAdicionales;
+            $felcamposadicionales->idfactura = $felfactura->Id;
+            $felcamposadicionales->nombrecampo = '10027';
+            $felcamposadicionales->valorcampo = $dato->pv_resolucion;
+            $felcamposadicionales->controlinterno1 = '';
+            $felcamposadicionales->controlinterno2 = '';
+            $felcamposadicionales->campopdf = 1;
+            $felcamposadicionales->campoxml = 1;
+            $felcamposadicionales->save();
         }
+
+        // // Cuando la factura es anulada, replique el registro con valores normales
+        // if( $type == 'ANUL'){
+        //     $anulfelfactura = $felfactura->replicate();
+        //     $anulfelfactura->tipoDocumento = '01';
+        //     $anulfelfactura->motivonota = $motivonota;
+        //     $anulfelfactura->fechafacturación = $fecha;
+        //     $anulfelfactura->fechafacturamodificada = $fecha;
+        //     $anulfelfactura->consecutivofacturamodificada = 0;
+        //     $anulfelfactura->save();
+        //
+        //     $anulfelcamposadicionales = $felcamposadicionales->replicate();
+        //     $anulfelcamposadicionales->idfactura = $anulfelfacturas->Id;
+        //     $anulfelcamposadicionales->save();
+        // }
 
         if( $type == 'DEVO' ){
             $query = Devolucion2::query();
             $query->select('devolucion2.*', 'producto_nombre', DB::raw("((devolucion2_precio-devolucion2_descuento)*devolucion2_cantidad) AS baseimponible, (devolucion2_iva*devolucion2_cantidad) AS valorretenido"));
             $query->join('producto', 'devolucion2_producto', '=', 'producto_serie');
-            $query->where('devolucion2_numero', $factura->devolucion1_numero);
-            $query->where('devolucion2_sucursal', $factura->devolucion1_sucursal);
+            $query->where('devolucion2_numero', $dato->numero);
+            $query->where('devolucion2_sucursal', $dato->sucursal);
             $productos = $query->get();
 
             foreach( $productos as $producto ){
@@ -233,12 +327,13 @@ class CarteraFel extends Command
                 $felimpuesto->valorretenido = $producto->valorretenido;
                 $felimpuesto->save();
             }
+
         }else{
             $query = Factura2::query();
             $query->select('factura2.*', 'producto_nombre', DB::raw("((factura2_precio_venta-factura2_descuento_pesos)*factura2_unidades_vendidas) AS baseimponible, (factura2_iva_pesos * factura2_unidades_vendidas) AS valorretenido"));
             $query->join('producto', 'factura2_producto', '=', 'producto_serie');
-            $query->where('factura2_numero', $factura->factura1_numero);
-            $query->where('factura2_sucursal', $factura->factura1_sucursal);
+            $query->where('factura2_numero', $dato->numero);
+            $query->where('factura2_sucursal', $dato->sucursal);
             $productos = $query->get();
 
             foreach( $productos as $producto ){
@@ -269,16 +364,16 @@ class CarteraFel extends Command
                 $felimpuesto->baseimponible = $producto->baseimponible;
                 $felimpuesto->valorretenido = $producto->valorretenido;
                 $felimpuesto->save();
-
-                if( $type == 'ANUL'){
-                    $anulfelproducto = $felproducto->replicate();
-                    $anulfelproducto->idfactura = $anulfelfactura->Id;
-                    $anulfelproducto->save();
-
-                    $anulfelimpuesto = $felimpuesto->replicate();
-                    $anulfelimpuesto->idfactura = $anulfelfactura->Id;
-                    $anulfelimpuesto->save();
-                }
+                //
+                // if( $type == 'ANUL'){
+                //     $anulfelproducto = $felproducto->replicate();
+                //     $anulfelproducto->idfactura = $anulfelfactura->Id;
+                //     $anulfelproducto->save();
+                //
+                //     $anulfelimpuesto = $felimpuesto->replicate();
+                //     $anulfelimpuesto->idfactura = $anulfelfactura->Id;
+                //     $anulfelimpuesto->save();
+                // }
             }
         }
 

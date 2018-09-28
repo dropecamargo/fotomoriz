@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Report;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Base\Sucursal, App\Models\Receivable\Factura1, App\Models\Receivable\Factura2, App\Models\Base\AuxiliarReporte;
+use App\Models\Base\Sucursal, App\Models\Receivable\Factura1, App\Models\Receivable\Devolucion1, App\Models\Receivable\Nota1, App\Models\Base\AuxiliarReporte;
 use DB, Validator, Log, App, View;
 
 class ReporteSabanaCostoController extends Controller
@@ -17,6 +17,9 @@ class ReporteSabanaCostoController extends Controller
     public function index(Request $request)
     {
         if ( $request->filled('type') ){
+            // ini_set('memory_limit', '-1');
+            // set_time_limit(0);
+
             // Validate fields
             $validator = Validator::make($request->all(), [
                 'filtersucursales' => 'required',
@@ -53,233 +56,246 @@ class ReporteSabanaCostoController extends Controller
 
             DB::beginTransaction();
             try{
-                // // Recuperar sucursales
-                // $query = Sucursal::query();
-                // $query->select('sucursal_codigo', 'sucursal_nombre');
-                // $query->join('puntoventa', 'sucursal_codigo', '=', 'puntoventa.puntoventa_sucursal');
-                // $query->where('puntoventa_prefijo', '<>', '8');
-                // !$validatesucursales ? $query->whereIn('sucursal_codigo', $request->filtersucursales) : '';
-                // $sucursales = $query->get();
+                // Sucursales
+                $query = Sucursal::query();
+                $query->select('sucursal_codigo', 'sucursal_nombre');
+                $query->join('puntoventa', 'sucursal_codigo', '=', 'puntoventa.puntoventa_sucursal');
+                $query->whereColumn('puntoventa_nombre', 'sucursal_nombre');
+                !$validatesucursales ? $query->whereIn('sucursal_codigo', $request->filtersucursales) : '';
+                $query->orderBy('sucursal_codigo', 'asc');
+                $sucursales = $query->get();
 
 
-                $query = Factura1::query();
-                $query->select('factura1_anulada as estado', 'factura1_sucursal as sucursal', 'factura1_numero as numero', DB::raw("SUM(factura2_precio_venta*factura2_unidades_vendidas) as ventas, SUM(factura2_descuento_pesos*factura2_unidades_vendidas) as descuentos, SUM(factura2_costo*factura2_unidades_vendidas) as costos"));
-                $query->join('factura2', function($join){
-                    $join->on('factura1_numero', '=', 'factura2_numero');
-                    $join->on('factura1_sucursal', '=', 'factura2_sucursal');
-                });
-                $query->join('producto', 'factura2.factura2_producto', '=', 'producto.producto_serie');
-                $query->join('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
-                !$validatesucursales ? $query->whereIn('factura1_sucursal', $filtersucursales) : '';
-                $query->where('configurasabana_agrupacion', 1);
-                $query->where('configurasabana_grupo', 1);
-                $query->where('configurasabana_unificacion', 1);
-                $query->whereBetween('factura1_fecha', [$fechai, $fechaf]);
-                $query->groupBy('estado', 'numero', 'sucursal');
-                $facturas = $query->get();
+                $array = [];
+                foreach ($sucursales as $sucursal) {
+                    // Facturas
+                    $query = Factura1::query();
+$query->select('configurasabana_agrupacion as agrupacion', 'configurasabana_grupo as grupo', 'configurasabana_unificacion as unificacion', DB::raw("SUM(factura2_precio_venta*factura2_unidades_vendidas) as ventas, SUM(factura2_descuento_pesos*factura2_unidades_vendidas) as descuentos, SUM(factura2_costo*factura2_unidades_vendidas) AS costos, SUM(0) AS devoluciones, 'F' as tipo"), 'producto_lineanegocio as linea', DB::raw("0 as valornota, 0 as brutofactura, 0 as descuentofactura, FALSE as anulada, 0 as ivafactura"));
+                    $query->whereBetween('factura1_fecha', [$fechai, $fechaf]);
+                    $query->join('factura2', function($join){
+                        $join->on('factura1.factura1_numero', '=', 'factura2.factura2_numero')
+                             ->on('factura1.factura1_sucursal', '=', 'factura2.factura2_sucursal');
+                    });
+                    $query->join('producto', 'factura2.factura2_producto', '=', 'producto.producto_serie');
+                    $query->join('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
+                    $query->join('puntoventa', function($join) use($sucursal){
+                        $join->on('factura1.factura1_puntoventa', '=', 'puntoventa.puntoventa_numero')
+                            ->where('puntoventa.puntoventa_sucursal', $sucursal->sucursal_codigo)
+                            ->where('puntoventa.puntoventa_numero', '<>', 8);
+                    });
+                    $query->where('factura1_anulada', false);
+                    $query->groupBy('agrupacion', 'grupo', 'unificacion', 'linea');
+                    $facturaunion = $query;
 
-                dd($facturas);
+                    // Devoluciones
+                    $query = Devolucion1::query();
+$query->select('configurasabana_agrupacion as agrupacion', 'configurasabana_grupo as grupo', 'configurasabana_unificacion as unificacion', DB::raw("SUM(0) AS ventas, SUM(0) AS descuentos, SUM(devolucion2_costo*devolucion2_cantidad) AS costos, SUM((devolucion2_precio*devolucion2_cantidad)-(devolucion2_descuento*devolucion2_cantidad)) AS devoluciones, 'D' as tipo"), 'producto_lineanegocio as linea', DB::raw("0 as valornota, 0 as brutofactura, 0 as descuentofactura, FALSE as anulada, 0 as ivafactura"));
+                    $query->join('devolucion2', function($join){
+                        $join->on('devolucion1.devolucion1_numero', '=', 'devolucion2.devolucion2_numero')
+                            ->on('devolucion1.devolucion1_sucursal', '=', 'devolucion2.devolucion2_sucursal');
+                    });
+                    $query->join('producto', 'devolucion2.devolucion2_producto', '=', 'producto.producto_serie');
+                    $query->join('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
+                    $query->join('factura1', 'devolucion1.devolucion1_factura_numero', '=', 'factura1.factura1_numero');
+                    $query->join('puntoventa', function($join) use($sucursal){
+                        $join->on('factura1.factura1_puntoventa', '=', 'puntoventa.puntoventa_numero')
+                            ->where('puntoventa.puntoventa_sucursal', $sucursal->sucursal_codigo)
+                            ->where('puntoventa.puntoventa_numero', '<>', 8);
+                    });
+                    $query->whereBetween('devolucion1_fecha_elaboro', [$fechai, $fechaf]);
+                    $query->groupBy('agrupacion', 'grupo', 'unificacion', 'linea');
+                    $query->unionAll($facturaunion);
+                    $devolucionunion = $query;
 
-                // foreach ($facturas as $factura) {
-                //     // Si la sucursal es 5 o 18 convertir a 1(BOGOTA)
-                //     $sucu = ($factura->sucursal == 5 || $factura->sucursal == 18 ) ? 1 : $factura->sucursal;
-                //
-                //     /**
-                //     * cdb1 -> ventas
-                //     * cdb2 -> descuentos
-                //     * cdb3 -> costos
-                //     * cdb4 -> aventas
-                //     * cdb5 -> adescuentos
-                //     * cdb6 -> acostos
-                //     * cin1 -> sucursal_codigo
-                //     * cin2 -> cod_agrupacion
-                //     * cin3 -> cod_grupo
-                //     * cin4 -> cod_unificacion
-                //     */
-                //     $auxiliar = new AuxiliarReporte;
-                //     if( !$factura->estado ){
-                //         $auxiliar->cdb1 = $factura->ventas;
-                //         $auxiliar->cdb2 = $factura->descuentos;
-                //         $auxiliar->cdb3 = $factura->costos;
-                //     }else{
-                //         $auxiliar->cdb4 = $factura->ventas;
-                //         $auxiliar->cdb5 = $factura->descuentos;
-                //         $auxiliar->cdb6 = $factura->costos;
-                //     }
-                //     $auxiliar->cin1 = $sucu;
-                //     $auxiliar->cin2 = $factura->agrupacion;
-                //     $auxiliar->cin3 = $factura->grupo;
-                //     $auxiliar->cin4 = $factura->unificacion;
-                //     $auxiliar->save();
-                // }
-                //
-                // $query = AuxiliarReporte::query();
-                // $query->select('cin1 as sucursal', 'cin2 as agrupacion', 'cin3 as grupo', 'cin4 as unificacion', DB::raw("SUM(cdb1-cdb4) as ventas, SUM(cdb2-cdb5) as descuentos, SUM(cdb3-cdb6) as costos"));
-                // $query->groupBy('sucursal', 'agrupacion', 'grupo', 'unificacion');
-                // $query->orderByRaw("agrupacion asc, grupo asc, unificacion asc");
-                // dd($query->get());
+                    // Notas
+                    $query = Nota1::query();
+$query->select('configurasabana_agrupacion as agrupacion', 'configurasabana_grupo as grupo', 'configurasabana_unificacion as unificacion', DB::raw("SUM(factura2_precio_venta*factura2_unidades_vendidas) as ventas, SUM(factura2_descuento_pesos*factura2_unidades_vendidas) as descuentos, SUM(factura2_costo*factura2_unidades_vendidas) as costos, SUM(0) as devoluciones, 'N' as tipo"), 'producto_lineanegocio as linea', 'nota2_valor as valornota', 'factura1_bruto as brutofactura', 'factura1_descuento as descuentofactura', 'nota1_anulada as anulada', 'factura1_iva as ivafactura');
+                    $query->join('nota2', function($join){
+                        $join->on('nota1.nota1_numero', '=', 'nota2.nota2_numero')
+                            ->on('nota1.nota1_sucursal', '=', 'nota2.nota2_sucursal');
+                    });
+                    $query->join('factura1', function($join){
+                        $join->on('nota2.nota2_numero_doc', '=', 'factura1.factura1_numero')
+                            ->on('nota2.nota2_sucursal_doc', '=', 'factura1.factura1_sucursal');
+                    });
+                    $query->join('factura2', function($join){
+                        $join->on('factura1.factura1_numero', '=', 'factura2.factura2_numero')
+                            ->on('factura1.factura1_sucursal', '=', 'factura2.factura2_sucursal');
+                    });
+                    $query->join('producto', 'factura2.factura2_producto', '=', 'producto.producto_serie');
+                    $query->join('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
+                    $query->join('puntoventa', function($join) use($sucursal){
+                        $join->on('factura1.factura1_puntoventa', '=', 'puntoventa.puntoventa_numero')
+                            ->where('puntoventa.puntoventa_sucursal', $sucursal->sucursal_codigo)
+                            ->where('puntoventa.puntoventa_numero', '<>', 8);
+                    });
+                    $query->where('nota1_anulada', false);
+                    $query->where('nota1_conceptonota', '<>', 3);
+                    $query->where('nota1_conceptonota', '<>', 4);
+                    $query->where('nota1_numero', '<>', 1279);
+                    $query->where(function($query){
+                        $query->whereRaw("NOT(nota1_anulada='true' AND nota1_fecha_elaboro >= nota1_fecha_anulo AND nota1_fecha_anulo <= nota1_fecha_elaboro)");
+                    });
+                    $query->whereBetween('nota1_fecha_elaboro', [$fechai, $fechaf]);
+                    $query->orWhereBetween('nota1_fecha_anulo', [$fechai, $fechaf]);
+                    $query->groupBy('agrupacion', 'grupo', 'unificacion', 'linea', 'tipo', 'valornota', 'brutofactura', 'descuentofactura', 'ivafactura', 'anulada');
+                    $query->unionAll($devolucionunion);
+                    $query->orderByRaw("agrupacion asc, grupo asc, unificacion asc");
+                    $detalles = $query->get();
 
-                // foreach ($sucursales as $sucursal) {
-                //     // Recuperar factura2
-                //     $query = Factura2::query();
-                //     $query->select('factura1_sucursal as sucursal', 'producto_lineanegocio as linea', 'configurasabana_agrupacion as agrupacion', 'configurasabana_grupo as grupo', 'configurasabana_unificacion as unificacion', DB::raw("SUM(factura2_precio_venta*factura2_unidades_vendidas) as ventas, SUM(factura2_descuento_pesos) as descuentos, SUM(factura2_costo) as costos"));
-                //     // $query->select('producto_lineanegocio as linea', 'factura1_anulada as estado', DB::raw("(factura2_precio_venta*factura2_unidades_vendidas) as ventas, (factura2_descuento_pesos) as descuentos, (factura2_costo) as costos"));
-                //     $query->join('factura1', function($join){
-                //         $join->on('factura1_numero', 'factura2_numero');
-                //         $join->on('factura1_sucursal', 'factura2_sucursal');
-                //     });
-                //     $query->join('producto', 'factura2_producto', '=', 'producto.producto_serie');
-                //     $query->join('configurasabana', 'producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
-                //     $query->where('factura1_puntoventa', $sucursal->sucursal_codigo);
-                //     $query->whereBetween('factura1_fecha', [$fechai, $fechaf]);
-                //     $query->groupBy('sucursal', 'agrupacion', 'grupo', 'unificacion', 'linea');
-                //     $facturas = $query->get();
-                //
-                //     dd($facturas);
-                //
-                //     // $query->join('producto', 'factura2.factura2_producto', '=', 'producto.producto_serie');
-                //     // $query->leftjoin('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
-                //
-                //     foreach ($facturas as $factura) {
-                //         /**
-                //         * cdb1 -> ventas
-                //         * cdb2 -> descuentos
-                //         * cdb3 -> costos
-                //         * cdb4 -> aventas
-                //         * cdb5 -> adescuentos
-                //         * cdb6 -> acostos
-                //         * cin1 -> sucursal_codigo
-                //         * cin2 -> linea_codigo
-                //         */
-                //         $auxiliar = new AuxiliarReporte;
-                //         if( !$factura->estado ){
-                //             $auxiliar->cdb1 = $factura->ventas;
-                //             $auxiliar->cdb2 = $factura->descuentos;
-                //             $auxiliar->cdb3 = $factura->costos;
-                //         }else{
-                //             $auxiliar->cdb4 = $factura->ventas;
-                //             $auxiliar->cdb5 = $factura->descuentos;
-                //             $auxiliar->cdb6 = $factura->costos;
-                //         }
-                //         $auxiliar->cin1 = $sucursal->sucursal_codigo;
-                //         $auxiliar->cin2 = $factura->linea;
-                //         $auxiliar->save();
-                //     }
-                // }
-                //
-                // $query = AuxiliarReporte::query();
-                // $query->select('cin1 as sucursal', 'cin2 as linea', DB::raw("SUM(cdb1-cdb4) as ventas, SUM(cdb2-cdb5) as descuentos, SUM(cdb3-cdb6) as costos"));
-                // $query->groupBy('sucursal', 'linea');
-                // dd($query->get());
+                    // Recorrer detalle del reporte
+                    foreach ($detalles as $item) {
+                            if( $item->tipo == 'N' ){
+                                $valorfactura = $item->brutofactura-$item->descuentofactura;
+                                $porcentajeiva = ($item->ivafactura*100/$valorfactura)/100;
+                                $valornota = $item->valornota/(1+$porcentajeiva);
+                                $porcentajeitem = (($item->ventas-$item->descuentos)*100/$valorfactura)/100;
+                                $valordescuento = $valornota*$porcentajeitem;
 
-                // $data = [];
-                // $agrupaciones = DB::table('configurasabana')
-                //                         ->select('configurasabana_nombre_agrupacion AS nom_agrupacion', 'configurasabana_agrupacion AS agrupacion')
-                //                         ->groupBy('nom_agrupacion', 'agrupacion')
-                //                         ->orderBy('agrupacion', 'asc')
-                //                         ->get();
-                // foreach ($agrupaciones as $agrupacion) {
-                //     $object = new \stdClass();
-                //     $object->agrupacion = $agrupacion->nom_agrupacion;
-                //
-                //     $grupos = DB::table('configurasabana')
-                //                         ->select('configurasabana_grupo_nombre AS nom_grupo', 'configurasabana_grupo AS grupo')
-                //                         ->where('configurasabana_agrupacion', $agrupacion->agrupacion)
-                //                         ->groupBy('nom_grupo', 'grupo')
-                //                         ->orderBy('grupo', 'asc')
-                //                         ->get();
-                //     foreach ($grupos as $grupo) {
-                //         $subObject = new \stdClass();
-                //         $subObject->grupo = $grupo->nom_grupo;
-                //
-                //         $unificaciones = DB::table('configurasabana')
-                //                                     ->select('configurasabana_nombre_unificacion AS nom_unificacion', 'configurasabana_unificacion AS unificacion')
-                //                                     ->where('configurasabana_agrupacion', $agrupacion->agrupacion)
-                //                                     ->where('configurasabana_grupo', $grupo->grupo)
-                //                                     ->groupBy('nom_unificacion', 'unificacion')
-                //                                     ->orderBy('unificacion', 'asc')
-                //                                     ->get();
-                //         foreach ($unificaciones as $unificacion) {
-                //             $subsubObject = new \stdClass();
-                //             $subsubObject->unificacion = $unificacion->nom_unificacion;
-                //
-                //             $aux = [];
-                //             foreach ($sucursales as $sucursal) {
-                //                 $query = AuxiliarReporte::query();
-                //                 $query->select('cin1 as sucursal', DB::raw("SUM(cdb1-cdb4) as ventas, SUM(cdb2-cdb5) as descuentos, SUM(cdb3-cdb6) as costos"));
-                //                 $query->join('configurasabana', 'cin2', '=', 'configurasabana.configurasabana_lineanegocio');
-                //                 $query->where('auxiliarreporte.cin1', $sucursal->sucursal_codigo);
-                //                 $query->where('configurasabana_agrupacion', $agrupacion->agrupacion);
-                //                 $query->where('configurasabana_grupo', $grupo->grupo);
-                //                 $query->where('configurasabana_unificacion', $unificacion->unificacion);
-                //                 $query->groupBy('sucursal');
-                //                 $auxiliar = $query->first();
-                //
-                //                 if( $auxiliar instanceof AuxiliarReporte ){
-                //                     $auxiliar->sucursal = $sucursal->sucursal_nombre;
-                //                     $auxiliar = $auxiliar->toArray();
-                //
-                //                 }else{
-                //                     $auxiliar = array(
-                //                         'sucursal' => $sucursal->sucursal_nombre,
-                //                         'ventas' => 0,
-                //                         'descuentos' => 0,
-                //                         'costos' => 0
-                //                     );
-                //                 }
-                //
-                //                 // // list($sucursales, $ventas, $descuentos, $costos) = array_divide($auxiliar['sucursal'], $auxiliar['ventas'], $auxiliar['descuentos'], $auxiliar['costos']);
-                //                 // $sucursales = array_pluck($auxiliar, 'sucursal');
-                //                 // $ventas = array_pluck($auxiliar, 'ventas');
-                //                 // $descuentos = array_pluck($auxiliar, 'descuentos');
-                //                 // $costos = array_pluck($auxiliar, 'costos');
-                //                 // dd($sucursales, $ventas, $descuentos, $costos);
-                //                 $aux[] = $auxiliar;
-                //             }
-                //
-                //             $subsubObject->detalle = $aux;
-                //             $subObject->unificaciones[] = $subsubObject;
-                //
-                //             // $query = AuxiliarReporte::query();
-                //             // $query->select('cin1 as sucursal', 'cin2 as linea', DB::raw("SUM(cdb1-cdb4) as ventas, SUM(cdb2-cdb5) as descuentos, SUM(cdb3-cdb6) as costos"));
-                //             // $query->join('configurasabana', 'cin2', '=', 'configurasabana.configurasabana_lineanegocio');
-                //             // $query->where('configurasabana_agrupacion', $agrupacion->agrupacion);
-                //             // $query->where('configurasabana_grupo', $grupo->grupo);
-                //             // $query->where('configurasabana_unificacion', $unificacion->unificacion);
-                //             // $query->groupBy('sucursal', 'linea');
-                //             // $query->orderBy('sucursal', 'asc');
-                //             // $aux = $query->get();
-                //             //
-                //             // if(count($aux) <= 0){
-                //             //     continue;
-                //             // }
-                //         }
-                //
-                //         if( !isset($subObject->unificaciones) ){
-                //             continue;
-                //         }
-                //         $object->grupos[] = $subObject;
-                //     }
-                //
-                //     if( !isset($object->grupos) ){
-                //         continue;
-                //     }
-                //
-                //     $data[] = $object;
-                // }
-                //
-                // // Preparar datos reporte
-                // $title = "Reporte Sabana de ventas costos";
-                // $type = $request->type;
-                // switch ($type)
-                // {
-                //     case 'pdf':
-                //         $pdf = App::make('dompdf.wrapper');
-                //         $pdf->loadHTML(View::make('reports.commercial.sabanaventas.reporte', compact('data', 'title', 'type', 'fechai', 'fechaf'))->render());
-                //         $pdf->setPaper('A4', 'landscape')->setWarnings(false);
-                //         return $pdf->stream(sprintf('%s.pdf', 'sabanaventas', date('Y_m_d')));
-                //     break;
-                // }
+                                if( $item->anulada )
+                                    $valordescuento= -1*$valordescuento;
+
+                                $item->ventas = 0;
+                                $item->descuentos = $valordescuento;
+                                $item->devoluciones = 0;
+                                $item->valor = 0;
+                                $item->costos = 0;
+                            }
+
+                            if( $item->tipo == 'D' )
+                                $item->costos = -$item->costos;
+
+                            /**
+                            * cdb1 -> ventas
+                            * cdb2 -> descuentos
+                            * cdb3 -> devoluciones
+                            * cdb4 -> costos
+                            * cin1 -> sucursal_codigo
+                            * cin2 -> cod_agrupacion
+                            * cin3 -> cod_grupo
+                            * cin4 -> cod_unificacion
+                            */
+                            $auxiliar = new AuxiliarReporte;
+                            $auxiliar->cdb1 = $item->ventas;
+                            $auxiliar->cdb2 = $item->descuentos;
+                            $auxiliar->cdb3 = $item->devoluciones;
+                            $auxiliar->cdb4 = $item->costos;
+                            $auxiliar->cin1 = $sucursal->sucursal_codigo;
+                            $auxiliar->cin2 = $item->agrupacion;
+                            $auxiliar->cin3 = $item->grupo;
+                            $auxiliar->cin4 = $item->unificacion;
+                            $auxiliar->save();
+                    }
+                }
+
+                $data = [];
+                $agrupaciones = DB::table('configurasabana')
+                                        ->select('configurasabana_nombre_agrupacion AS nom_agrupacion', 'configurasabana_agrupacion AS agrupacion')
+                                        ->groupBy('nom_agrupacion', 'agrupacion')
+                                        ->orderBy('agrupacion', 'asc')
+                                        ->get();
+                foreach ($agrupaciones as $agrupacion) {
+                    $object = new \stdClass();
+                    $object->agrupacion = $agrupacion->nom_agrupacion;
+
+                    $grupos = DB::table('configurasabana')
+                                        ->select('configurasabana_grupo_nombre AS nom_grupo', 'configurasabana_grupo AS grupo')
+                                        ->where('configurasabana_agrupacion', $agrupacion->agrupacion)
+                                        ->groupBy('nom_grupo', 'grupo')
+                                        ->orderBy('grupo', 'asc')
+                                        ->get();
+                    foreach ($grupos as $grupo) {
+                        $subObject = new \stdClass();
+                        $subObject->grupo = $grupo->nom_grupo;
+
+                        $unificaciones = DB::table('configurasabana')
+                                                    ->select('configurasabana_nombre_unificacion AS nom_unificacion', 'configurasabana_unificacion AS unificacion')
+                                                    ->where('configurasabana_agrupacion', $agrupacion->agrupacion)
+                                                    ->where('configurasabana_grupo', $grupo->grupo)
+                                                    ->groupBy('nom_unificacion', 'unificacion')
+                                                    ->orderBy('unificacion', 'asc')
+                                                    ->get();
+                        foreach ($unificaciones as $unificacion) {
+                            $subsubObject = new \stdClass();
+                            $subsubObject->unificacion = $unificacion->nom_unificacion;
+
+                            $aux = [];
+                            foreach ($sucursales as $sucursal) {
+                                $query = AuxiliarReporte::query();
+                                $query->select('cin1 as sucursal', DB::raw("SUM(cdb1) as ventas, SUM(cdb2) as descuentos, SUM(cdb3) as devoluciones, SUM(cdb1-cdb2-cdb3) as total, SUM(cdb4) as costos"));
+                                $query->where('auxiliarreporte.cin1', $sucursal->sucursal_codigo);
+                                $query->where('auxiliarreporte.cin2', $agrupacion->agrupacion);
+                                $query->where('auxiliarreporte.cin3', $grupo->grupo);
+                                $query->where('auxiliarreporte.cin4', $unificacion->unificacion);
+                                $query->groupBy('sucursal');
+                                $auxiliar = $query->first();
+
+                                // Traer presupuestos
+                                $query = DB::table('presupuesto');
+                                $query->select('configurasabana_agrupacion as agrupacion', 'configurasabana_grupo as grupo', 'configurasabana_unificacion as unificacion', DB::raw("SUM(presupuesto_valor) as p_valor"));
+                                $query->join('configurasabana', 'presupuesto.presupuesto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
+                                $query->where('presupuesto_sucursal', $sucursal->sucursal_codigo);
+                                $query->where('configurasabana_agrupacion', $agrupacion->agrupacion);
+                                $query->where('configurasabana_grupo', $grupo->grupo);
+                                $query->where('configurasabana_unificacion', $unificacion->unificacion);
+
+                                if( $anoi != $anof ){
+                                    $query->where(function ($query) use ($mesi, $anoi, $mesf, $anof){
+                                        $query->where(function ($query) use ($mesi, $anoi){
+                                            $query->whereBetween('presupuesto_mes', [$mesi, 12]);
+                                            $query->where('presupuesto_ano', $anoi);
+                                        });
+                                        $query->orWhere(function ($query) use ($mesf, $anof){
+                                            $query->whereBetween('presupuesto_mes', [1, $mesf]);
+                                            $query->where('presupuesto_ano', $anof);
+                                        });
+                                    });
+                                } else {
+                                    $query->whereBetween('presupuesto_mes', [$mesi, $mesf]);
+                                    $query->whereBetween('presupuesto_ano', [$anoi, $anof]);
+                                }
+
+                                $query->groupBy('agrupacion', 'grupo', 'unificacion');
+                                $presupuestos = $query->first();
+
+                                if( $auxiliar instanceof AuxiliarReporte ){
+                                    $auxiliar->sucursal = $sucursal->sucursal_nombre;
+                                    $auxiliar->presupuesto = !empty($presupuestos) ? $presupuestos->p_valor : 0;
+                                    $auxiliar = $auxiliar->toArray();
+
+                                }else{
+                                    $auxiliar = array(
+                                        'sucursal' => $sucursal->sucursal_nombre,
+                                        'ventas' => 0,
+                                        'descuentos' => 0,
+                                        'devoluciones' => 0,
+                                        'total' => 0,
+                                        'presupuesto' => 0,
+                                        'costos' => 0
+                                    );
+                                }
+                                $aux[] = $auxiliar;
+                            }
+
+                            $subsubObject->detalle = $aux;
+                            $subObject->unificaciones[] = $subsubObject;
+                        }
+                        $object->grupos[] = $subObject;
+                    }
+                    $data[] = $object;
+                }
+
+                // Preparar datos reporte
+                $title = "Reporte Sabana de ventas costos";
+                $type = $request->type;
+                switch ($type) {
+                    case 'pdf':
+                        $pdf = App::make('dompdf.wrapper');
+                        $pdf->loadHTML(View::make('reports.commercial.sabanaventas.reporte', compact('data', 'title', 'type', 'fechai', 'fechaf'))->render());
+                        $pdf->setPaper('A4', 'landscape')->setWarnings(false);
+                        return $pdf->stream(sprintf('%s.pdf', 'sabanaventas', date('Y_m_d')));
+                    break;
+                }
 
                 DB::rollback();
             }catch(\Exception $e){
@@ -291,3 +307,43 @@ class ReporteSabanaCostoController extends Controller
         return view('reports.commercial.sabanaventas.index');
     }
 }
+
+// Parcial
+// $query = Factura1::query();
+// $query->select(DB::raw("SUM(factura2_precio_venta*factura2_unidades_vendidas) as ventas, SUM((factura2_precio_venta-factura2_descuento_pesos)*factura2_unidades_vendidas) as valor, SUM(factura2_descuento_pesos*factura2_unidades_vendidas) as descuentos, SUM(factura2_costo*factura2_unidades_vendidas) as costos"), 'factura1_numero as numero', 'factura1_sucursal as sucursal');
+// $query->whereBetween('factura1_fecha', [$fechai, $fechaf]);
+// $query->join('factura2', function($join){
+//     $join->on('factura1.factura1_numero', '=', 'factura2.factura2_numero'); $join->on('factura1.factura1_sucursal', '=', 'factura2.factura2_sucursal');
+// });
+// $query->join('producto', 'factura2.factura2_producto', '=', 'producto.producto_serie');
+// $query->join('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
+// $query->join('puntoventa', function($join) use($sucursal){
+//     $join->on('factura1.factura1_puntoventa', '=', 'puntoventa.puntoventa_numero')
+//         ->where('puntoventa.puntoventa_sucursal', $sucursal->sucursal_codigo)
+//         ->where('puntoventa.puntoventa_numero', '<>', 8);
+// });
+// $query->where('factura1_sucursal', $sucursal->sucursal_codigo);
+// // $query->groupBy('agrupacion', 'grupo', 'unificacion');
+// // $query->orderByRaw("agrupacion ASC, grupo ASC, unificacion ASC");
+// $query->where('configurasabana_agrupacion', 2);
+// $query->where('configurasabana_grupo', 5);
+// $query->where('configurasabana_unificacion', 18);
+// $query->groupBy('numero', 'sucursal');
+
+// Parcial
+// $query = Devolucion1::query();
+// $query->select('configurasabana_agrupacion as agrupacion', 'configurasabana_grupo as grupo', 'configurasabana_unificacion as unificacion', DB::raw('SUM(devolucion2_costo*devolucion2_cantidad) AS costo, SUM(devolucion2_precio*devolucion2_cantidad) AS devoluciones, SUM(devolucion2_descuento*devolucion2_cantidad) as descdevoluciones'));
+// $query->join('devolucion2', function($join){
+//     $join->on('devolucion1.devolucion1_numero', '=', 'devolucion2.devolucion2_numero')
+//         ->on('devolucion1.devolucion1_sucursal', '=', 'devolucion2.devolucion2_sucursal');
+// });
+// $query->join('producto', 'devolucion2.devolucion2_producto', '=', 'producto.producto_serie');
+// $query->join('configurasabana', 'producto.producto_lineanegocio', '=', 'configurasabana.configurasabana_lineanegocio');
+// $query->join('factura1', 'devolucion1.devolucion1_factura_numero', '=', 'factura1.factura1_numero');
+// $query->join('puntoventa', function($join) use($sucursal){
+//     $join->on('factura1.factura1_puntoventa', '=', 'puntoventa.puntoventa_numero')
+//         ->where('puntoventa.puntoventa_sucursal', $sucursal->sucursal_codigo)
+//         ->where('puntoventa.puntoventa_numero', '<>', 8);
+// });
+// $query->whereBetween('devolucion1_fecha_elaboro', [$fechai, $fechaf]);
+// $query->groupBy('agrupacion', 'grupo', 'unificacion');

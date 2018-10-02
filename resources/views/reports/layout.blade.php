@@ -76,13 +76,20 @@
 					margin: 0 0 5 0;
 				}
 
-				.detalle-unificaciones {
+				.detalle-grupos {
 					padding: 0 5 5 10;
 					margin: 0 0 5 0;
 				}
 
-				*:empty {
-				    display:none;
+				.configtable-grupos{
+					width: 100%;
+					border-collapse: collapse;
+					font-size: 6;
+				}
+
+				.configtable-grupos th {
+					background-color: #000;
+					color: #fff;
 				}
 
 				.detalles {
@@ -164,6 +171,10 @@
 
 				.bold{
 					font-weight: bold;
+				}
+
+				.width-10 {
+					width: 10%;
 				}
 
 				.width-100 {

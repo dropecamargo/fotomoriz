@@ -17,6 +17,9 @@ class ReporteSabanaCostoController extends Controller
     public function index(Request $request)
     {
         if ( $request->filled('type') ){
+            ini_set('memory_limit', '-1');
+            set_time_limit(0);
+
             // Validate fields
             $validator = Validator::make($request->all(), [
                 'filtersucursales' => 'required',
@@ -79,6 +82,9 @@ class ReporteSabanaCostoController extends Controller
                             ->where('puntoventa.puntoventa_numero', '<>', 8);
                     });
                     $query->where('factura1_anulada', false);
+                    if($sucursal->sucursal_codigo == 1){
+                        $query->whereIn('factura1_sucursal', [$sucursal->sucursal_codigo, 18]);
+                    }
                     $query->groupBy('agrupacion', 'grupo', 'unificacion', 'linea');
                     $facturaunion = $query;
 
@@ -98,6 +104,9 @@ class ReporteSabanaCostoController extends Controller
                             ->where('puntoventa.puntoventa_numero', '<>', 8);
                     });
                     $query->whereBetween('devolucion1_fecha_elaboro', [$fechai, $fechaf]);
+                    if($sucursal->sucursal_codigo == 1){
+                        $query->whereIn('factura1_sucursal', [$sucursal->sucursal_codigo, 18]);
+                    }
                     $query->groupBy('agrupacion', 'grupo', 'unificacion', 'linea');
                     $query->unionAll($facturaunion);
                     $devolucionunion = $query;
@@ -131,6 +140,9 @@ class ReporteSabanaCostoController extends Controller
                     $query->where(function($query){
                         $query->whereRaw("NOT(nota1_anulada='true' AND nota1_fecha_elaboro >= nota1_fecha_anulo AND nota1_fecha_anulo <= nota1_fecha_elaboro)");
                     });
+                    if($sucursal->sucursal_codigo == 1){
+                        $query->whereIn('factura1_sucursal', [$sucursal->sucursal_codigo, 18]);
+                    }
                     $query->whereBetween('nota1_fecha_elaboro', [$fechai, $fechaf]);
                     $query->orWhereBetween('nota1_fecha_anulo', [$fechai, $fechaf]);
                     $query->groupBy('agrupacion', 'grupo', 'unificacion', 'linea', 'tipo', 'valornota', 'brutofactura', 'descuentofactura', 'ivafactura', 'anulada');
@@ -158,7 +170,7 @@ class ReporteSabanaCostoController extends Controller
                             }
 
                             if( $item->tipo == 'D' )
-                                $item->costos = -$item->costos;
+                                $item->costos = -1*$item->costos;
 
                             /**
                             * cdb1 -> ventas
@@ -196,8 +208,6 @@ class ReporteSabanaCostoController extends Controller
                         $itemsgrupo->grupo = $grupo->grupo;
                         $itemsgrupo->nombre = $grupo->nom_grupo;
 
-                        // Variables para calcular total x grupo
-                        $g_ventas = $g_descuentos = $g_devoluciones = $g_totales = $g_presupuestos = $g_costos = 0;
                         $unificaciones = ConfiguraSabana::getUnificaciones($agrupacion->agrupacion, $grupo->grupo);
                         foreach($unificaciones as $unificacion){
                             $itemunificacion = new \stdClass();
@@ -248,7 +258,7 @@ class ReporteSabanaCostoController extends Controller
                                     $auxiliar->porcentaje = ($presupuesto != 0) ? ($auxiliar->total*100)/$presupuesto : 0;
                                     $auxiliar->presupuesto = $presupuesto;
                                     $auxiliar->margen = $auxiliar->total-$auxiliar->costos;
-                                    $auxiliar->p_margen = (100*($auxiliar->total-$auxiliar->costos))/$auxiliar->total;
+                                    $auxiliar->p_margen = ($auxiliar->total != 0) ? (100*($auxiliar->total-$auxiliar->costos))/$auxiliar->total : 0;
                                     $auxiliar = $auxiliar->toArray();
 
                                 }else{
@@ -265,13 +275,83 @@ class ReporteSabanaCostoController extends Controller
                                         'p_margen' => 0
                                     );
                                 }
-
                                 $itemunificacion->lineas[] = $auxiliar;
                             }
                             $itemsgrupo->unificaciones[] = $itemunificacion;
                         }
+
+                        // Calcular valores totales por grupo
+                        $totalgrupos = [];
+                        foreach ($sucursales as $key => $sucursal) {
+                            $suc = new \stdClass();
+                            $suc->sucursal = $sucursal->sucursal_nombre;
+
+                            // Variables para calcular total x grupo
+                            $s_ventas = $s_descuentos = $s_devoluciones = $s_totales = $s_presupuestos = $s_costos = 0;
+                            foreach ($itemsgrupo->unificaciones as $lineas) {
+
+                                $filtered = array_where($lineas->lineas, function ($item) use($sucursal){
+                                    return $item['sucursal'] == $sucursal->sucursal_nombre;
+                                });
+
+                                $s_ventas += $filtered[$key]['ventas'];
+                                $s_descuentos += $filtered[$key]['descuentos'];
+                                $s_devoluciones += $filtered[$key]['devoluciones'];
+                                $s_totales += $filtered[$key]['total'];
+                                $s_presupuestos += $filtered[$key]['presupuesto'];
+                                $s_costos += $filtered[$key]['costos'];
+                            }
+
+                            $suc->ventas = $s_ventas;
+                            $suc->descuentos = $s_descuentos;
+                            $suc->devoluciones = $s_devoluciones;
+                            $suc->totales = $s_totales;
+                            $suc->presupuestos = $s_presupuestos;
+                            $suc->porcentajes = ($s_presupuestos != 0) ? ($s_totales*100)/$s_presupuestos : 0;
+                            $suc->costos = $s_costos;
+                            $suc->margenes = $s_totales-$s_costos;
+                            $suc->p_margenes = ($s_totales != 0) ? (100*($s_totales-$s_costos))/$s_totales : 0;
+                            $totalgrupos[] = $suc;
+                        }
+
+                        $itemsgrupo->totales = $totalgrupos;
                         $detalle->grupos[] = $itemsgrupo;
                     }
+
+                    // Calcular valores totales por agrupacion
+                    $totalagrupaciones = [];
+                    foreach ($sucursales as $key => $sucursal) {
+                        $suc = new \stdClass();
+                        $suc->sucursal = $sucursal->sucursal_nombre;
+
+                        // Variables para calcular total x agrupacion
+                        $a_ventas = $a_descuentos = $a_devoluciones = $a_totales = $a_presupuestos = $a_costos = 0;
+                        foreach ($detalle->grupos as $totales) {
+                            $filtered = array_where($totales->totales, function ($item) use($sucursal){
+                                return $item->sucursal == $sucursal->sucursal_nombre;
+                            });
+
+                            $a_ventas += $filtered[$key]->ventas;
+                            $a_descuentos += $filtered[$key]->descuentos;
+                            $a_devoluciones += $filtered[$key]->devoluciones;
+                            $a_totales += $filtered[$key]->totales;
+                            $a_presupuestos += $filtered[$key]->presupuestos;
+                            $a_costos += $filtered[$key]->costos;
+                        }
+
+                        $suc->ventas = $a_ventas;
+                        $suc->descuentos = $a_descuentos;
+                        $suc->devoluciones = $a_devoluciones;
+                        $suc->totales = $a_totales;
+                        $suc->presupuestos = $a_presupuestos;
+                        $suc->porcentajes = ($a_presupuestos != 0) ? ($a_totales*100)/$a_presupuestos : 0;
+                        $suc->costos = $a_costos;
+                        $suc->margenes = $a_totales-$a_costos;
+                        $suc->p_margenes = ($a_totales != 0) ? (100*($a_totales-$a_costos))/$a_totales : 0;
+                        $totalagrupaciones[] = $suc;
+                    }
+
+                    $detalle->totales = $totalagrupaciones;
                     $data[] = $detalle;
                 }
 

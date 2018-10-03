@@ -81,17 +81,6 @@
 					margin: 0 0 5 0;
 				}
 
-				.configtable-grupos{
-					width: 100%;
-					border-collapse: collapse;
-					font-size: 6;
-				}
-
-				.configtable-grupos th {
-					background-color: #000;
-					color: #fff;
-				}
-
 				.detalles {
 					padding: 0 5 0 20;
 					margin-bottom: 10px;
@@ -233,6 +222,12 @@
 
 				.color-blue {
 					color: blue;
+				}
+
+				.color-black {
+					background-color: #000;
+					color: #fff;
+					font-size: 8;
 				}
 
 				.noborder {

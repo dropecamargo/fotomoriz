@@ -69,19 +69,24 @@
             </li>
 
             {{-- Reportes cartera --}}
-            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
+            <li class="{{ in_array(Request::segment(1), ['reporteedades', 'reportefacturaselectronicas', 'rintereses', 'reporteposfechados', 'reporterecibos', 'reporteresumencobro']) ? 'active' : '' }}">
                 <a href="#">
                     <i class="fa fa-bar-chart-o"></i> Reportes <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
+                    <li class="{{ in_array(Request::segment(1), ['reporteposfechados']) ? 'active' : '' }}">
+                        <a href="{{ route('reporteposfechados.index') }}">
+                            <i class="fa fa-circle-o"></i><span>Cheques posfechados</span>
+                        </a>
+                    </li>
                     <li class="{{ in_array(Request::segment(1), ['reporteedades']) ? 'active' : '' }}">
                         <a href="{{ route('reporteedades.index') }}">
                             <i class="fa fa-circle-o"></i><span>Edades de cartera</span>
                         </a>
                     </li>
-                    <li class="{{ in_array(Request::segment(1), ['reporteposfechados']) ? 'active' : '' }}">
-                        <a href="{{ route('reporteposfechados.index') }}">
-                            <i class="fa fa-circle-o"></i><span>Cheques posfechados</span>
+                    <li class="{{ in_array(Request::segment(1), ['reportefacturaselectronicas']) ? 'active' : '' }}">
+                        <a href="{{ route('reportefacturaselectronicas.index') }}">
+                            <i class="fa fa-circle-o"></i><span>Facturas electronicas</span>
                         </a>
                     </li>
                     <li class="{{ in_array(Request::segment(1), ['rintereses']) ? 'active' : '' }}">

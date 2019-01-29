@@ -30,6 +30,12 @@ app || (app = {});
             this.$modal = $('#modal-import-file-component');
             this.$modal.find('.modal-title').text( 'Importando ' + this.parameters.title );
             this.$modal.find('.content-modal').empty().html( this.template({title: this.parameters.title}) );
+
+            // Export file
+            if (this.parameters.call == 'presupuesto') {
+                this.$modal.find('.content-modal').append('<a href="'+ window.Misc.urlFull( Route.route('presupuestosg.exportar') ) +'">Descargar formato</a>');
+            }
+
             this.$wrapper = this.$('#modal-wrapper-import-file');
             this.$form = $('#form-import-component');
 

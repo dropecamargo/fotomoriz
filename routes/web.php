@@ -55,8 +55,7 @@ Route::middleware('auth')->group(function () {
 	|-------------------------
 	*/
 	Route::resource('generarintereses', 'Receivable\GenerarInteresController', ['only' => ['index', 'store']]);
-	Route::prefix('enviarintereses')->name('enviarintereses.')->group(function ()
-	{
+	Route::prefix('enviarintereses')->name('enviarintereses.')->group(function () {
 		Route::get('enviar', ['as' => 'enviar', 'uses' => 'Receivable\EnviarInteresController@enviar']);
 		Route::get('anular/{enviarinteres}', ['as' => 'anular', 'uses' => 'Receivable\EnviarInteresController@anular']);
 		Route::get('exportar/{enviarinteres}', ['as' => 'exportar', 'uses' => 'Receivable\EnviarInteresController@exportar']);
@@ -85,6 +84,9 @@ Route::middleware('auth')->group(function () {
 	| Contabilidad Routes
 	|-------------------------
 	*/
+	Route::prefix('presupuestosg')->name('presupuestosg.')->group(function() {
+		Route::get('exportar', ['as' => 'exportar', 'uses' => 'Accounting\PresupuestoGastoController@exportar']);
+	});
 	Route::resource('presupuestosg', 'Accounting\PresupuestoGastoController', ['only' => ['index']]);
 	Route::resource('reportearp', 'Report\ReporteArpController', ['only' => ['index']]);
 
@@ -101,8 +103,7 @@ Route::middleware('auth')->group(function () {
 	| Imports Routes
 	|-------------------------
 	*/
-	Route::prefix('import')->name('import.')->group(function()
-	{
+	Route::prefix('import')->name('import.')->group(function() {
 		Route::post('presupuestog' ,['as' =>'presupuestosg','uses'=>'Accounting\PresupuestoGastoController@import'] );
 	});
 });

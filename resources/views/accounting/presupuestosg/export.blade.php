@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	</head>
+	<body>
+		<table>
+            <thead>
+                <tr>
+                    <td>Mes</td>
+                    <td>Ano</td>
+                    <td>Unidad</td>
+                    <td>Nivel1</td>
+                    <td>Nivel2</td>
+                    <td>Valor</td>
+                </tr>
+            </thead>
+        </table>
+	</body>
+</html>

@@ -144,66 +144,6 @@ class PresupuestoGastoController extends Controller
                     return response()->json($data[0]);
                 }
 
-                // $excel = Excel::load($request->file)->get();
-                // $headers = $excel->first()->keys()->toArray();
-                // $defaultHeaders = array_combine($headers, $headers);
-                // dd($headers);
-                // $validator = \Validator::make($defaultHeaders, [
-                //     'mes' => 'required',
-                //     'ano' => 'required',
-                //     'unidad' => 'required',
-                //     'nivel1' => 'required',
-                //     'nivel2' => 'required',
-                //     'valor' => 'required'
-                // ]);
-                // if ($validator->fails()) {
-                //     $validator->errors()->add('comment', 'Estos campos mencionados no estan presentes en el encabezado del archivo');
-                //     return response()->json(['success' => false, 'errors' => $validator->errors()]);
-                // }
-                //
-                // // Guardar regustris byevis
-                // $number_row = 1;
-                // foreach ($excel as $row) {
-                //     // Count row for error y convert a enteros
-                //     $number_row++;
-                //
-                //     $row->mes = intval($row->mes);
-                //     $row->ano = intval($row->ano);
-                //     $row->unidad = intval($row->unidad);
-                //     $row->nivel1 = intval($row->nivel1);
-                //     $row->nivel2 = intval($row->nivel2);
-                //
-                //     // Validar unidad de decision
-                //     $unidad = UnidadDecision::where('unidaddecision_codigo', $row->unidad)->first();
-                //     if(!$unidad instanceof UnidadDecision){
-                //         DB::rollback();
-                //         return response()->json(['success' => false, 'errors' => "No es posible recuperar la unidad de decision en la fila #$number_row, por favor verifique la información."]);
-                //     }
-                //
-                //     // Validar presupuestog
-                //     $presupuestog = PresupuestoGasto::where('presupuestog_mes', $row->mes)
-                //         ->where('presupuestog_ano', $row->ano)
-                //         ->where('presupuestog_unidaddecision', $unidad->unidaddecision_codigo)
-                //         ->where('presupuestog_nivel1', $row->nivel1)
-                //         ->where('presupuestog_nivel2', $row->nivel2)
-                //         ->first();
-                //
-                //     if( $presupuestog instanceof PresupuestoGasto ){
-                //         $presupuestog->presupuestog_valor = $row->valor;
-                //         $presupuestog->save();
-                //
-                //     }else{
-                //         $presupuestog = new PresupuestoGasto;
-                //         $presupuestog->presupuestog_mes = $row->mes;
-                //         $presupuestog->presupuestog_ano = $row->ano;
-                //         $presupuestog->presupuestog_unidaddecision = $unidad->unidaddecision_codigo;
-                //         $presupuestog->presupuestog_nivel1 = $row->nivel1;
-                //         $presupuestog->presupuestog_nivel2 = $row->nivel2;
-                //         $presupuestog->presupuestog_valor = $row->valor;
-                //         $presupuestog->save();
-                //     }
-                // }
-
                 DB::commit();
                 return response()->json(['success'=> true, 'msg'=> "Se importo con exito el archivo."]);
             } catch (\Exception $e) {
@@ -213,5 +153,21 @@ class PresupuestoGastoController extends Controller
             }
         }
         return response()->json(['success' => false, 'errors' => "Por favor, seleccione un archivo."]);
+    }
+
+    /**
+     * Export Excel the specified resource.
+     *
+     * @param  Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function exportar()
+    {
+        Excel::create(sprintf('%s_%s', "formato_presupuesto", date('Y_m_d H_m_s')), function ($excel) {
+            $title = 'Presupuesto';
+            $excel->sheet('Excel', function($sheet) use ($title) {
+                $sheet->loadView('accounting.presupuestosg.export', compact('title'));
+            });
+        })->download('xls');
     }
 }

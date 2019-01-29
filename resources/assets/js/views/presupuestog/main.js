@@ -96,7 +96,8 @@ app || (app = {});
                 parameters: {
                     title: 'presupuesto de gastos',
                     url: window.Misc.urlFull( Route.route('import.presupuestosg') ),
-                    datatable: _this.presupuestogSearchTable
+                    datatable: _this.presupuestogSearchTable,
+                    call: 'presupuesto'
                 }
             });
             this.importActionView.render();

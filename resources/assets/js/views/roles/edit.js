@@ -55,8 +55,8 @@ app || (app = {});
         */
         onStore: function (e) {
             if (!e.isDefaultPrevented()) {
-
                 e.preventDefault();
+                
                 var data = window.Misc.formToJson( e.target );
                 this.model.save( data, {patch: true, silent: true} );
             }

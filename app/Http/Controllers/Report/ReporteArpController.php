@@ -49,9 +49,6 @@ class ReporteArpController extends Controller
                     $query->where('asiento2n_grupo', '1');
                     $query->orWhere('asiento2n_grupo', '2');
                 });
-                $query->join('plancuentasn', 'asiento2n_plancuentasn', '=', 'plancuentasn_cuenta');
-                $query->whereRaw('asiento2n_nivel1 = plancuentasn_nivel1');
-                $query->whereRaw('asiento2n_nivel2 = plancuentasn_nivel2');
                 $union = $query;
 
                 // Acumulado(REAL) de asienton
@@ -64,8 +61,8 @@ class ReporteArpController extends Controller
                     $query->where('asiento2n_grupo', '1');
                     $query->orWhere('asiento2n_grupo', '2');
                 });
+                $query->union($union);
                 $query->groupBy('centro', 'cuenta', 'nivel1', 'nivel2');
-                $query->unionAll($union);
                 $asientosn = $query->get();
 
                 foreach($asientosn as $asienton){
@@ -94,7 +91,7 @@ class ReporteArpController extends Controller
                     $inventario->cdb2 = $asienton->valor_anual;
                     $inventario->cdb3 = isset( $presupuestogm->presupuestog_valor ) ? $presupuestogm->presupuestog_valor : 0;
                     $inventario->cdb4 = isset( $presupuestoga->presupuestog_valor ) ? $presupuestoga->presupuestog_valor : 0;
-                    $inventario->cbi1 = $asienton->cuenta;
+                    $inventario->cch1 = $asienton->cuenta;
                     $inventario->cin1 = $asienton->centro;
                     $inventario->save();
                 }
@@ -107,28 +104,27 @@ class ReporteArpController extends Controller
 				$nmes = config('koi.meses')[$request->mes];
 
 				// Generate file
-				switch ($type)
-				{
+				switch ($type) {
 					case 'xls':
-						Excel::create( sprintf('%s_%s_%s', 'reporte_arp', date('Y_m_d'), date('H_m_s') ), function($excel) use($mes, $ano, $nmes, $title, $type){
+						Excel::create( sprintf('%s_%s_%s', 'reporte_arp', date('Y_m_d'), date('H_m_s') ), function ($excel) use ($mes, $ano, $nmes, $title, $type) {
                                 $unidades = UnidadDecision::select('unidaddecision_codigo', 'unidaddecision_nombre')->where('unidaddecision_activa', true)->orderby('unidaddecision_codigo', 'asc')->get();
-                                foreach ($unidades as $unidad){
-
+                                foreach ($unidades as $unidad) {
                                     $sentencia = "
-                                            SELECT cuenta, codigo, nivel1, nivel2, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
+                                            SELECT cuenta, codigo, concepto, nivel1, nivel2, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
                                             FROM (
-                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
+                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto as concepto, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
                                                 FROM auxiliarreporte
                                                 INNER JOIN plancuentasn ON auxiliarreporte.cbi1 = plancuentasn.plancuentasn_cuenta
                                                 WHERE cin1 = $unidad->unidaddecision_codigo
-                                                GROUP BY cuenta, codigo, nivel1, nivel2
+                                                GROUP BY cuenta, codigo, concepto, nivel1, nivel2
                                             UNION
-                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
+                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto as concepto, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
                                                 FROM plancuentasn
                                                 WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0
-                                                GROUP BY cuenta, codigo, nivel1, nivel2
+                                                GROUP BY cuenta, codigo, concepto, nivel1, nivel2
                                             ) x
-                                            GROUP BY cuenta, codigo, nivel1, nivel2";
+                                            GROUP BY cuenta, codigo, concepto, nivel1, nivel2
+                                            ORDER BY codigo ASC, concepto ASC";
                                     $auxiliar = DB::select($sentencia);
 
                                     $expression = array( "[","]","*","?",":","/",'"',"\\");

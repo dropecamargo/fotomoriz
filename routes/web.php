@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
 	});
 	Route::resource('presupuestosg', 'Accounting\PresupuestoGastoController', ['only' => ['index']]);
 	Route::resource('reportearp', 'Report\ReporteArpController', ['only' => ['index']]);
+	Route::resource('plancuentasn', 'Accounting\PlanCuentaNController', ['only' => ['index', 'show', 'edit', 'update']]);
 
 	/*
 	|-------------------------

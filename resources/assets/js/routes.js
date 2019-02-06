@@ -35,6 +35,9 @@ app || (app = {});
 
             // Routes accounting
             'presupuestosg(/)': 'getPresupuestoGastosMain',
+
+            'plancuentasn(/)': 'getPlanCuentasNMain',
+            'plancuentasn/:plancuentasn/edit(/)': 'getPlanCuentasNEdit',
         },
 
         /**
@@ -264,7 +267,7 @@ app || (app = {});
 
         /**
         * Routes Accounting
-        * main view presupuestos gastos
+        * View main
         */
         getPresupuestoGastosMain: function () {
 
@@ -275,6 +278,35 @@ app || (app = {});
 
             this.mainPresupuestoGastosView = new app.MainPresupuestoGastosView( );
         },
+
+        /**
+        * View main
+        */
+        getPlanCuentasNMain: function () {
+            if ( this.mainPlanCuentasNView instanceof Backbone.View ){
+                this.mainPlanCuentasNView.stopListening();
+                this.mainPlanCuentasNView.undelegateEvents();
+            }
+
+            this.mainPlanCuentasNView = new app.MainPlanCuentasNView( );
+        },
+
+        /**
+        * View edit
+        */
+        getPlanCuentasNEdit: function (plancuentasn) {
+            this.planCuentaNModel = new app.PlanCuentaNModel();
+            this.planCuentaNModel.set({'id': plancuentasn}, {silent: true});
+
+            if ( this.editPlanCuentaNView instanceof Backbone.View ){
+                this.editPlanCuentaNView.stopListening();
+                this.editPlanCuentaNView.undelegateEvents();
+            }
+
+            this.editPlanCuentaNView = new app.EditPlanCuentaNView({ model: this.planCuentaNModel });
+            this.planCuentaNModel.fetch();
+        },
+
     }) );
 
 })(jQuery, this, this.document);

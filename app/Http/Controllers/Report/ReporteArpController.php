@@ -28,8 +28,8 @@ class ReporteArpController extends Controller
             // }
 
 			DB::beginTransaction();
-            try{
-                //campos auxiliar
+            try {
+                // Campos auxiliar
                 // cin1 : unidad decision
                 // cin2 : nivel1
                 // cin3 : nivel2
@@ -107,36 +107,44 @@ class ReporteArpController extends Controller
 				switch ($type) {
 					case 'xls':
 						Excel::create( sprintf('%s_%s_%s', 'reporte_arp', date('Y_m_d'), date('H_m_s') ), function ($excel) use ($mes, $ano, $nmes, $title, $type) {
-                                $unidades = UnidadDecision::select('unidaddecision_codigo', 'unidaddecision_nombre')->where('unidaddecision_activa', true)->orderby('unidaddecision_codigo', 'asc')->get();
-                                foreach ($unidades as $unidad) {
+                            $unidades = UnidadDecision::select('unidaddecision_codigo', 'unidaddecision_nombre')->where('unidaddecision_activa', true)->orderby('unidaddecision_codigo', 'asc')->get();
+                            foreach ($unidades as $unidad) {
+                                $data = [];
+                                $conceptos = PlanCuentasN::select('plancuentasn_concepto')->groupBy('plancuentasn_concepto')->get();
+                                foreach ($conceptos as $concepto) {
+                                    $object = new \stdClass();
+                                    $object->concepto = $concepto->plancuentasn_concepto;
                                     $sentencia = "
-                                            SELECT cuenta, codigo, concepto, nivel1, nivel2, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
-                                            FROM (
-                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto as concepto, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
-                                                FROM auxiliarreporte
-                                                INNER JOIN plancuentasn ON auxiliarreporte.cbi1 = plancuentasn.plancuentasn_cuenta
-                                                WHERE cin1 = $unidad->unidaddecision_codigo
-                                                GROUP BY cuenta, codigo, concepto, nivel1, nivel2
-                                            UNION
-                                                SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto as concepto, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
-                                                FROM plancuentasn
-                                                WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0
-                                                GROUP BY cuenta, codigo, concepto, nivel1, nivel2
-                                            ) x
+                                        SELECT cuenta, codigo, concepto, nivel1, nivel2, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
+                                        FROM (
+                                            SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto as concepto, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
+                                            FROM auxiliarreporte
+                                            INNER JOIN plancuentasn ON auxiliarreporte.cbi1 = plancuentasn.plancuentasn_cuenta
+                                            WHERE cin1 = $unidad->unidaddecision_codigo AND plancuentasn_concepto = '$concepto->plancuentasn_concepto'
                                             GROUP BY cuenta, codigo, concepto, nivel1, nivel2
-                                            ORDER BY codigo ASC, concepto ASC";
+                                        UNION
+                                            SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto as concepto, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
+                                            FROM plancuentasn
+                                            WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0 AND plancuentasn_concepto = '$concepto->plancuentasn_concepto'
+                                            GROUP BY cuenta, codigo, concepto, nivel1, nivel2
+                                        ) x
+                                        GROUP BY cuenta, codigo, concepto, nivel1, nivel2
+                                        ORDER BY codigo ASC, concepto ASC";
                                     $auxiliar = DB::select($sentencia);
-
-                                    $expression = array( "[","]","*","?",":","/",'"',"\\");
-                                    $name = str_replace($expression, '', $unidad->unidaddecision_nombre);
-    								$title = "$name";
-    								$excel->sheet('Excel', function($sheet) use ($mes, $ano, $nmes, $auxiliar, $title, $type, $unidad){
-    									$sheet->loadView('reports.accounting.reportearp.reporte', compact('mes','ano', 'nmes', 'auxiliar', 'title', 'type', 'unidad'));
-                                        $sheet->setWidth(array('A' => 20, 'B' => 70, 'C' => 2, 'G' => 2, 'L' => 2));
-                                        $sheet->setHeight(array(1 => 15, 2 => 15));
-    									$sheet->setFontSize(8);
-    								});
+                                    $object->cuentas = $auxiliar;
+                                    $data[] = $object;
                                 }
+
+                                $expression = array( "[","]","*","?",":","/",'"',"\\");
+                                $name = str_replace($expression, '', $unidad->unidaddecision_nombre);
+								$title = "$name";
+								$excel->sheet('Excel', function($sheet) use ($mes, $ano, $nmes, $data, $title, $type, $unidad){
+									$sheet->loadView('reports.accounting.reportearp.reporte', compact('mes','ano', 'nmes', 'data', 'title', 'type', 'unidad'));
+                                    $sheet->setWidth(array('A' => 20, 'B' => 70, 'C' => 2, 'G' => 2, 'L' => 2));
+                                    $sheet->setHeight(array(1 => 15, 2 => 15));
+									$sheet->setFontSize(8);
+								});
+                            }
 
 						})->download('xls');
 					break;

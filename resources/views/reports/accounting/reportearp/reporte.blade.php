@@ -23,7 +23,23 @@
 			}
 
 			tr > td {
-			    border: 1px solid #000000;
+			    border: 1px solid #D3D3D3;
+			}
+
+			.border-top {
+				border-top: 2px solid #000;
+			}
+
+			.border-bottom {
+				border-bottom: 2px solid #000;
+			}
+
+			.border-right {
+				border-right: 2px solid #000;
+			}
+
+			.border-left {
+				border-left: 2px solid #000;
 			}
 		</style>
 	</head>
@@ -74,61 +90,75 @@
 				<td align="center" class="bold-cell">%</td>
 			</tr>
 			@php
-				$arpmestotal = $realmestotal = $arpacutotal = $realacutotal = 0;
+				$arpmestotal = $realmestotal = $arpacutotal = $realacutotal = $row = 0;
 			@endphp
 
-			@foreach($auxiliar as $item)
-				@php
-					$varmes = $item->mes - $item->arpmes;
-					$varacu = $item->anoacu - $item->arpacu;
-					$promedioacu = ($item->anoacu > 0) ? ($item->arpacu/$item->anoacu)-1 : 0;
+			@foreach ($data as $cuenta)
+				@php $countrows = count($cuenta->cuentas) @endphp
+				@foreach ($cuenta->cuentas as $item)
+					@php
+						$varmes = $item->mes - $item->arpmes;
+						$varacu = $item->anoacu - $item->arpacu;
+						$promedioacu = ($item->anoacu > 0) ? ($item->arpacu/$item->anoacu)-1 : 0;
 
-					$arpmestotal += $item->arpmes;
-					$realmestotal += $item->mes;
-					$arpacutotal += $item->arpacu;
-					$realacutotal += $item->anoacu;
-				@endphp
-				<tr>
-				    <td align="left">{{ $item->codigo }}</td>
-				    <td align="left">{{ $item->cuenta }}</td>
-					<td class="noborder"></td>
-					<td align="center">{!! " ".number_format($item->arpmes,2,',','.') !!}</td>
-					<td align="center" class="color-cell">{!! " ".number_format($item->mes,2,',','.') !!}</td>
-					<td align="center">{!! " ".number_format($varmes,2,',','.') !!}</td>
-					<td class="noborder"></td>
-					<td align="center">{!! " ".number_format($item->arpacu,2,',','.') !!}</td>
-					<td align="center" class="color-cell">{!! " ".number_format($item->anoacu,2,',','.') !!}</td>
-					<td align="center">{!! " ".number_format($varacu,2,',','.') !!}</td>
-					<td align="center">{!! " ".number_format($promedioacu,2,',','.') !!}%</td>
-					<td class="noborder"></td>
-					<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
-					<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
-					<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
-				</tr>
+						$arpmestotal += $item->arpmes;
+						$realmestotal += $item->mes;
+						$arpacutotal += $item->arpacu;
+						$realacutotal += $item->anoacu;
+
+						if ($row == 0) {
+							$class = 'border-top';
+						} else if ($row == $countrows) {
+							$class = 'border-bototm';
+						} else {
+							$class = '';
+						}
+					@endphp
+
+					<tr>
+						<td class="{{ $class }} border-left" align="left">{{ strval($item->codigo) }}</td>
+						<td class="{{ $class }} border-right" align="left">{{ $item->cuenta }}</td>
+						<td class="{{ $class }}" class="noborder"></td>
+						<td class="{{ $class }} border-left" align="center">{!! " ".number_format($item->arpmes,2,',','.') !!}</td>
+						<td class="{{ $class }}" align="center" class="color-cell">{!! " ".number_format($item->mes,2,',','.') !!}</td>
+						<td class="{{ $class }} border-right" align="center">{!! " ".number_format($varmes,2,',','.') !!}</td>
+						<td class="{{ $class }}" class="noborder"></td>
+						<td class="{{ $class }} border-left" align="center">{!! " ".number_format($item->arpacu,2,',','.') !!}</td>
+						<td class="{{ $class }}" align="center" class="color-cell">{!! " ".number_format($item->anoacu,2,',','.') !!}</td>
+						<td class="{{ $class }}" align="center">{!! " ".number_format($varacu,2,',','.') !!}</td>
+						<td class="{{ $class }} border-right" align="center">{!! " ".number_format($promedioacu,2,',','.') !!}%</td>
+						<td class="{{ $class }}" class="noborder"></td>
+						<td class="{{ $class }} border-left" align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+						<td class="{{ $class }}" align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+						<td class="{{ $class }} border-right" align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+					</tr>
+					@php $row++ @endphp
+				@endforeach
+				@php $row = 0 @endphp
 			@endforeach
 
 			@php
-				$mespromediototal = ($realmestotal > 0) ? ($arpmestotal/$realmestotal)-1 : 0;
-				$acupromediototal = ($realacutotal > 0) ? ($arpacutotal/$realacutotal)-1 : 0;
-				$acuvartotal = $realacutotal - $arpacutotal;
+			    $mespromediototal = ($realmestotal > 0) ? ($arpmestotal/$realmestotal)-1 : 0;
+			    $acupromediototal = ($realacutotal > 0) ? ($arpacutotal/$realacutotal)-1 : 0;
+			    $acuvartotal = $realacutotal - $arpacutotal;
 			@endphp
 
 			<tr>
-				<td class="noborder"></td>
-				<td class="bold-cell">Total</td>
-				<td class="noborder"></td>
-				<td align="center">{!! " ".number_format($arpmestotal,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format($realmestotal,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format($mespromediototal,2,',','.') !!}%</td>
-				<td class="noborder"></td>
-				<td align="center">{!! " ".number_format($arpacutotal,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format($realacutotal,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format($acuvartotal,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format($acupromediototal,2,',','.') !!}%</td>
-				<td class="noborder"></td>
-				<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
-				<td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+			    <td class="noborder"></td>
+			    <td class="bold-cell">Total</td>
+			    <td class="noborder"></td>
+			    <td align="center">{!! " ".number_format($arpmestotal,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format($realmestotal,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format($mespromediototal,2,',','.') !!}%</td>
+			    <td class="noborder"></td>
+			    <td align="center">{!! " ".number_format($arpacutotal,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format($realacutotal,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format($acuvartotal,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format($acupromediototal,2,',','.') !!}%</td>
+			    <td class="noborder"></td>
+			    <td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
+			    <td align="center">{!! " ".number_format(0,2,',','.') !!}</td>
 			</tr>
 		</table>
 	</body>

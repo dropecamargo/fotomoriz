@@ -103,48 +103,37 @@ class ReporteArpController extends Controller
 				$ano = $request->ano;
 				$nmes = config('koi.meses')[$request->mes];
 
-                // Get conceptos
-                $conceptos = PlanCuentasN::select('plancuentasn_concepto')->groupBy('plancuentasn_concepto')->orderBy('plancuentasn_concepto', 'asc')->get();
+                // Get unidades
                 $unidades = UnidadDecision::select('unidaddecision_codigo', 'unidaddecision_nombre')->where('unidaddecision_activa', true)->orderby('unidaddecision_codigo', 'asc')->get();
 
 				// Generate file
 				switch ($type) {
 					case 'xls':
-						Excel::create( sprintf('%s_%s', 'reporte_arp', date('Y_m_d H_m_s') ), function ($excel) use ($mes, $ano, $nmes, $title, $type, $conceptos, $unidades) {
+						Excel::create( sprintf('%s_%s', 'reporte_arp', date('Y_m_d H_m_s') ), function ($excel) use ($mes, $ano, $nmes, $title, $type, $unidades) {
                             foreach ($unidades as $unidad) {
-                                $data = [];
-                                foreach ($conceptos as $concepto) {
-                                    $sentencia = "
-                                        SELECT cuenta, codigo, nivel1, nivel2, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
-                                        FROM (
-                                            SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
-                                            FROM auxiliarreporte
-                                            INNER JOIN plancuentasn ON auxiliarreporte.cch1 = plancuentasn.plancuentasn_cuenta
-                                            WHERE cin1 = $unidad->unidaddecision_codigo AND plancuentasn_concepto = '$concepto->plancuentasn_concepto'
-                                            GROUP BY cuenta, codigo, nivel1, nivel2
-                                        UNION
-                                            SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
-                                            FROM plancuentasn
-                                            WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel1 != 0 AND plancuentasn_nivel2 != 0 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0 AND plancuentasn_concepto = '$concepto->plancuentasn_concepto'
-                                            GROUP BY cuenta, codigo, nivel1, nivel2
-                                        ) x
-                                        GROUP BY cuenta, codigo, nivel1, nivel2
-                                        ORDER BY codigo ASC";
-                                    $auxiliar = DB::select($sentencia);
-
-                                    $object = new \stdClass();
-                                    $object->concepto = $concepto->plancuentasn_concepto;
-                                    $object->cuentas = $auxiliar;
-                                    $object->count = count($auxiliar);
-
-                                    $data[] = $object;
-                                }
+                                $sentencia = "
+                                    SELECT cuenta, codigo, nivel1, nivel2, concepto, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
+                                    FROM (
+                                        SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto AS concepto, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
+                                        FROM auxiliarreporte
+                                        INNER JOIN plancuentasn ON auxiliarreporte.cch1 = plancuentasn.plancuentasn_cuenta
+                                        WHERE cin1 = $unidad->unidaddecision_codigo
+                                        GROUP BY cuenta, codigo, nivel1, nivel2, concepto
+                                    UNION
+                                        SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto AS concepto, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
+                                        FROM plancuentasn
+                                        WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel1 != 0 AND plancuentasn_nivel2 != 0 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0
+                                        GROUP BY cuenta, codigo, nivel1, nivel2, concepto
+                                    ) x
+                                    GROUP BY cuenta, codigo, nivel1, nivel2, concepto
+                                    ORDER BY nivel1 ASC, concepto ASC";
+                                $auxiliar = DB::select($sentencia);
 
                                 $expression = array( "[","]","*","?",":","/",'"',"\\");
                                 $name = str_replace($expression, '', $unidad->unidaddecision_nombre);
 								$title = "$name";
-								$excel->sheet('Excel', function($sheet) use ($mes, $ano, $nmes, $data, $title, $type, $unidad){
-									$sheet->loadView('reports.accounting.reportearp.reporte', compact('mes','ano', 'nmes', 'data', 'title', 'type', 'unidad'));
+								$excel->sheet('Excel', function($sheet) use ($mes, $ano, $nmes, $auxiliar, $title, $type, $unidad){
+									$sheet->loadView('reports.accounting.reportearp.reporte', compact('mes','ano', 'nmes', 'auxiliar', 'title', 'type', 'unidad'));
                                     $sheet->setWidth(array('A' => 20, 'B' => 70, 'C' => 2, 'G' => 2, 'L' => 2));
                                     $sheet->setHeight(array(1 => 15, 2 => 15));
 									$sheet->setFontSize(8);

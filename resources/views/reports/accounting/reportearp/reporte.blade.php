@@ -26,7 +26,11 @@
 				font-weight: bold;
 			}
 
-			thead, tfoot > tr > td {
+			thead > tr > td {
+			    border: 1px solid #000;
+			}
+
+			tfoot > tr > td {
 			    border: 1px solid #000;
 			}
 
@@ -91,58 +95,54 @@
 			</thead>
 			<tbody>
 				@php
-					$arpmestotal = $realmestotal = $arpacutotal = $realacutotal = $row = 0;
+					$arpmestotal = $realmestotal = $arpacutotal = $realacutotal = $a = 0;
+					$ultimapos = '';
 				@endphp
-				@foreach ($data as $cuenta)
-					@foreach ($cuenta->cuentas as $item)
-						@php
-							$varmes = $item->mes - $item->arpmes;
-							$varacu = $item->anoacu - $item->arpacu;
-							$promedioacu = ($item->anoacu > 0) ? ($item->arpacu/$item->anoacu)-1 : 0;
 
-							$arpmestotal += $item->arpmes;
-							$realmestotal += $item->mes;
-							$arpacutotal += $item->arpacu;
-							$realacutotal += $item->anoacu;
-
-							if ($row == 0) {
-							    $border = 'border-top';
-							} else if ($row == $cuenta->count-1) {
-							    $border = 'border-bottom';
-							} else {
-							    $border = '';
-							}
-
-							if ($cuenta->concepto) {
-								$printrow = '';
-							} else {
-								$printrow = 'gray';
-							}
-						@endphp
-
-						<tr>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="left">{{ $item->codigo }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="left">{{ $item->cuenta }}&nbsp;</td>
-							<td class="noborder"></td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format($item->arpmes,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right yellow" align="center">{{ number_format($item->mes,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format($varmes,2,',','.') }}&nbsp;</td>
-							<td class="noborder"></td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format($item->arpacu,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right yellow" align="center">{{ number_format($item->anoacu,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format($varacu,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format($promedioacu,2,',','.') }}%</td>
-							<td class="noborder"></td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format(0,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format(0,2,',','.') }}&nbsp;</td>
-							<td class="{{ $border }} {{ $printrow }} border-left-right" align="center">{{ number_format(0,2,',','.') }}&nbsp;</td>
-						</tr>
-						@php
-							$row++;
-						@endphp
-					@endforeach
+				@foreach ($auxiliar as $item)
 					@php
-						$row = 0;
+						$varmes = $item->mes - $item->arpmes;
+						$varacu = $item->anoacu - $item->arpacu;
+						$promedioacu = ($item->anoacu > 0) ? ($item->arpacu/$item->anoacu)-1 : 0;
+
+						$arpmestotal += $item->arpmes;
+						$realmestotal += $item->mes;
+						$arpacutotal += $item->arpacu;
+						$realacutotal += $item->anoacu;
+
+						if ($item->concepto == $ultimapos) {
+							$a++;
+						} else {
+							$a = 0;
+						}
+
+						if ($a == 0) {
+							$border = 'border-top';
+						} else {
+							$border = '';
+						}
+					@endphp
+
+					<tr>
+						<td class="{{ $border }} border-left-right" align="left">{{ $item->codigo }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right" align="left">{{ $item->cuenta }}&nbsp;</td>
+						<td class="noborder"></td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format($item->arpmes,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right yellow" align="center">{{ number_format($item->mes,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format($varmes,2,',','.') }}&nbsp;</td>
+						<td class="noborder"></td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format($item->arpacu,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right yellow" align="center">{{ number_format($item->anoacu,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format($varacu,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format($promedioacu,2,',','.') }}%</td>
+						<td class="noborder"></td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format(0,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format(0,2,',','.') }}&nbsp;</td>
+						<td class="{{ $border }} border-left-right" align="center">{{ number_format(0,2,',','.') }}&nbsp;</td>
+					</tr>
+
+					@php
+						$ultimapos = $item->concepto;
 					@endphp
 				@endforeach
 			</tbody>

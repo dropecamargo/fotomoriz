@@ -47,6 +47,11 @@ class ReporteArpController extends Controller
                     $query->where('asiento2n_grupo', '1');
                     $query->orWhere('asiento2n_grupo', '2');
                 });
+                $query->where('asiento2n_nivel1', '!=', '0');
+                $query->where('asiento2n_nivel2', '!=', '0');
+                $query->where('asiento2n_nivel3', '0');
+                $query->where('asiento2n_nivel4', '0');
+                $query->where('asiento2n_nivel5', '0');
                 $union = $query;
 
                 // Acumulado(REAL) de asienton
@@ -59,11 +64,17 @@ class ReporteArpController extends Controller
                     $query->where('asiento2n_grupo', '1');
                     $query->orWhere('asiento2n_grupo', '2');
                 });
+                $query->where('asiento2n_nivel1', '!=', '0');
+                $query->where('asiento2n_nivel2', '!=', '0');
+                $query->where('asiento2n_nivel3', '0');
+                $query->where('asiento2n_nivel4', '0');
+                $query->where('asiento2n_nivel5', '0');
                 $query->union($union);
+                $query->take(50);
                 $query->groupBy('centro', 'cuenta', 'nivel1', 'nivel2');
                 $asientosn = $query->get();
 
-                foreach($asientosn as $asienton){
+                foreach($asientosn as $asienton) {
                     // Mes(ARP) de presupuestog
                     $query = PresupuestoGasto::query();
                     $query->select('presupuestog_valor');
@@ -119,10 +130,17 @@ class ReporteArpController extends Controller
                                         INNER JOIN plancuentasn ON auxiliarreporte.cch1 = plancuentasn.plancuentasn_cuenta
                                         WHERE cin1 = $unidad->unidaddecision_codigo
                                         GROUP BY cuenta, codigo, nivel1, nivel2, concepto
-                                    UNION
+                                        UNION
                                         SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto AS concepto, 0 AS nivel1, 0 AS nivel2, 0 AS mes, 0 AS anoacu, 0 AS arpmes, 0 AS arpacu
                                         FROM plancuentasn
-                                        WHERE plancuentasn_clase = 5 AND plancuentasn_grupo = 1 AND plancuentasn_nivel1 != 0 AND plancuentasn_nivel2 != 0 AND plancuentasn_nivel3 = 0 AND plancuentasn_nivel4 = 0 AND plancuentasn_nivel5 = 0
+                                        WHERE 
+                                        plancuentasn_clase = 5 
+                                        AND plancuentasn_grupo = 1
+                                        AND plancuentasn_nivel1 != 0 
+                                        AND plancuentasn_nivel2 != 0 
+                                        AND plancuentasn_nivel3 = 0 
+                                        AND plancuentasn_nivel4 = 0 
+                                        AND plancuentasn_nivel5 = 0
                                         GROUP BY cuenta, codigo, nivel1, nivel2, concepto
                                     ) x
                                     GROUP BY cuenta, codigo, nivel1, nivel2, concepto

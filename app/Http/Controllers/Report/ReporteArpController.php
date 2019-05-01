@@ -145,7 +145,7 @@ class ReporteArpController extends Controller
                                         GROUP BY cuenta, codigo, nivel1, nivel2, concepto
                                     ) x
                                     GROUP BY cuenta, codigo, nivel1, nivel2, concepto
-                                    ORDER BY cuenta ASC";
+                                    ORDER BY codigo ASC";
                                 $auxiliar = DB::select($sentencia);
 
                                 $expression = array( "[","]","*","?",":","/",'"',"\\");

@@ -124,7 +124,9 @@ class ReporteArpController extends Controller
                                 $sentencia = "
                                     SELECT cuenta, codigo, nivel1, nivel2, concepto, SUM(mes) as mes, SUM(anoacu) as anoacu, SUM(arpmes) as arpmes, SUM(arpacu) as arpacu
                                     FROM (
-                                        SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto AS concepto, cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, sum(cdb4)/1000000 AS arpacu
+                                        SELECT plancuentasn_nombre AS cuenta, plancuentasn_cuenta AS codigo, plancuentasn_concepto AS concepto, 
+                                        cin2 AS nivel1, cin3 AS nivel2, sum(cdb1)/1000000 AS mes, sum(cdb2)/1000000 AS anoacu, sum(cdb3)/1000000 AS arpmes, 
+                                        sum(cdb4)/1000000 AS arpacu
                                         FROM auxiliarreporte
                                         INNER JOIN plancuentasn ON auxiliarreporte.cch1 = plancuentasn.plancuentasn_cuenta
                                         WHERE cin1 = $unidad->unidaddecision_codigo
@@ -143,7 +145,7 @@ class ReporteArpController extends Controller
                                         GROUP BY cuenta, codigo, nivel1, nivel2, concepto
                                     ) x
                                     GROUP BY cuenta, codigo, nivel1, nivel2, concepto
-                                    ORDER BY nivel1 ASC, nivel2 ASC";
+                                    ORDER BY cuenta ASC";
                                 $auxiliar = DB::select($sentencia);
 
                                 $expression = array( "[","]","*","?",":","/",'"',"\\");

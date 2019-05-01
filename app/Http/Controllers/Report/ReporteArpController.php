@@ -70,7 +70,6 @@ class ReporteArpController extends Controller
                 $query->where('asiento2n_nivel4', '0');
                 $query->where('asiento2n_nivel5', '0');
                 $query->union($union);
-                $query->take(50);
                 $query->groupBy('centro', 'cuenta', 'nivel1', 'nivel2');
                 $asientosn = $query->get();
 
